@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Episodios | Develando el Código Masónico</title>
+  <meta name="description" content="Biblioteca de episodios del podcast Develando el Código Masónico." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html"><span class="brand__mark">⟡</span><span class="brand__name">Develando el Código Masónico</span></a>
+      <nav class="nav">
+        <a href="index.html">Inicio</a>
+        <a class="active" href="episodios.html">Episodios</a>
+        <a href="index.html#donaciones">Donaciones</a>
+        <a href="comunidad.html">Comunidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <h1>Episodios</h1>
+      <p class="muted">Explora, busca y filtra por categoría. Reemplaza los links de reproducción por los tuyos.</p>
+
+      <div class="searchbar">
+        <input id="searchInput" type="search" placeholder="Buscar episodio…" />
+        <select id="categorySelect">
+          <option value="">Todas las categorías</option>
+          <option value="Introducción">Introducción</option>
+          <option value="Simbolismo">Simbolismo</option>
+          <option value="Historia">Historia</option>
+          <option value="Filosofía">Filosofía</option>
+          <option value="Entrevista">Entrevista</option>
+        </select>
+      </div>
+
+      <div id="episodeResults" class="cards3"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="muted">© <span id="year"></span> Develando el Código Masónico</p>
+      <div class="footer__links">
+        <a href="index.html#donaciones">Donaciones</a>
+        <a href="comunidad.html">Comunidad</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

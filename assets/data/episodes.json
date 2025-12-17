@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ep-001",
+    "numero": 1,
+    "titulo": "Capítulo Piloto: Qué es la Masonería y qué no es",
+    "categoria": "Introducción",
+    "fecha": "2026-01-05",
+    "descripcion": "Presentación del podcast, conceptos base, mitos comunes y qué esperar de la temporada.",
+    "invitado": "",
+    "duracion": "30:00",
+    "spotify": "TU_LINK_EP_SPOTIFY",
+    "youtube": "TU_LINK_EP_YOUTUBE"
+  },
+  {
+    "id": "ep-002",
+    "numero": 2,
+    "titulo": "Los Orígenes de la Orden",
+    "categoria": "Historia",
+    "fecha": "2026-01-12",
+    "descripcion": "Un recorrido claro por orígenes, contexto, evolución y malentendidos históricos.",
+    "invitado": "",
+    "duracion": "32:00",
+    "spotify": "TU_LINK_EP_SPOTIFY",
+    "youtube": "TU_LINK_EP_YOUTUBE"
+  },
+  {
+    "id": "ep-003",
+    "numero": 3,
+    "titulo": "Los Secretos Masónicos: Qué son realmente",
+    "categoria": "Filosofía",
+    "fecha": "2026-01-19",
+    "descripcion": "Discreción, símbolos, lenguaje y por qué el mito del secreto se distorsiona.",
+    "invitado": "",
+    "duracion": "28:00",
+    "spotify": "TU_LINK_EP_SPOTIFY",
+    "youtube": "TU_LINK_EP_YOUTUBE"
+  }
+]
