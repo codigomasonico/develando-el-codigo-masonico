@@ -125,13 +125,25 @@ img {
 /* =========================
    LOGO + TEXTO EDITORIAL
    ========================= */
+/* Contenedor alineado al top */
 .logo-text-wrap {
-  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
 }
 
-.logo-text-wrap p {
-  margin-top: 0;
+/* Logo */
+.logo-float {
+  flex-shrink: 0;
+  max-width: 130px;
+  height: auto;
 }
+
+/* Texto */
+.logo-text-wrap p {
+  margin: 0;
+}
+
 
 .logo-float {
   float: left;
@@ -318,3 +330,4 @@ img {
     justify-content: center;
   }
 }
+
