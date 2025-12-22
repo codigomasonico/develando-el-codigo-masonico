@@ -318,13 +318,13 @@ img {
 
 @media (max-width: 768px) {
   .logo-float {
-    float: none;
-    display: block;
-    margin: 0 auto 14px;
     max-width: 110px;
+    margin-bottom: 14px;
   }
 
-  .logo-text-wrap p {
+  .logo-text-wrap {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
   }
 
@@ -336,5 +336,6 @@ img {
     justify-content: center;
   }
 }
+
 
 
