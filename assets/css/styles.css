@@ -98,3 +98,29 @@ textarea{ max-width:520px; }
     max-width: 140px;
   }
 }
+
+/* Texto rodeando el logo (estilo editorial) */
+.logo-text-wrap {
+  overflow: hidden; /* limpia el float */
+}
+
+.logo-float {
+  float: left;
+  max-width: 180px;
+  margin: 0 20px 10px 0;
+  height: auto;
+}
+
+/* Ajuste en móviles */
+@media (max-width: 768px) {
+  .logo-float {
+    float: none;
+    display: block;
+    margin: 0 auto 16px;
+    max-width: 140px;
+  }
+
+.logo-text-wrap p {
+    text-align: center;
+  }
+}
