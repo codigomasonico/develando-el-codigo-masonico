@@ -104,6 +104,10 @@ textarea{ max-width:520px; }
   overflow: hidden; /* limpia el float */
 }
 
+.logo-text-wrap p {
+  margin-top: 0;
+}
+
 .logo-float {
   float: left;
   max-width: 130px;
@@ -124,5 +128,6 @@ textarea{ max-width:520px; }
     text-align: center;
   }
 }
+
 
 
