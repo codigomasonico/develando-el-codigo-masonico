@@ -116,12 +116,13 @@ textarea{ max-width:520px; }
   .logo-float {
     float: none;
     display: block;
-    margin: 0 auto 16px;
-    max-width: 140px;
+    margin: 0 auto 14px;
+    max-width: 110px;
   }
 
 .logo-text-wrap p {
     text-align: center;
   }
 }
+
 
