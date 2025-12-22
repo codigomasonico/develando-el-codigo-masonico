@@ -106,9 +106,9 @@ textarea{ max-width:520px; }
 
 .logo-float {
   float: left;
-  max-width: 180px;
-  margin: 0 20px 10px 0;
+  max-width: 130px;
   height: auto;
+  margin: 0 18px 10px 0;
 }
 
 /* Ajuste en móviles */
@@ -124,3 +124,4 @@ textarea{ max-width:520px; }
     text-align: center;
   }
 }
+
