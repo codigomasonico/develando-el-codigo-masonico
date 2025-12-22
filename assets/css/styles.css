@@ -16,7 +16,7 @@
 }
 
 /* =========================
-   RESET BÁSICO
+   RESET
    ========================= */
 *,
 *::before,
@@ -41,7 +41,7 @@ img {
 }
 
 /* =========================
-   CONTENEDORES
+   LAYOUT BASE
    ========================= */
 .container {
   width: min(1100px, 92vw);
@@ -49,7 +49,7 @@ img {
 }
 
 /* =========================
-   HEADER / TOPBAR
+   TOPBAR
    ========================= */
 .topbar {
   position: sticky;
@@ -123,43 +123,38 @@ img {
 }
 
 /* =========================
-   LOGO + TEXTO EDITORIAL
+   BLOQUE LOGO + TEXTO (ALINEADO TOP)
+   Requiere HTML:
+   <div class="logo-text-wrap">
+     <img class="logo-float" .../>
+     <div class="logo-text"><p>...</p></div>
+   </div>
    ========================= */
-/* Contenedor alineado al top */
 .logo-text-wrap {
   display: flex;
   align-items: flex-start;
   gap: 18px;
 }
 
-/* Logo */
 .logo-float {
   flex-shrink: 0;
   max-width: 130px;
   height: auto;
 }
 
-/* Contenedor de texto */
+/* Este wrapper ayuda a eliminar el desfase visual de la primera línea */
 .logo-text {
   display: flex;
   align-items: flex-start;
 }
 
-/* Texto */
-.logo-text-wrap p {
-   margin: 0;
-   line-height: 1.6;
-}
-
-.logo-float {
-  float: left;
-  max-width: 130px;
-  height: auto;
-  margin: 0 18px 10px 0;
+.logo-text p {
+  margin: 0;
+  line-height: 1.65;
 }
 
 /* =========================
-   BOTONES Y CTAs
+   CTAS
    ========================= */
 .cta {
   display: flex;
@@ -259,16 +254,46 @@ img {
 }
 
 /* =========================
-   LISTAS
+   FORMULARIOS
+   ========================= */
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-main);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(201, 162, 39, 0.7);
+}
+
+button {
+  font-family: inherit;
+}
+
+/* =========================
+   LISTAS Y TEXTOS
    ========================= */
 .bullets {
   padding-left: 18px;
   color: var(--text-muted);
 }
 
-/* =========================
-   TEXTOS
-   ========================= */
 .muted {
   color: var(--text-muted);
 }
@@ -280,6 +305,15 @@ img {
 .center {
   display: flex;
   justify-content: center;
+}
+
+.link {
+  color: var(--accent-ivory);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
 }
 
 /* =========================
@@ -303,6 +337,15 @@ img {
   gap: 14px;
 }
 
+.footer__links a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.footer__links a:hover {
+  color: var(--text-main);
+}
+
 /* =========================
    RESPONSIVE
    ========================= */
@@ -317,15 +360,15 @@ img {
 }
 
 @media (max-width: 768px) {
-  .logo-float {
-    max-width: 110px;
-    margin-bottom: 14px;
-  }
-
   .logo-text-wrap {
     flex-direction: column;
     align-items: center;
     text-align: center;
+  }
+
+  .logo-float {
+    max-width: 110px;
+    margin-bottom: 14px;
   }
 
   .cta {
@@ -336,6 +379,3 @@ img {
     justify-content: center;
   }
 }
-
-
-
