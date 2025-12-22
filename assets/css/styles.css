@@ -139,11 +139,17 @@ img {
   height: auto;
 }
 
-/* Texto */
-.logo-text-wrap p {
-  margin: 0;
+/* Contenedor de texto */
+.logo-text {
+  display: flex;
+  align-items: flex-start;
 }
 
+/* Texto */
+.logo-text-wrap p {
+   margin: 0;
+   line-height: 1.6;
+}
 
 .logo-float {
   float: left;
@@ -330,4 +336,5 @@ img {
     justify-content: center;
   }
 }
+
 
