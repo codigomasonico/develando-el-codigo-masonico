@@ -154,6 +154,17 @@ img {
 }
 
 /* =========================
+   AJUSTE ÓPTICO EN ESCRITORIO
+   Corrige el "desfase visual" entre PNG y primera línea de texto
+   ========================= */
+@media (min-width: 769px) {
+  .logo-text {
+    position: relative;
+    top: -6px;
+  }
+}
+
+/* =========================
    CTAS
    ========================= */
 .cta {
