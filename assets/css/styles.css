@@ -238,6 +238,30 @@ img {
   color: var(--text-main);
 }
 
+.pill.pill--icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  height: 34px;          /* ↓ antes ~44–48 */
+  padding: 0 12px;       /* padding solo horizontal */
+
+  border-radius: 999px;
+  font-size: 0.9rem;
+
+  box-sizing: border-box;
+}
+
+.pill__icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex: 0 0 auto;
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0);
+}
+
+
 /* =========================
    CARDS
    ========================= */
