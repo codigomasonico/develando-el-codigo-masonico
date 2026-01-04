@@ -1,0 +1,671 @@
+/* =========================
+   VARIABLES DE COLOR
+   ========================= */
+:root {
+  --bg-main: #0b0c10;
+  --bg-alt: #151827;
+  --bg-card: #11131a;
+  --border: #23263a;
+
+  --text-main: #e9eef7;
+  --text-muted: #a9b4c7;
+
+  --accent-gold: #c9a227;
+  --accent-purple: #6b2fa3;
+  --accent-ivory: #f2ede4;
+}
+
+/* =========================
+   RESET
+   ========================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* =========================
+   LAYOUT BASE
+   ========================= */
+.container {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+}
+
+/* =========================
+   TOPBAR
+   ========================= */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(11, 12, 16, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-main);
+}
+
+.brand__mark {
+  color: var(--accent-gold);
+}
+
+.nav {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.nav a:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+/* =========================
+   HERO
+   ========================= */
+.hero {
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(
+    1200px 600px at 20% 20%,
+    rgba(107, 47, 163, 0.18),
+    transparent 55%
+  );
+}
+
+.hero__inner {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  padding: 48px 0;
+}
+
+.hero__copy p {
+  margin-bottom: 16px;
+}
+
+/* =========================
+   BLOQUE LOGO + TEXTO (ALINEADO TOP)
+   Requiere HTML:
+   <div class="logo-text-wrap">
+     <img class="logo-float" .../>
+     <div class="logo-text"><p>...</p></div>
+   </div>
+   ========================= */
+.logo-text-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.logo-float {
+  flex-shrink: 0;
+  max-width: 130px;
+  height: auto;
+}
+
+/* Este wrapper ayuda a eliminar el desfase visual de la primera línea */
+.logo-text {
+  display: flex;
+  align-items: flex-start;
+}
+
+.logo-text p {
+  margin: 0;
+  line-height: 1.65;
+}
+
+/* =========================
+   AJUSTE ÓPTICO EN ESCRITORIO
+   Corrige el "desfase visual" entre PNG y primera línea de texto
+   ========================= */
+@media (min-width: 769px) {
+  .logo-text {
+    position: relative;
+    top: -6px;
+  }
+}
+
+/* =========================
+   CTAS
+   ========================= */
+.cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: var(--accent-gold);
+  color: #1b1506;
+  text-decoration: none;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+/* =========================
+   PLATAFORMAS
+   ========================= */
+.platforms {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.pill {
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.pill:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+/* =========================
+   CARDS
+   ========================= */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.card--soft {
+  background: var(--bg-alt);
+}
+
+.card__foot {
+  margin-top: 12px;
+}
+
+/* =========================
+   SECCIONES
+   ========================= */
+.section {
+  padding: 48px 0;
+}
+
+.section--alt {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    transparent
+  );
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* =========================
+   FORMULARIOS
+   ========================= */
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-main);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(201, 162, 39, 0.7);
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Unificar tipografía en formularios */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+/* =========================
+   LISTAS Y TEXTOS
+   ========================= */
+.bullets {
+  padding-left: 18px;
+  color: var(--text-muted);
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.lead {
+  font-size: 18px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+.link {
+  color: var(--accent-ivory);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 18px 0;
+}
+
+.footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.footer__links {
+  display: flex;
+  gap: 14px;
+}
+
+.footer__links a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.footer__links a:hover {
+  color: var(--text-main);
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 900px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-text-wrap {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo-float {
+    max-width: 110px;
+    margin-bottom: 14px;
+  }
+
+  .cta {
+    justify-content: center;
+  }
+
+  .platforms {
+    justify-content: center;
+  }
+}
+
+/* =========================
+   AUTOR
+   ========================= */
+.autor-layout {
+  display: flex;
+  align-items: stretch;
+  gap: 32px;
+}
+
+.autor-texto {
+  flex: 1.2;
+}
+
+.autor-imagen {
+  flex: 0.6;
+  display: flex;
+  max-width: 320px;
+}
+
+.autor-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .autor-layout {
+    flex-direction: column;
+  }
+
+  .autor-imagen {
+    max-height: 360px;
+  }
+
+  .autor-imagen img {
+    height: auto;
+  }
+}
+
+/* =========================
+   DONACIONES
+   ========================= */
+
+.donate {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+  overflow: visible;
+}
+
+.donate .btn--icon {
+  background-color: var(--accent-gold);
+  color: #1b1506;
+  border: none;
+
+  height: 48px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 14px;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: visible;
+  filter: none; /* evita conflicto con .btn:hover */
+  text-decoration: none;
+}
+
+.donate .btn--icon:hover {
+  background-color: #d8b52f;
+  transform: translateY(-2px);
+}
+
+.donate-icon {
+  width: 28px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+}
+
+/* Ajuste óptico Mercado Pago */
+.donate-icon--mp {
+  width: 28px;
+  height: 28px;
+}
+
+/* Tooltip debajo */
+.donate .btn--icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10px);
+  transform: translateX(-50%) translateY(-4px);
+
+  background-color: var(--bg-alt);
+  color: var(--text-main);
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.1;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  border: 1px solid var(--border);
+  z-index: 9999;
+}
+
+.donate .btn--icon:hover::after,
+.donate .btn--icon:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =========================
+   SEARCHBAR – SELECT CON CONTRASTE
+   ========================= */
+
+.searchbar select {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 13px) calc(50% - 4px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 34px;
+}
+
+.searchbar select option {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+/* =========================
+   ACCESIBILIDAD
+   ========================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================
+   NOVEDADES (MARQUEE + ROTACIÓN)
+   ========================= */
+
+.newsbar {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.newsbar__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  color: var(--accent-gold);
+  background: rgba(201, 162, 39, 0.08);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Contenedor que recorta el texto para que "se mueva" */
+.newsbar__text {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Oculta los mensajes base (solo los usa JS) */
+.newsbar__msg {
+  display: none;
+}
+
+/* El elemento que se desplaza */
+#newsTicker {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* Animación tipo marquee */
+@keyframes newsTickerScroll {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Clase que activa el movimiento */
+#newsTicker.is-scrolling {
+  animation: newsTickerScroll 14s linear infinite;
+}
+
+/* =========================
+   SUSCRIPCIÓN – SELECTS CON CONTRASTE
+   ========================= */
+
+form select,
+form select option {
+  font-family: inherit;
+}
+
+/* Select visible en tema oscuro */
+form select {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* flecha */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 13px) calc(50% - 4px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+
+  padding-right: 34px;
+}
+
+/* Opciones del desplegable */
+form select option {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+/* Focus */
+form select:focus {
+  outline: none;
+  border-color: rgba(201, 162, 39, 0.7);
+}

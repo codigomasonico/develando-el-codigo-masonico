@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comunidad | Develando el Código Masónico</title>
+  <meta name="description" content="Participa: propone temas, deja comentarios y apoya el proyecto." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html"><span class="brand__mark">⟡</span><span class="brand__name">Develando el Código Masónico</span></a>
+      <nav class="nav">
+        <a href="index.html">Inicio</a>
+        <a href="episodios.html">Episodios</a>
+        <a href="index.html#donaciones">Donaciones</a>
+        <a class="active" href="comunidad.html">Comunidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <h1>Comunidad</h1>
+      <p class="muted">Tu participación guía el rumbo del podcast.</p>
+
+      <section id="proponer" class="grid2">
+        <div class="card">
+          <h2>Proponer tema</h2>
+
+          <!-- Opción A: Netlify Forms -->
+          <form name="propuestas" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="propuesta-enviada.html">
+
+            <input type="hidden" name="form-name" value="propuestas" />
+
+            <!-- Honeypot anti-spam -->
+            <p class="hidden">
+              <label>No llenar: <input name="bot-field" /></label>
+            </p>
+
+            <label>
+              Nombre
+              <input name="nombre" type="text" placeholder="Tu nombre" required />
+            </label>
+
+            <label>
+              Email (opcional)
+              <input name="email" type="email" placeholder="tu@email.com" />
+            </label>
+
+            <label>
+              Tema propuesto
+              <input name="tema" type="text" placeholder="Ejemplo: La escuadra y el compás" required />
+            </label>
+
+            <label>
+              Tipo de episodio
+              <select name="tipo" required>
+                <option value="">Selecciona</option>
+                <option>Explicación</option>
+                <option>Entrevista</option>
+                <option>Historia</option>
+                <option>Preguntas y respuestas</option>
+              </select>
+            </label>
+
+            <label>
+              ¿Qué te gustaría aprender o aclarar?
+              <textarea name="detalle" rows="5" placeholder="Escribe contexto, dudas o enfoque deseado" required></textarea>
+            </label>
+
+            <button class="btn" type="submit">Enviar propuesta</button>
+            <p class="tiny muted">Al enviar aceptas que podamos leer y resumir tu propuesta al aire, sin datos personales.</p>
+          </form>
+        </div>
+
+        <div class="card card--soft">
+          <h2>Contacto</h2>
+
+          <!-- Opción A: Netlify Forms -->
+          <form name="contacto" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/mensaje-enviado.html">
+
+            <input type="hidden" name="form-name" value="contacto" />
+            <p class="hidden">
+              <label>No llenar: <input name="bot-field" /></label>
+            </p>
+
+            <label>
+              Asunto
+              <input name="asunto" type="text" placeholder="Motivo de tu mensaje" required />
+            </label>
+
+            <label>
+              Mensaje
+              <textarea name="mensaje" rows="6" placeholder="Escribe tu mensaje" required></textarea>
+            </label>
+
+            <button class="btn" type="submit">Enviar</button>
+          </form>
+
+          <hr class="sep" />
+
+          <h3>Donaciones</h3>
+          <div class="donate">
+            <a class="btn" href="https://paypal.me/codigomasonico" target="_blank" rel="noopener">Donar con PayPal</a>
+            <a class="btn btn--ghost" href="TU_LINK_MERCADOPAGO" target="_blank" rel="noopener">Mercado Pago</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card">
+          <h2>Comentarios</h2>
+          <p class="muted">
+            Para comentarios públicos te recomiendo una de estas opciones:
+            Disqus, Giscus (GitHub) o un grupo de Telegram/WhatsApp con reglas claras.
+          </p>
+
+          <!-- Placeholder: pega aquí el embed de Disqus o Giscus -->
+          <div class="commentBox muted">
+            Aquí va el embed de comentarios (Disqus o Giscus).
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="muted">© <span id="year"></span> Develando el Código Masónico</p>
+      <div class="footer__links">
+        <a href="episodios.html">Episodios</a>
+        <a href="index.html#donaciones">Donaciones</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

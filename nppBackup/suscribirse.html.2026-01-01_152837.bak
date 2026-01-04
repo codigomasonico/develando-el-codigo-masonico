@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Suscribirse | Develando el Código Masónico</title>
+  <meta name="description" content="Suscríbete para recibir avisos de nuevos episodios y encuestas de temas." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">⟡</span>
+        <span class="brand__name">Develando el Código Masónico</span>
+      </a>
+
+      <nav class="nav">
+        <a href="index.html">Inicio</a>
+        <a href="episodios.html">Episodios</a>
+        <a href="comunidad.html">Comunidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container grid2">
+
+        <div>
+          <h1>Suscribirse</h1>
+          <p class="muted">
+            Recibe avisos de nuevos episodios, novedades del podcast y encuestas para proponer temas.
+            Sin spam. Puedes darte de baja cuando quieras.
+          </p>
+
+          <div class="card card--soft">
+            <h2>Qué vas a recibir</h2>
+            <ul class="bullets">
+              <li>Notificación semanal del nuevo episodio.</li>
+              <li>Encuestas para elegir temas e invitados.</li>
+              <li>Noticias, lecturas y referencias recomendadas.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Formulario de suscripción</h2>
+          <p class="muted">Completa tu email y, si quieres, tu nombre.</p>
+
+          <form
+            name="newsletter"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="suscripcion-enviada.html"
+          >
+            <input type="hidden" name="form-name" value="newsletter" />
+
+            <p class="hidden">
+              <label>No llenar: <input name="bot-field" /></label>
+            </p>
+
+            <label>
+              Nombre (opcional)
+              <input name="nombre" type="text" placeholder="Tu nombre" />
+            </label>
+
+            <label>
+              Email
+              <input name="email" type="email" placeholder="tu@email.com" required />
+            </label>
+
+            <label>
+              Frecuencia
+              <select name="frecuencia">
+                <option value="semanal" selected>Semanal</option>
+                <option value="quincenal">Quincenal</option>
+                <option value="solo-novedades">Solo novedades importantes</option>
+              </select>
+            </label>
+
+            <label>
+              Temas de interés
+              <select name="interes">
+                <option value="general" selected>General</option>
+                <option value="simbolismo">Simbolismo</option>
+                <option value="historia">Historia</option>
+                <option value="filosofia">Filosofía</option>
+                <option value="entrevistas">Entrevistas</option>
+              </select>
+            </label>
+
+            <button class="btn" type="submit">Suscribirme</button>
+            <p class="tiny muted">Al enviar, aceptas recibir correos del podcast. Puedes darte de baja cuando quieras.</p>
+          </form>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="muted">© <span id="year"></span> Develando el Código Masónico</p>
+      <div class="footer__links">
+        <a href="comunidad.html">Comunidad</a>
+        <a href="episodios.html">Episodios</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,306 @@
+/* =========================
+   VARIABLES DE COLOR
+   ========================= */
+:root {
+  --bg-main: #0b0c10;
+  --bg-alt: #151827;
+  --bg-card: #11131a;
+  --border: #23263a;
+
+  --text-main: #e9eef7;
+  --text-muted: #a9b4c7;
+
+  --accent-gold: #c9a227;
+  --accent-purple: #6b2fa3;
+  --accent-ivory: #f2ede4;
+}
+
+/* =========================
+   RESET
+   ========================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* =========================
+   LAYOUT BASE
+   ========================= */
+.container {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+}
+
+/* =========================
+   TOPBAR
+   ========================= */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(11, 12, 16, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-main);
+}
+
+.brand__mark {
+  color: var(--accent-gold);
+}
+
+.nav {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.nav a:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+/* =========================
+   HERO
+   ========================= */
+.hero {
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(
+    1200px 600px at 20% 20%,
+    rgba(107, 47, 163, 0.18),
+    transparent 55%
+  );
+}
+
+.hero__inner {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  padding: 48px 0;
+}
+
+/* =========================
+   LOGO + TEXTO
+   ========================= */
+.logo-text-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.logo-float {
+  flex-shrink: 0;
+  max-width: 130px;
+}
+
+.logo-text p {
+  margin: 0;
+  line-height: 1.65;
+}
+
+@media (min-width: 769px) {
+  .logo-text {
+    position: relative;
+    top: -6px;
+  }
+}
+
+/* =========================
+   BOTONES GENERALES
+   ========================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: var(--accent-gold);
+  color: #1b1506;
+  text-decoration: none;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+/* =========================
+   CARDS
+   ========================= */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.card--soft {
+  background: var(--bg-alt);
+}
+
+/* =========================
+   DONACIONES – FINAL
+   ========================= */
+.donate {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.donate .btn--icon {
+  background-color: var(--accent-gold);
+  color: #1b1506;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 14px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.donate .btn--icon:hover {
+  background-color: #d8b52f;
+  transform: translateY(-2px);
+}
+
+.donate-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+}
+
+/* Tooltip debajo */
+.donate .btn--icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10px);
+  transform: translateX(-50%) translateY(-4px);
+  background-color: var(--bg-alt);
+  color: var(--text-main);
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  border: 1px solid var(--border);
+  z-index: 9999;
+}
+
+.donate .btn--icon:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =========================
+   SEARCHBAR
+   ========================= */
+.searchbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.searchbar input,
+.searchbar select {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.searchbar select {
+  appearance: none;
+  padding-right: 34px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 13px) calc(50% - 4px);
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.searchbar select option {
+  background: #fff;
+  color: #111;
+}
+
+/* =========================
+   UTILIDADES
+   ========================= */
+.muted {
+  color: var(--text-muted);
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+/* Accesibilidad */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+}

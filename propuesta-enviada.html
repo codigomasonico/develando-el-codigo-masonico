@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Propuesta enviada | Develando el Código Masónico</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">⟡</span>
+        <span class="brand__name">Develando el Código Masónico</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Inicio</a>
+        <a href="episodios.html">Episodios</a>
+		<a href="index.html#donaciones">Donaciones</a>
+        <a href="comunidad.html">Comunidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="card">
+          <h1>¡Gracias! Tu propuesta fue enviada</h1>
+          <p class="muted">
+            Recibimos tu propuesta de tema. La revisaremos y, si encaja con el enfoque del podcast,
+            la consideraremos para próximos episodios.
+          </p>
+
+          <div class="cta">
+            <a class="btn" href="comunidad.html#proponer">Enviar otra propuesta</a>
+            <a class="btn btn--ghost" href="index.html">Volver al inicio</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="muted">© <span id="year"></span> Develando el Código Masónico</p>
+      <div class="footer__links">
+        <a href="comunidad.html">Comunidad</a>
+        <a href="episodios.html">Episodios</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

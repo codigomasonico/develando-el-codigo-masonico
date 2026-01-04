@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Suscripción confirmada | Develando el Código Masónico</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">⟡</span>
+        <span class="brand__name">Develando el Código Masónico</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Inicio</a>
+        <a href="episodios.html">Episodios</a>
+		<a href="index.html#donaciones">Donaciones</a>
+        <a href="comunidad.html">Comunidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="card">
+          <h1>Suscripción enviada</h1>
+          <p class="muted">
+            Gracias por suscribirte. A partir de ahora recibirás avisos y novedades del podcast.
+          </p>
+
+          <div class="cta">
+            <a class="btn" href="episodios.html">Ver episodios</a>
+            <a class="btn btn--ghost" href="index.html">Volver al inicio</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="muted">© <span id="year"></span> Develando el Código Masónico</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

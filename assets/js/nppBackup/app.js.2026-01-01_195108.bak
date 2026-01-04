@@ -1,0 +1,90 @@
+async function loadEpisodes() {
+  const res = await fetch("assets/data/episodes.json");
+  return await res.json();
+}
+
+function el(html) {
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstChild;
+}
+
+function renderCards(episodes, targetId) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+
+  target.innerHTML = "";
+  if (!episodes.length) {
+    target.appendChild(el(`<div class="card"><p class="muted">No hay resultados con esos filtros.</p></div>`));
+    return;
+  }
+
+  episodes.forEach(ep => {
+    const card = el(`
+      <article class="card">
+        <div class="chip">${ep.categoria}</div>
+        <h3>Episodio ${ep.numero}: ${ep.titulo}</h3>
+        <p class="muted">${ep.descripcion}</p>
+        <p class="tiny muted">Duración: ${ep.duracion} · Fecha: ${ep.fecha}${ep.invitado ? ` · Invitado: ${ep.invitado}` : ""}</p>
+        <div class="actions">
+          <a class="btn btn--small" href="${ep.spotify}" target="_blank" rel="noopener">Spotify</a>
+          <a class="btn btn--small btn--ghost" href="${ep.youtube}" target="_blank" rel="noopener">YouTube</a>
+        </div>
+      </article>
+    `);
+    target.appendChild(card);
+  });
+}
+
+function applyFilters(all) {
+  const q = (document.getElementById("searchInput")?.value || "").toLowerCase();
+  const cat = document.getElementById("categorySelect")?.value || "";
+
+  return all.filter(ep => {
+    const haystack = `${ep.titulo} ${ep.descripcion} ${ep.invitado || ""} ${ep.categoria}`.toLowerCase();
+    const okQ = !q || haystack.includes(q);
+    const okC = !cat || ep.categoria === cat;
+    return okQ && okC;
+  });
+}
+
+async function init() {
+  const year = document.getElementById("year");
+  if (year) year.textContent = new Date().getFullYear();
+
+  let episodes = [];
+  try {
+    episodes = await loadEpisodes();
+  } catch (e) {
+    console.error(e);
+  }
+
+  // Último episodio en home
+  const latest = document.getElementById("latestEpisode");
+  if (latest && episodes.length) {
+    const ep = [...episodes].sort((a,b) => (a.fecha < b.fecha ? 1 : -1))[0];
+    latest.innerHTML = `
+      <p class="muted">Episodio ${ep.numero}</p>
+      <h3>${ep.titulo}</h3>
+      <p class="muted">${ep.descripcion}</p>
+      <div class="actions">
+        <a class="btn btn--small" href="${ep.spotify}" target="_blank" rel="noopener">Spotify</a>
+        <a class="btn btn--small btn--ghost" href="${ep.youtube}" target="_blank" rel="noopener">YouTube</a>
+      </div>
+    `;
+  } else if (latest) {
+    latest.textContent = "Agrega episodios en assets/data/episodes.json";
+  }
+
+  // Render inicial
+  renderCards(episodes, "episodeResults");
+
+  // Listeners
+  const si = document.getElementById("searchInput");
+  const cs = document.getElementById("categorySelect");
+  [si, cs].forEach(x => x?.addEventListener("input", () => {
+    renderCards(applyFilters(episodes), "episodeResults");
+  }));
+}
+
+init();

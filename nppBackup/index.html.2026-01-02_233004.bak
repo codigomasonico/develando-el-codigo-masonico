@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Develando el Código Masónico | Podcast</title>
+  <meta name="description" content="Podcast para entender la Masonería de forma clara, respetuosa y profunda. Símbolos, historia, filosofía, entrevistas y reflexiones." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">⟡</span>
+        <span class="brand__name">Develando el Código Masónico</span>
+      </a>
+
+      <nav class="nav">
+        <a href="#presentacion">Inicio</a>
+        <a href="episodios.html">Episodios</a>
+        <a href="#donaciones">Donaciones</a>
+        <a href="comunidad.html">Comunidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__inner">
+		<div class="hero__copy">
+		
+		  <div class="logo-text-wrap">
+		    <img 
+		      src="assets/img/logo_DCM.png" 
+		      alt="Logo Develando el Código Masónico"
+		      class="logo-float"
+		    />
+			<div class="logo-text">
+			    <p>
+			      Este es un espacio dedicado a entender la Masonería de forma clara, respetuosa y profunda.
+			      Cada semana exploramos sus símbolos, historia, filosofía y valores, así como su influencia
+			      en la sociedad a lo largo de los siglos, acercando su esencia al público general sin mitos
+			      ni especulaciones. A través de explicaciones accesibles, testimonios, reflexiones y
+			      entrevistas con invitados conocedores del tema, este podcast abre una ventana al pensamiento
+			      masónico y a su relevancia en la vida moderna. Si buscas comprender, aprender y descubrir,
+			      aquí encontrarás luz para tu propio camino.
+			    </p>
+			 </div>
+		  </div>
+
+          <div class="cta">
+            <a class="btn" href="episodios.html">Escuchar episodios</a>
+            <a class="btn btn--ghost" href="comunidad.html#proponer">Proponer un tema</a>
+          </div>
+
+                    <div class="platforms">
+            <span class="muted">Escúchalo en:</span>
+
+            <a class="pill pill--icon" href="TU_LINK_SPOTIFY" target="_blank" rel="noopener" aria-label="Spotify">
+              <img src="assets/img/icon-spotify.png" alt="" class="platform-icon" />
+              <span>Spotify</span>
+            </a>
+
+            <a class="pill pill--icon" href="TU_LINK_YOUTUBE" target="_blank" rel="noopener" aria-label="YouTube">
+              <img src="assets/img/icon-youtube.png" alt="" class="platform-icon" />
+              <span>YouTube</span>
+            </a>
+
+            <!-- <a class="pill" href="TU_LINK_APPLE" target="_blank" rel="noopener">Apple Podcasts</a> -->
+            <!-- <a class="pill" href="TU_LINK_AMAZON" target="_blank" rel="noopener">Amazon Music</a> -->
+          </div>
+
+
+          <div class="newsbar" aria-label="Novedades del podcast">
+            <span class="newsbar__tag">Novedades</span>
+            <span class="newsbar__text" id="newsTicker">Cargando novedades…</span>
+
+            <!-- Mensajes base (edita libremente) -->
+            <span class="newsbar__msg">🎙️ Episodio nuevo, cada semana.</span>
+            <span class="newsbar__msg">🗳️ Propuestas abiertas, sugiere tu próximo tema en Comunidad.</span>
+            <span class="newsbar__msg">📬 Suscríbete al boletín para recibir avisos y encuestas.</span>
+          </div>
+        </div>
+
+        <div class="hero__card">
+          <div class="card">
+            <h2>Último episodio</h2>
+            <div id="latestEpisode" class="skeleton">Cargando…</div>
+            <div class="card__foot">
+              <a class="link" href="episodios.html">Ver todos</a>
+            </div>
+          </div>
+
+          <div class="card card--soft">
+            <h3>Una invitación al camino...</h3>
+            <p class="lead">“El símbolo habla, tú interpretas.”</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="presentacion" class="section">
+      <div class="container grid2">
+        <div>
+          <h2>Presentación</h2>
+          <p>
+            Este proyecto busca acercar el pensamiento masónico al público general sin mitos ni sensacionalismo.
+            Aquí hablamos con claridad, con respeto a la tradición y con foco en lo esencial: el símbolo, la ética y el trabajo interior.
+          </p>
+          <ul class="bullets">
+            <li>Episodios semanales, 20 a 40 minutos.</li>
+            <li>Formato híbrido, explicaciones y entrevistas.</li>
+            <li>Contenido apto para todo público, con profundidad y contexto.</li>
+          </ul>
+        </div>
+
+        
+        <div class="card">
+          <h3>Boletín</h3>
+          <p class="muted">Recibe avisos de nuevos episodios y encuestas de temas.</p>
+          <a class="btn" href="suscribirse.html">Ir a suscripción</a>
+          <p class="tiny muted">Sin spam. Puedes darte de baja cuando quieras.</p>
+        </div>
+
+      </div>
+    </section>
+
+	<section id="autor" class="section">
+	  <div class="container autor-layout">
+	
+	    <!-- Texto -->
+	    <div class="autor-texto">
+	      <h2>Sobre el autor</h2>
+	
+	      <p>
+	        <strong>Daniel Pazos</strong> es el creador de <em>Develando el Código Masónico</em>, 
+	        Masón Grado 33°, con más de quince años de camino dentro de la Orden, ha transitado
+	        la Masonería desde el trabajo constante, la reflexión profunda y el compromiso con
+	        sus valores fundamentales. A lo largo de su trayectoria ocupó en reiteradas ocasiones
+	        el cargo de <strong>Venerable Maestro</strong>, experiencia que marcó su visión sobre
+	        el liderazgo, el servicio y la responsabilidad que implica guiar trabajos masónicos.
+	      </p>
+	
+	      <p>
+	        Este podcast nace como una extensión natural de ese recorrido, con el propósito de
+	        abrir un espacio de divulgación clara y respetuosa, donde los símbolos, la historia
+	        y la filosofía masónica puedan ser comprendidos sin mitos ni sensacionalismo. Desde
+	        una mirada contemporánea, <em>Develando el Código Masónico</em> busca tender puentes
+	        entre la tradición iniciática y la vida moderna, invitando al oyente a reflexionar,
+	        aprender y recorrer su propio sendero de perfeccionamiento.
+	      </p>
+	    </div>
+	
+	    <!-- Imagen -->
+	    <div class="autor-imagen">
+	      <img
+	        src="assets/img/daniel-pazos.jpg"
+	        alt="Daniel Pazos"
+	      />
+	    </div>
+	
+	  </div>
+	</section>
+
+    <section class="section section--alt">
+      <div class="container">
+        <h2>Buscador rápido de episodios</h2>
+        <p class="muted">
+          Busca por título, palabras clave o invitado. Inspirado en la idea de “buscador de episodios” del sitio de referencia. 
+        </p>
+
+        <div class="searchbar">
+          <input id="searchInput" type="search" placeholder="Ejemplo: escuadra, compás, iniciación, historia..." />
+          <select id="categorySelect">
+            <option value="">Todas las categorías</option>
+            <option value="Introducción">Introducción</option>
+            <option value="Simbolismo">Simbolismo</option>
+            <option value="Historia">Historia</option>
+            <option value="Filosofía">Filosofía</option>
+            <option value="Entrevista">Entrevista</option>
+          </select>
+        </div>
+
+        <div id="episodeResults" class="cards3"></div>
+        <div class="center">
+          <a class="btn btn--ghost" href="episodios.html">Ver biblioteca completa</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="donaciones" class="section">
+      <div class="container grid2">
+        <div>
+          <h2>Apoya el proyecto</h2>
+          <p>
+            Si este contenido te aporta valor, puedes apoyar para mejorar producción, investigación e invitados.
+            En el sitio de referencia se ofrece apoyo vía plataformas de donación. 
+          </p>
+
+          <div class="donate" aria-label="Opciones de donación">
+            <a class="btn btn--icon" href="https://paypal.me/codigomasonico" target="_blank" rel="noopener"
+               aria-label="Donar con PayPal" data-tooltip="Donar con PayPal">
+              <img src="assets/img/icon-paypal.png" alt="" class="donate-icon" />
+              <span class="sr-only">Donar con PayPal</span>
+            </a>
+
+            <a class="btn btn--icon" href="https://www.buymeacoffee.com/develandoelcodigomasonico" target="_blank" rel="noopener"
+               aria-label="Invítame un café" data-tooltip="Donar con Buy Me a Coffee">
+              <img src="assets/img/icon-bmc.png" alt="" class="donate-icon" />
+              <span class="sr-only">Invítame un café</span>
+            </a>
+
+            <a class="btn btn--icon" href="TU_LINK_MERCADOPAGO" target="_blank" rel="noopener"
+               aria-label="Donar con Mercado Pago" data-tooltip="Donar con Mercado Pago">
+              <img src="assets/img/icon-mercadopago.png" alt="" class="donate-icon" />
+              <span class="sr-only">Donar con Mercado Pago</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>¿En qué se usa tu apoyo?</h3>
+          <ul class="bullets">
+            <li>Mejoras de audio, música y edición.</li>
+            <li>Investigación y bibliografía para episodios históricos.</li>
+            <li>Invitados, logística y herramientas de grabación.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container grid2">
+        <div class="card">
+          <h3>Proponer tema o contactar</h3>
+          <p class="muted">
+            En el sitio de referencia existe un bloque de “Proponé tu tema o contactanos”. 
+            Aquí lo llevamos un paso más allá, con formulario de tema, motivo y preferencias.
+          </p>
+          <a class="btn" href="comunidad.html#proponer">Ir al formulario</a>
+        </div>
+
+        <div class="card card--soft">
+          <h3>Normas de la comunidad</h3>
+          <p class="muted">
+            Conversación respetuosa, sin doxxing, sin ataques personales, sin incitación al odio.
+            Las propuestas se revisan antes de publicarse.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="muted">© <span id="year"></span> Develando el Código Masónico</p>
+      <div class="footer__links">
+        <a href="comunidad.html">Comunidad</a>
+        <a href="episodios.html">Episodios</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
