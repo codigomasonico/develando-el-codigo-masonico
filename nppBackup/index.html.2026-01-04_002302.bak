@@ -3,21 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="index, follow" />
-  <title>Develando el Código Masónico | Podcast sobre Masonería</title>
-  <meta name="description" content="Podcast dedicado a comprender la Masonería de forma clara, respetuosa y profunda. Símbolos, historia, filosofía, entrevistas y pensamiento masónico sin mitos." />
+  <title>Develando el Código Masónico | Podcast</title>
+  <meta name="description" content="Podcast para entender la Masonería de forma clara, respetuosa y profunda. Símbolos, historia, filosofía, entrevistas y reflexiones." />
   <link rel="stylesheet" href="assets/css/styles.css" />
-  
-	<!-- Favicon -->
-	<link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
-
-	<link rel="icon" type="image/png" sizes="32x32"
-			href="assets/img/favicon/favicon-32x32.png">
-
-	<link rel="icon" type="image/png" sizes="16x16"
-			href="assets/img/favicon/favicon-16x16.png">  
 </head>
-
 <body>
   <header class="topbar">
     <div class="container topbar__inner">
@@ -47,10 +36,8 @@
 		      class="logo-float"
 		    />
 			<div class="logo-text">
-				<h1>Develando el Código Masónico</h1>
-			    <p>					
+			    <p>
 					Este es un espacio dedicado a comprender la Masonería de forma clara, respetuosa y profunda. Cada semana exploramos sus símbolos, historia, filosofía y valores, así como su influencia en la sociedad a lo largo de los siglos, acercando su esencia al público general, sin mitos ni especulaciones. A través de explicaciones accesibles, testimonios, reflexiones y entrevistas con invitados conocedores del tema, este podcast abre una ventana al pensamiento masónico y a su relevancia en la vida moderna. Si buscas comprender, aprender y descubrir, aquí encontrarás luz para tu propio camino.
-					
 			    </p>
 			 </div>
 		  </div>
@@ -60,7 +47,7 @@
             <a class="btn btn--ghost" href="comunidad.html#proponer">Proponer un tema</a>
           </div>
 
-		<div class="platforms">
+                    <div class="platforms">
             <span class="muted">Escúchalo en:</span>
 
             <a class="pill pill--icon" href="https://open.spotify.com/show/1ZQyTVWnQphe3WfZCjgJZb" target="_blank" rel="noopener" aria-label="Spotify">

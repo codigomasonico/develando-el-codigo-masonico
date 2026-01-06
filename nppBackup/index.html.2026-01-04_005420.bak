@@ -7,17 +7,7 @@
   <title>Develando el Código Masónico | Podcast sobre Masonería</title>
   <meta name="description" content="Podcast dedicado a comprender la Masonería de forma clara, respetuosa y profunda. Símbolos, historia, filosofía, entrevistas y pensamiento masónico sin mitos." />
   <link rel="stylesheet" href="assets/css/styles.css" />
-  
-	<!-- Favicon -->
-	<link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
-
-	<link rel="icon" type="image/png" sizes="32x32"
-			href="assets/img/favicon/favicon-32x32.png">
-
-	<link rel="icon" type="image/png" sizes="16x16"
-			href="assets/img/favicon/favicon-16x16.png">  
 </head>
-
 <body>
   <header class="topbar">
     <div class="container topbar__inner">
@@ -60,7 +50,7 @@
             <a class="btn btn--ghost" href="comunidad.html#proponer">Proponer un tema</a>
           </div>
 
-		<div class="platforms">
+                    <div class="platforms">
             <span class="muted">Escúchalo en:</span>
 
             <a class="pill pill--icon" href="https://open.spotify.com/show/1ZQyTVWnQphe3WfZCjgJZb" target="_blank" rel="noopener" aria-label="Spotify">

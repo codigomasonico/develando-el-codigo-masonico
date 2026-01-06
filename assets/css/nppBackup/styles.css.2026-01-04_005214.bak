@@ -145,9 +145,7 @@ img {
 /* Este wrapper ayuda a eliminar el desfase visual de la primera línea */
 .logo-text {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
 }
 
 .logo-text p {
