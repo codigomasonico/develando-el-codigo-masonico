@@ -1,44 +1,12 @@
-// Barra de novedades (rotación simple)
+/* =========================
+   app.js (limpio)
+   - Evita duplicar la barra de novedades (antes había 2 inicializaciones)
+   - Reduce “saltos” en iOS/Safari evitando múltiples intervals y observadores agresivos
+   ========================= */
+
 (function () {
-  function initNewsbar() {
-    var ticker = document.getElementById("newsTicker");
-    if (!ticker) return;
+  "use strict";
 
-    var container = ticker.closest(".newsbar");
-    if (!container) return;
-
-    var msgs = Array.prototype.slice.call(container.querySelectorAll(".newsbar__msg"))
-      .map(function (el) { return (el.textContent || "").trim(); })
-      .filter(Boolean);
-
-    if (!msgs.length) {
-      ticker.textContent = "";
-      return;
-    }
-
-    var i = 0;
-    ticker.textContent = msgs[i];
-
-    setInterval(function () {
-      i = (i + 1) % msgs.length;
-
-      ticker.classList.add("is-fading");
-      setTimeout(function () {
-        ticker.textContent = msgs[i];
-        ticker.classList.remove("is-fading");
-      }, 230);
-    }, 4500);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initNewsbar);
-  } else {
-    initNewsbar();
-  }
-})();
-
-// Barra de novedades (inteligente): rota mensajes y usa el "Último episodio" si está disponible
-(function () {
   function textFrom(node) {
     return (node && (node.textContent || "")).replace(/\s+/g, " ").trim();
   }
@@ -47,47 +15,40 @@
     var latest = document.getElementById("latestEpisode");
     if (!latest) return null;
 
-    // Si el bloque tiene un link, tomamos el texto del primer link
     var a = latest.querySelector("a");
     if (a) return textFrom(a);
 
-    // Si usa encabezados dentro del card
     var h = latest.querySelector("h3, h4, strong");
     if (h) return textFrom(h);
 
-    // Si solo hay texto plano
     var t = textFrom(latest);
     if (!t || /cargando/i.test(t)) return null;
-
-    // Evita textos genéricos tipo "Ver en..." si aplica
     if (t.length < 4) return null;
+
     return t;
   }
 
   function buildMessages(container) {
-    var msgs = Array.prototype.slice.call(container.querySelectorAll(".newsbar__msg"))
+    var base = Array.prototype.slice
+      .call(container.querySelectorAll(".newsbar__msg"))
       .map(function (el) { return textFrom(el); })
       .filter(Boolean);
 
-    // Mensaje dinámico basado en "Último episodio"
     var title = extractLatestEpisodeTitle();
     if (title) {
-      msgs.unshift("🆕 Último episodio: " + title);
+      base.unshift("🆕 Último episodio: " + title);
     } else {
-      // Placeholder si aún no cargó, se reemplaza cuando aparezca el título real
-      msgs.unshift("🆕 Último episodio: cargando…");
+      base.unshift("🆕 Último episodio: cargando…");
     }
 
-    // Elimina duplicados simples
+    // Dedup simple
     var seen = {};
-    msgs = msgs.filter(function (m) {
-      var key = m.toLowerCase();
-      if (seen[key]) return false;
-      seen[key] = true;
+    return base.filter(function (m) {
+      var k = m.toLowerCase();
+      if (seen[k]) return false;
+      seen[k] = true;
       return true;
     });
-
-    return msgs;
   }
 
   function initNewsbar() {
@@ -104,47 +65,77 @@
     }
 
     var i = 0;
+    var intervalId = null;
 
+    // Fade suave sin forzar reflow pesado
     function setTicker(text) {
+      // Evita trabajo si no cambió
+      if (ticker.textContent === text) return;
+
       ticker.classList.add("is-fading");
-      setTimeout(function () {
-        ticker.textContent = text;
-        ticker.classList.remove("is-fading");
-      }, 220);
+
+      // requestAnimationFrame ayuda a Safari a aplicar la clase antes del cambio
+      requestAnimationFrame(function () {
+        window.setTimeout(function () {
+          ticker.textContent = text;
+          ticker.classList.remove("is-fading");
+        }, 200);
+      });
     }
 
-    // Primer render
+    // Render inicial
     ticker.textContent = msgs[0];
 
-    // Rota mensajes
-    setInterval(function () {
+    // Rota mensajes (solo 1 interval)
+    intervalId = window.setInterval(function () {
       i = (i + 1) % msgs.length;
       setTicker(msgs[i]);
     }, 4500);
 
-    // Si el "Último episodio" se carga después, lo detectamos y actualizamos el primer mensaje
+    // Observa “Último episodio” con throttle para iOS
     var latest = document.getElementById("latestEpisode");
     if (!latest) return;
 
-    var obs = new MutationObserver(function () {
-      var title = extractLatestEpisodeTitle();
-      if (title) {
-        var dynamic = "🆕 Último episodio: " + title;
+    var pending = false;
 
-        // Actualiza lista de mensajes y el ticker solo si cambió
-        if (msgs[0] !== dynamic) {
-          msgs[0] = dynamic;
-          if (i === 0) setTicker(dynamic);
-        }
+    function refreshDynamic() {
+      pending = false;
+      var title = extractLatestEpisodeTitle();
+      if (!title) return;
+
+      var dynamic = "🆕 Último episodio: " + title;
+      if (msgs[0] !== dynamic) {
+        msgs[0] = dynamic;
+        if (i === 0) setTicker(dynamic);
       }
+    }
+
+    var obs = new MutationObserver(function () {
+      if (pending) return;
+      pending = true;
+      // agrupa cambios múltiples en una sola actualización
+      window.setTimeout(refreshDynamic, 120);
     });
 
     obs.observe(latest, { childList: true, subtree: true, characterData: true });
+
+    // Limpieza básica si el usuario navega y la página se “congela” en iOS
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) return;
+      // Re-render rápido al volver
+      if (msgs.length) {
+        setTicker(msgs[i] || msgs[0]);
+      }
+    });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initNewsbar);
-  } else {
-    initNewsbar();
+  function onReady(fn) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fn);
+    } else {
+      fn();
+    }
   }
+
+  onReady(initNewsbar);
 })();
