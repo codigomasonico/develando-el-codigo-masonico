@@ -18,6 +18,12 @@
 /* =========================
    RESET
    ========================= */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 *,
 *::before,
 *::after {
@@ -57,7 +63,17 @@ img {
   z-index: 100;
   background: rgba(11, 12, 16, 0.85);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
+}
+
+/* Fix iOS Safari: sticky + blur puede causar “jitter” al hacer scroll */
+@supports (-webkit-touch-callout: none) {
+  .topbar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(11, 12, 16, 0.95);
+  }
 }
 
 .topbar__inner {
@@ -116,6 +132,15 @@ img {
   grid-template-columns: 1.2fr 0.8fr;
   gap: 24px;
   padding: 48px 0;
+}
+
+/* Fix iOS/Safari: evita overflow y saltos en layouts flex/grid */
+.hero__inner > *,
+.hero__copy,
+.logo-text,
+.platforms,
+.newsbar__text {
+  min-width: 0;
 }
 
 .hero__copy p {
@@ -345,7 +370,7 @@ select,
 textarea,
 button {
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 /* =========================
@@ -655,6 +680,7 @@ button {
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
+  transform: translate3d(0,0,0);
 }
 
 /* Animación tipo marquee */
@@ -726,4 +752,12 @@ form select:focus {
 h2 {
   font-size: 1.5rem;
   font-weight: 700;
+}
+
+
+/* Reduce motion (iOS/Accesibilidad) */
+@media (prefers-reduced-motion: reduce) {
+  #newsTicker {
+    animation: none !important;
+  }
 }
