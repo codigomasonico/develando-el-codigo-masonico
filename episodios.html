@@ -2,9 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Episodios | Develando el Código Masónico</title>
   <meta name="description" content="Biblioteca de episodios del podcast Develando el Código Masónico." />
+  <meta name="theme-color" content="#0b0c10" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
@@ -26,8 +27,8 @@
       <p class="muted">Explora, busca y filtra por categoría. Reemplaza los links de reproducción por los tuyos.</p>
 
       <div class="searchbar">
-        <input id="searchInput" type="search" placeholder="Buscar episodio…" />
-        <select id="categorySelect">
+        <input id="searchInput" name="q" type="search" inputmode="search" placeholder="Buscar episodio…" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" />
+        <select id="categorySelect" aria-label="Filtrar por categoría">
           <option value="">Todas las categorías</option>
           <option value="Introducción">Introducción</option>
           <option value="Simbolismo">Simbolismo</option>

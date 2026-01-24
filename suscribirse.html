@@ -2,9 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Suscribirse | Develando el Código Masónico</title>
   <meta name="description" content="Suscríbete para recibir avisos de nuevos episodios y encuestas de temas." />
+  <meta name="theme-color" content="#0b0c10" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 
@@ -65,12 +66,12 @@
 
             <label>
               Nombre (opcional)
-              <input name="nombre" type="text" placeholder="Tu nombre" />
+              <input name="nombre" type="text" placeholder="Tu nombre" autocomplete="name" autocapitalize="words" />
             </label>
 
             <label>
               Email
-              <input name="email" type="email" placeholder="tu@email.com" required />
+              <input name="email" type="email" placeholder="tu@email.com" required inputmode="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" />
             </label>
 
             <label>

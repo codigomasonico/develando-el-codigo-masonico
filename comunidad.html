@@ -2,9 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Comunidad | Develando el Código Masónico</title>
   <meta name="description" content="Participa: propone temas, deja comentarios y apoya el proyecto." />
+  <meta name="theme-color" content="#0b0c10" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
@@ -41,17 +42,17 @@
 
             <label>
               Nombre
-              <input name="nombre" type="text" placeholder="Tu nombre" required />
+              <input name="nombre" type="text" placeholder="Tu nombre" required autocomplete="name" autocapitalize="words" />
             </label>
 
             <label>
               Email (opcional)
-              <input name="email" type="email" placeholder="tu@email.com" />
+              <input name="email" type="email" placeholder="tu@email.com" inputmode="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" />
             </label>
 
             <label>
               Tema propuesto
-              <input name="tema" type="text" placeholder="Ejemplo: La escuadra y el compás" required />
+              <input name="tema" type="text" placeholder="Ejemplo: La escuadra y el compás" required autocomplete="off" autocapitalize="sentences" />
             </label>
 
             <label>
@@ -67,7 +68,7 @@
 
             <label>
               ¿Qué te gustaría aprender o aclarar?
-              <textarea name="detalle" rows="5" placeholder="Escribe contexto, dudas o enfoque deseado" required></textarea>
+              <textarea name="detalle" rows="5" placeholder="Escribe contexto, dudas o enfoque deseado" required autocapitalize="sentences" autocorrect="on" spellcheck="true"></textarea>
             </label>
 
             <button class="btn" type="submit">Enviar propuesta</button>
@@ -88,12 +89,12 @@
 
             <label>
               Asunto
-              <input name="asunto" type="text" placeholder="Motivo de tu mensaje" required />
+              <input name="asunto" type="text" placeholder="Motivo de tu mensaje" required autocomplete="off" autocapitalize="sentences" />
             </label>
 
             <label>
               Mensaje
-              <textarea name="mensaje" rows="6" placeholder="Escribe tu mensaje" required></textarea>
+              <textarea name="mensaje" rows="6" placeholder="Escribe tu mensaje" required autocapitalize="sentences" autocorrect="on" spellcheck="true"></textarea>
             </label>
 
             <button class="btn" type="submit">Enviar</button>
