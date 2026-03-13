@@ -1,150 +1,295 @@
-// Barra de novedades (rotación simple)
-(function () {
-  function initNewsbar() {
-    var ticker = document.getElementById("newsTicker");
-    if (!ticker) return;
+/* =========================
+   app.js
+   ========================= */
 
-    var container = ticker.closest(".newsbar");
-    if (!container) return;
+"use strict";
 
-    var msgs = Array.prototype.slice.call(container.querySelectorAll(".newsbar__msg"))
-      .map(function (el) { return (el.textContent || "").trim(); })
-      .filter(Boolean);
+/* =========================
+   VARIABLES GLOBALES
+   ========================= */
 
-    if (!msgs.length) {
-      ticker.textContent = "";
+let allEpisodes = [];
+
+/* =========================
+   UTILIDADES
+   ========================= */
+
+function safeSpotifyId(url) {
+
+  if (!url) return null;
+
+  try {
+
+    if (!url.includes("/episode/")) return null;
+
+    return url.split("/episode/")[1].split("?")[0];
+
+  } catch {
+    return null;
+  }
+
+}
+
+/* =========================
+   CARGA DE EPISODIOS
+   ========================= */
+
+async function loadEpisodes() {
+
+  try {
+
+    const res = await fetch("assets/data/episodes.json");
+
+    if (!res.ok) {
+      throw new Error("No se pudo cargar episodes.json");
+    }
+
+    allEpisodes = await res.json();
+
+    if (!Array.isArray(allEpisodes) || allEpisodes.length === 0) {
+      console.warn("No hay episodios");
       return;
     }
 
-    var i = 0;
-    ticker.textContent = msgs[i];
+    allEpisodes.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-    setInterval(function () {
-      i = (i + 1) % msgs.length;
+    renderLatestEpisode(allEpisodes[0]);
+    renderEpisodeLibrary(allEpisodes);
 
-      ticker.classList.add("is-fading");
-      setTimeout(function () {
-        ticker.textContent = msgs[i];
-        ticker.classList.remove("is-fading");
-      }, 230);
-    }, 4500);
+  } catch (err) {
+
+    console.error("Error cargando episodios:", err);
+
+    const latest = document.getElementById("latestEpisode");
+    if (latest) latest.textContent = "No se pudo cargar el episodio.";
+
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initNewsbar);
-  } else {
-    initNewsbar();
-  }
-})();
+}
 
-// Barra de novedades (inteligente): rota mensajes y usa el "Último episodio" si está disponible
-(function () {
-  function textFrom(node) {
-    return (node && (node.textContent || "")).replace(/\s+/g, " ").trim();
-  }
+/* =========================
+   ÚLTIMO EPISODIO
+   ========================= */
 
-  function extractLatestEpisodeTitle() {
-    var latest = document.getElementById("latestEpisode");
-    if (!latest) return null;
+function renderLatestEpisode(ep) {
 
-    // Si el bloque tiene un link, tomamos el texto del primer link
-    var a = latest.querySelector("a");
-    if (a) return textFrom(a);
+  const container = document.getElementById("latestEpisode");
+  if (!container) return;
 
-    // Si usa encabezados dentro del card
-    var h = latest.querySelector("h3, h4, strong");
-    if (h) return textFrom(h);
+  const spotifyId = safeSpotifyId(ep.spotify);
 
-    // Si solo hay texto plano
-    var t = textFrom(latest);
-    if (!t || /cargando/i.test(t)) return null;
+  container.innerHTML = `
 
-    // Evita textos genéricos tipo "Ver en..." si aplica
-    if (t.length < 4) return null;
-    return t;
-  }
+    <div class="latest-title">
+      <img src="assets/img/icon-podcast.png" class="episode-icon" alt="">
+      <span>${ep.titulo}</span>
+    </div>
 
-  function buildMessages(container) {
-    var msgs = Array.prototype.slice.call(container.querySelectorAll(".newsbar__msg"))
-      .map(function (el) { return textFrom(el); })
-      .filter(Boolean);
+    <div class="episode-meta">
+      ${ep.fecha} • ${ep.duracion} • ${ep.categoria}
+    </div>
 
-    // Mensaje dinámico basado en "Último episodio"
-    var title = extractLatestEpisodeTitle();
-    if (title) {
-      msgs.unshift("🆕 Último episodio: " + title);
-    } else {
-      // Placeholder si aún no cargó, se reemplaza cuando aparezca el título real
-      msgs.unshift("🆕 Último episodio: cargando…");
+    <p class="episode-description">
+      ${ep.descripcion}
+    </p>
+
+    ${
+      spotifyId
+        ? `
+    <iframe
+      style="border-radius:12px"
+      src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
+      width="100%"
+      height="152"
+      frameBorder="0"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>`
+        : ""
     }
 
-    // Elimina duplicados simples
-    var seen = {};
-    msgs = msgs.filter(function (m) {
-      var key = m.toLowerCase();
-      if (seen[key]) return false;
-      seen[key] = true;
-      return true;
-    });
+    ${
+      ep.transcripcion
+        ? `<a class="transcript-link" href="${ep.transcripcion}">Leer transcripción</a>`
+        : ""
+    }
 
-    return msgs;
+  `;
+}
+
+/* =========================
+   BIBLIOTECA DE EPISODIOS
+   ========================= */
+
+function renderEpisodeLibrary(episodes) {
+
+  const container = document.getElementById("episodeResults");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (!episodes.length) {
+
+    container.innerHTML = `
+      <div class="card">
+        <p class="muted">
+          No hay episodios disponibles en esta categoría.
+        </p>
+      </div>
+    `;
+
+    return;
   }
 
-  function initNewsbar() {
-    var ticker = document.getElementById("newsTicker");
-    if (!ticker) return;
+  episodes.forEach(ep => {
 
-    var container = ticker.closest(".newsbar");
-    if (!container) return;
+    const spotifyId = safeSpotifyId(ep.spotify);
 
-    var msgs = buildMessages(container);
-    if (!msgs.length) {
-      ticker.textContent = "";
-      return;
-    }
+    const card = document.createElement("div");
+    card.className = "card";
 
-    var i = 0;
+    card.innerHTML = `
 
-    function setTicker(text) {
-      ticker.classList.add("is-fading");
-      setTimeout(function () {
-        ticker.textContent = text;
-        ticker.classList.remove("is-fading");
-      }, 220);
-    }
+      <h3>${ep.titulo}</h3>
 
-    // Primer render
-    ticker.textContent = msgs[0];
+      <p class="muted">${ep.descripcion}</p>
 
-    // Rota mensajes
-    setInterval(function () {
-      i = (i + 1) % msgs.length;
-      setTicker(msgs[i]);
-    }, 4500);
-
-    // Si el "Último episodio" se carga después, lo detectamos y actualizamos el primer mensaje
-    var latest = document.getElementById("latestEpisode");
-    if (!latest) return;
-
-    var obs = new MutationObserver(function () {
-      var title = extractLatestEpisodeTitle();
-      if (title) {
-        var dynamic = "🆕 Último episodio: " + title;
-
-        // Actualiza lista de mensajes y el ticker solo si cambió
-        if (msgs[0] !== dynamic) {
-          msgs[0] = dynamic;
-          if (i === 0) setTicker(dynamic);
-        }
+      ${
+        spotifyId
+          ? `
+      <iframe
+        style="border-radius:12px"
+        src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
+        width="100%"
+        height="152"
+        frameBorder="0"
+        allowfullscreen=""
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+      </iframe>`
+          : ""
       }
-    });
 
-    obs.observe(latest, { childList: true, subtree: true, characterData: true });
-  }
+    `;
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initNewsbar);
-  } else {
-    initNewsbar();
+    container.appendChild(card);
+
+  });
+
+}
+
+/* =========================
+   FILTRO POR CATEGORÍA
+   ========================= */
+
+function initCategoryFilter() {
+
+  const select = document.getElementById("categorySelect");
+  if (!select) return;
+
+  select.addEventListener("change", () => {
+
+    const category = select.value;
+
+    let filtered = allEpisodes;
+
+    if (category) {
+      filtered = allEpisodes.filter(ep => ep.categoria === category);
+    }
+
+    renderEpisodeLibrary(filtered);
+
+  });
+
+}
+
+/* =========================
+   NEWSBAR (NOVEDADES)
+   ========================= */
+
+function initNewsbar() {
+
+  const ticker = document.getElementById("newsTicker");
+  if (!ticker) return;
+
+  const container = ticker.closest(".newsbar");
+  if (!container) return;
+
+  const msgs = [...container.querySelectorAll(".newsbar__msg")]
+    .map(el => el.textContent.trim())
+    .filter(Boolean);
+
+  if (!msgs.length) return;
+
+  let i = 0;
+
+  ticker.textContent = msgs[0];
+
+  setInterval(() => {
+
+    i = (i + 1) % msgs.length;
+
+    ticker.classList.add("is-fading");
+
+    setTimeout(() => {
+
+      ticker.textContent = msgs[i];
+      ticker.classList.remove("is-fading");
+
+    }, 200);
+
+  }, 4500);
+
+}
+
+/* =========================
+   INICIALIZACIÓN
+   ========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  loadEpisodes();
+  initNewsbar();
+  initCategoryFilter();
+
+});
+
+/* =========================
+   LECTURAS
+   ========================= */
+	 
+document.addEventListener("DOMContentLoaded", () => {
+  const contenedorLibros = document.getElementById("listaLibros");
+
+  if (contenedorLibros) {
+    fetch("assets/data/libros.json")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`No se pudo cargar libros.json: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        const libros = data.libros || [];
+
+        if (!libros.length) {
+          contenedorLibros.innerHTML = "<p>No hay libros disponibles.</p>";
+          return;
+        }
+
+				contenedorLibros.innerHTML = libros.map(libro => `
+					<article class="libro-card">
+						<div class="libro-icono">📘</div>
+						<div class="libro-contenido">
+							<h4 class="libro-titulo">${libro.titulo}</h4>
+							<p class="libro-autor">${libro.autor}</p>
+							<p class="libro-tema">${libro.tema}</p>
+						</div>
+					</article>
+				`).join("");
+      })
+      .catch(error => {
+        console.error(error);
+        contenedorLibros.innerHTML = "<p>Error al cargar las lecturas recomendadas.</p>";
+      });
   }
-})();
+});

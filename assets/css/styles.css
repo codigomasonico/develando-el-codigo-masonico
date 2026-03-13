@@ -3,7 +3,7 @@
    ========================= */
 :root {
   --bg-main: #0b0c10;
-  --bg-alt: #151827;
+  --bg-alt: #0f1118;
   --bg-card: #11131a;
   --border: #23263a;
 
@@ -153,10 +153,11 @@ img {
 .logo-text p {
   margin: 0;
   line-height: 1.65;
+	max-width: 680px;
 }
 
 .logo-text h1 {
-  margin: 0;
+  margin: 0 0 6px 0;
   line-height: 1.2;
 }
 
@@ -180,12 +181,10 @@ img {
 
 .btn,
 .donate .btn--icon {
-  height: 48px;
-  min-height: 48px;
-  padding-top: 0;
-  padding-bottom: 0;
+  height: 46px;
+  min-height: 46px;
+  padding: 0 16px;
 }
-
 
 .cta {
   display: flex;
@@ -194,21 +193,87 @@ img {
   margin: 18px 0;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 48px;
-  min-height: 48px;
-  padding: 0 18px;
-  border-radius: 12px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  background: var(--accent-gold);
-  color: #1b1506;
-  text-decoration: none;
+/* =========================
+   BOTONES PRINCIPALES
+   ========================= */
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+
+  height:48px;
+  padding:0 22px;
+
+  border-radius:14px;
+
+  font-weight:600;
+  font-size:0.95rem;
+
+  border:none;
+  cursor:pointer;
+  text-decoration:none;
+
+  transition:all .18s ease;
+	letter-spacing:.2px;
+}
+
+.btn-icon{
+  font-size:1.05rem;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+}
+
+/* botón principal */
+
+.btn-primary{
+  background:transparent;
+  color:var(--text-main);
+  border:1px solid var(--border);
+}
+
+.btn-primary:hover{
+  background:linear-gradient(
+    135deg,
+    #d4af37,
+    #c9a227
+  );
+
+  color:#1b1506;
+  border-color:#c9a227;
+
+  transform: translateY(-2px);
+  box-shadow:0 6px 18px rgba(201,162,39,.35);
+}
+
+.btn-primary:hover{
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 18px rgba(201,162,39,.35);
+}
+
+/* botón secundario */
+
+.btn-secondary{
+  background:transparent;
+  color:var(--text-main);
+  border:1px solid var(--border);
+}
+
+.btn-secondary:hover{
+  background:linear-gradient(
+    135deg,
+    #d4af37,
+    #c9a227
+  );
+
+  color:#1b1506;
+  border-color:#c9a227;
+
+  transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(201,162,39,.35);
 }
 
 .btn:hover {
@@ -268,6 +333,41 @@ img {
   transform: translateZ(0);
 }
 
+/* =========================
+   BOTÓN SPOTIFY
+   ========================= */
+
+.pill--spotify{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  padding:6px 14px;
+  border-radius:999px;
+
+  background:#12151d;
+  border:1px solid #1db95433;
+
+  color:#e9eef7;
+  text-decoration:none;
+  font-weight:500;
+  font-size:0.92rem;
+
+  transition:all 0.2s ease;
+}
+
+.pill--spotify:hover{
+  background:#1db954;
+  color:#ffffff;
+  border-color:#1db954;
+  transform:translateY(-1px);
+}
+
+.pill--spotify img{
+  width:18px;
+  height:18px;
+	filter: brightness(0) invert(1);
+}
 
 /* =========================
    CARDS
@@ -280,7 +380,7 @@ img {
 }
 
 .card--soft {
-  background: var(--bg-alt);
+  background: var(--bg-card);
 }
 
 .card__foot {
@@ -295,11 +395,7 @@ img {
 }
 
 .section--alt {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.02),
-    transparent
-  );
+  background: var(--bg-main);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
@@ -328,7 +424,7 @@ textarea {
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-card);
   color: var(--text-main);
   outline: none;
 }
@@ -361,7 +457,7 @@ button {
 }
 
 .lead {
-  font-size: 1rem;       /* mismo tamaño que el texto normal */
+  font-size: 1rem;      /* mismo tamaño que el texto normal */
   font-weight: 500;     /* un poco más de peso */
   opacity: 0.9;         /* sutileza visual */
 }
@@ -369,6 +465,7 @@ button {
 .center {
   display: flex;
   justify-content: center;
+  margin-top: 28px;
 }
 
 .link {
@@ -394,6 +491,11 @@ button {
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.footer .muted{
+  font-size:0.78rem;
+  opacity:.75;
 }
 
 .footer__links {
@@ -430,10 +532,11 @@ button {
     text-align: center;
   }
 
-  .logo-float {
-    max-width: 110px;
-    margin-bottom: 14px;
-  }
+	.logo-float {
+		flex-shrink: 0;
+		max-width: 140px;
+		height: auto;
+	}
 
   .cta {
     justify-content: center;
@@ -523,8 +626,8 @@ button {
 }
 
 .donate-icon {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
@@ -570,7 +673,7 @@ button {
    ========================= */
 
 .searchbar select {
-  background-color: var(--bg-card);
+  background: var(--bg-card);
   color: var(--text-main);
   border: 1px solid var(--border);
   padding: 10px 12px;
@@ -726,4 +829,285 @@ form select:focus {
 h2 {
   font-size: 1.5rem;
   font-weight: 700;
+}
+
+/* =========================
+   EPISODIO DESTACADO
+   ========================= */
+
+.episode-meta {
+  font-size: 0.82rem;
+  color: #9aa6bf;
+  margin-bottom: 10px;
+}
+
+.episode-description {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #cfd6e6;
+  margin-bottom: 18px;
+}
+
+.transcript-link {
+  font-size: 0.85rem;
+  color: var(--accent-ivory);
+  text-decoration: none;
+}
+
+.transcript-link:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   TÍTULO DEL ÚLTIMO EPISODIO
+   ========================= */
+
+.latest-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:700;
+  font-size:1rem;
+  margin-bottom:6px;
+}
+
+.episode-icon{
+  width:20px;
+  height:20px;
+  margin-right:8px;
+  vertical-align:middle;
+  filter: brightness(1.1);
+}
+
+/* =========================
+   LECTURAS RECOMENDADAS
+   ========================= */
+
+.reading-box{
+  margin-top:20px;
+}
+
+.reading-subtitle{
+  font-size:0.85rem;
+  color:#9aa6bf;
+  margin-bottom:10px;
+}
+
+.reading-list{
+  margin:0;
+  padding-left:18px;
+}
+
+.reading-list li{
+  margin-bottom:6px;
+  font-size:0.9rem;
+  color:#d6deef;
+}
+
+.lista-libros{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:14px;
+  margin-top:22px;
+}
+
+.libro-card{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  padding:8px 12px;
+  min-height:auto;
+  border:1px solid rgba(255,255,255,0.08);
+  border-left:3px solid rgba(201,162,39,0.35);
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+}
+
+.libro-card:hover{
+  border-color:rgba(212,175,55,0.35);
+  background:linear-gradient(180deg, rgba(212,175,55,0.04), rgba(255,255,255,0.02));
+}
+
+.libro-icono{
+  flex:0 0 28px;
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.05rem;
+  border-radius:10px;
+  background:rgba(212,175,55,0.08);
+	border:none;
+  /*border:1px solid rgba(212,175,55,0.16);*/
+}
+
+.libro-contenido{
+  min-width:0;
+  flex:1;
+}
+.libro-titulo{
+  margin:0 0 1px;
+  font-size:0.92rem;
+	letter-spacing:.2px;
+  line-height:1.35;
+  color:var(--text-main);
+  font-weight:700;
+}
+
+.libro-autor,
+.libro-tema{
+  display:inline;
+  font-size:0.86rem;
+}
+
+.libro-autor{
+  color:rgba(255,255,255,0.65);
+}
+
+.libro-tema{
+  color:var(--accent-gold);
+}
+
+.libro-tema::before{
+  content:" • ";
+  color:rgba(255,255,255,0.35);
+}
+
+@media (max-width: 980px){
+  .lista-libros{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px){
+  .lista-libros{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 768px){
+  .libro-card{
+    padding:10px 12px;
+    gap:10px;
+    border-radius:14px;
+  }
+
+  .libro-icono{
+    width:34px;
+    height:34px;
+    flex-basis:34px;
+    font-size:1rem;
+    border-radius:10px;
+  }
+
+  .libro-titulo{
+    font-size:0.95rem;
+  }
+
+  .libro-autor,
+  .libro-tema{
+    font-size:0.85rem;
+  }
+}
+
+
+/* =========================
+   HERO ALTURA SINCRONIZADA
+   ========================= */
+
+.hero__inner{
+  align-items:stretch;
+}
+
+.hero__copy,
+.hero__card{
+  display:flex;
+  flex-direction:column;
+}
+
+.hero__card{
+  gap:20px;
+}
+
+.reading-box{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.reading-card{
+  flex:1;
+}
+
+/* =========================
+   RESULTADOS DEL BUSCADOR
+   ========================= */
+
+.cards3{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+
+.cards3 .card{
+  background: var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+}
+
+/* =========================
+   DONACIONES - CAJA IZQUIERDA
+   ========================= */
+
+#donaciones .container > div:first-child {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+#donaciones .card h2{
+margin-top:0;
+}
+
+.participa-card{
+  padding: 28px 28px 32px;
+}
+
+.participa-card h2{
+  margin-bottom: 18px;
+}
+
+.participa-card p{
+  margin-bottom: 18px;
+}
+
+.participa-card hr{
+  margin: 22px 0 18px;
+}
+
+.donate{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:18px 0 16px;
+}
+
+.donate-note{
+  margin-top:10px;
+  line-height:1.6;
+}
+
+.card h3 + .muted{
+  margin-top: 0;
+}
+
+.sep{
+  border:none;
+  border-top:1px solid var(--border);
+  margin:20px 0;
 }

@@ -70,7 +70,7 @@
               <textarea name="detalle" rows="5" placeholder="Escribe contexto, dudas o enfoque deseado" required></textarea>
             </label>
 
-            <button class="btn" type="submit">Enviar propuesta</button>
+            <button class="btn btn-primary" type="submit">Enviar propuesta</button>
             <p class="tiny muted">Al enviar aceptas que podamos leer y resumir tu propuesta al aire, sin datos personales.</p>
           </form>
         </div>
@@ -96,36 +96,72 @@
               <textarea name="mensaje" rows="6" placeholder="Escribe tu mensaje" required></textarea>
             </label>
 
-            <button class="btn" type="submit">Enviar</button>
+            <button class="btn btn-primary" type="submit">Enviar</button>
           </form>
 
           <hr class="sep" />
 
-          <h3>Donaciones</h3>
-          <div class="donate" aria-label="Opciones de donación">
-            <a class="btn btn--icon" href="https://paypal.me/codigomasonico" target="_blank" rel="noopener"
-               aria-label="Donar con PayPal" data-tooltip="Donar con PayPal">
-              <img src="assets/img/icon-paypal.png" alt="" class="donate-icon" />
-              <span class="sr-only">Donar con PayPal</span>
-            </a>
+					<div class="card">
+						<h3>Donaciones</h3>
 
-            <a class="btn btn--icon" href="https://www.buymeacoffee.com/develandoelcodigomasonico" target="_blank" rel="noopener"
-               aria-label="Invítame un café" data-tooltip="Donar con Buy Me a Coffee">
-              <img src="assets/img/icon-bmc.png" alt="" class="donate-icon" />
-              <span class="sr-only">Invítame un café</span>
-            </a>
+						<p class="muted">
+							Si este espacio te resulta valioso, tu apoyo ayuda a sostener la
+							producción, la investigación, la edición y la mejora continua del proyecto.
+						</p>
+						
+						<p class="tiny muted donate-note">
+							Toda contribución, por pequeña que sea, ayuda a seguir compartiendo
+							contenidos con más profundidad y mejor calidad.
+						</p>
+					
+						<div class="donate" aria-label="Opciones de donación">
 
-            <a class="btn btn--icon" href="TU_LINK_MERCADOPAGO" target="_blank" rel="noopener"
+							<a
+								class="btn btn--icon"
+								href="https://paypal.me/codigomasonico"
+								target="_blank"
+								rel="noopener"
+								aria-label="Donar con PayPal"
+								data-tooltip="Donar con PayPal"
+							>
+								<img
+									src="assets/img/icon-paypal.png"
+									class="donate-icon"
+									alt="PayPal"
+								>
+								<span class="sr-only">Donar con PayPal</span>
+							</a>
+
+							<a
+								class="btn btn--icon"
+								href="https://www.buymeacoffee.com/develandoelcodigomasonico"
+								target="_blank"
+								rel="noopener"
+								aria-label="Donar con Buy Me a Coffee"
+								data-tooltip="Donar con Buy Me a Coffee"
+							>
+								<img
+									src="assets/img/icon-bmc.png"
+									class="donate-icon"
+									alt="Buy Me a Coffee"
+								>
+								<span class="sr-only">Donar con Buy Me a Coffee</span>
+							</a>
+
+						</div>
+						
+            <!-- <a class="btn btn--icon" href="TU_LINK_MERCADOPAGO" target="_blank" rel="noopener"
                aria-label="Donar con Mercado Pago" data-tooltip="Donar con Mercado Pago">
               <img src="assets/img/icon-mercadopago.png" alt="" class="donate-icon donate-icon--mp" />
               <span class="sr-only">Donar con Mercado Pago</span>
             </a>
-          </div>
+						-->						
+					</div>
         </div>
       </section>
 
       <section aria-label="Participación" class="participa">
-        <div class="card">
+        <div class="card participa-card">
           <h2>Participa</h2>
           <p class="muted">
             Tu participación guía el rumbo del podcast. Puedes proponer temas, enviar preguntas para una sección de Q&A
@@ -148,11 +184,7 @@
 
   <footer class="footer">
     <div class="container footer__inner">
-      <p class="muted">© <span id="year"></span> Develando el Código Masónico</p>
-      <div class="footer__links">
-        <a href="episodios.html">Episodios</a>
-        <a href="index.html#donaciones">Donaciones</a>
-      </div>
+      <p class="muted">© <span id="year"></span>2026 Develando el Código Masónico - Todos los derechos reservados.</p>
     </div>
   </footer>
 
