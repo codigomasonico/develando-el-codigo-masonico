@@ -12,4 +12,18 @@
     "spotify": "https://open.spotify.com/episode/0X5A9keXdyp5z57UEwqv3L?si=sdn03C6VSzuGpF2Mk2PwnA",
     "youtube": ""
   }
+	
+  {
+    "id": "ep-002",
+    "numero": 2,
+    "titulo": "Episodio 2: Los Orígenes de la Orden",
+    "categoria": "Introducción",
+    "fecha": "18 de marzo de 2026",
+    "duracion": "38:00",
+    "descripcion": "El origen de la Masonería no es solo una fecha ni un hecho histórico, es una pregunta que te obliga a mirar qué estás buscando realmente.",
+    "imagen": "assets/img/episodios/ep-001.jpg",
+    "invitado": "",
+    "spotify": "https://open.spotify.com/episode/3xb3piCSSHhbvFGY9FAn4v?si=_Ah5iwwVShiuyz2D0Ygcyw",
+    "youtube": ""
+  }	
 ]
