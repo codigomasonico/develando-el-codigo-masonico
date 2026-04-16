@@ -1,19 +1,5 @@
 [
   {
-    "id": "ep-006",
-    "numero": 6,
-    "titulo": "Episodio 6: La Iniciación Masónica",
-    "categoria": "Simbolismo",
-    "fecha": "15 de abril de 2026",
-    "duracion": "37:17",
-    "descripcion": "Una reflexión sobre la iniciación masónica, su sentido profundo y el compromiso interior que se pone en marcha.",
-    "imagen": "assets/img/episodios/ep-001.jpg",
-    "invitado": "",
-    "spotify": "https://open.spotify.com/episode/5AZoYCqt7g8QTklfHq0jcb?si=mLQ4qnJ0SgiEtVB8ZZEXPw",
-    "youtube": ""
-  },
-	
-  {
     "id": "ep-005",
     "numero": 5,
     "titulo": "Episodio 5: La Cámara de Reflexiones",
