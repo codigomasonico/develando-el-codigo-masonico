@@ -116,19 +116,25 @@ img {
   grid-template-columns: 1.2fr 0.8fr;
   gap: 24px;
   padding: 48px 0;
+  align-items: stretch;
+}
+
+.hero__copy,
+.hero__card {
+  display: flex;
+  flex-direction: column;
 }
 
 .hero__copy p {
   margin-bottom: 16px;
 }
 
+.hero__card {
+  gap: 20px;
+}
+
 /* =========================
-   BLOQUE LOGO + TEXTO (ALINEADO TOP)
-   Requiere HTML:
-   <div class="logo-text-wrap">
-     <img class="logo-float" .../>
-     <div class="logo-text"><p>...</p></div>
-   </div>
+   BLOQUE LOGO + TEXTO
    ========================= */
 .logo-text-wrap {
   display: flex;
@@ -142,7 +148,6 @@ img {
   height: auto;
 }
 
-/* Este wrapper ayuda a eliminar el desfase visual de la primera línea */
 .logo-text {
   display: flex;
   flex-direction: column;
@@ -153,7 +158,7 @@ img {
 .logo-text p {
   margin: 0;
   line-height: 1.65;
-	max-width: 680px;
+  max-width: 680px;
 }
 
 .logo-text h1 {
@@ -161,10 +166,6 @@ img {
   line-height: 1.2;
 }
 
-/* =========================
-   AJUSTE ÓPTICO EN ESCRITORIO
-   Corrige el "desfase visual" entre PNG y primera línea de texto
-   ========================= */
 @media (min-width: 769px) {
   .logo-text {
     position: relative;
@@ -173,19 +174,8 @@ img {
 }
 
 /* =========================
-   CTAS
+   CTAS Y BOTONES
    ========================= */
-/* =========================
-   BOTONES – ALTURA UNIFICADA
-   ========================= */
-
-.btn,
-.donate .btn--icon {
-  height: 46px;
-  min-height: 46px;
-  padding: 0 16px;
-}
-
 .cta {
   display: flex;
   gap: 12px;
@@ -193,97 +183,69 @@ img {
   margin: 18px 0;
 }
 
-/* =========================
-   BOTONES PRINCIPALES
-   ========================= */
-
-.btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-
-  height:48px;
-  padding:0 22px;
-
-  border-radius:14px;
-
-  font-weight:600;
-  font-size:0.95rem;
-
-  border:none;
-  cursor:pointer;
-  text-decoration:none;
-
-  transition:all .18s ease;
-	letter-spacing:.2px;
+.btn,
+.donate .btn--icon {
+  height: 48px;
+  min-height: 48px;
 }
 
-.btn-icon{
-  font-size:1.05rem;
-  line-height:1;
-  display:inline-flex;
-  align-items:center;
-}
-
-/* botón principal */
-
-.btn-primary{
-  background:transparent;
-  color:var(--text-main);
-  border:1px solid var(--border);
-}
-
-.btn-primary:hover{
-  background:linear-gradient(
-    135deg,
-    #d4af37,
-    #c9a227
-  );
-
-  color:#1b1506;
-  border-color:#c9a227;
-
-  transform: translateY(-2px);
-  box-shadow:0 6px 18px rgba(201,162,39,.35);
-}
-
-.btn-primary:hover{
-  transform: translateY(-2px);
-  box-shadow:
-    0 6px 18px rgba(201,162,39,.35);
-}
-
-/* botón secundario */
-
-.btn-secondary{
-  background:transparent;
-  color:var(--text-main);
-  border:1px solid var(--border);
-}
-
-.btn-secondary:hover{
-  background:linear-gradient(
-    135deg,
-    #d4af37,
-    #c9a227
-  );
-
-  color:#1b1506;
-  border-color:#c9a227;
-
-  transform:translateY(-2px);
-  box-shadow:0 6px 18px rgba(201,162,39,.35);
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 22px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  letter-spacing: 0.2px;
 }
 
 .btn:hover {
   filter: brightness(1.05);
 }
 
+.btn-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-primary,
+.btn-secondary,
 .btn--ghost {
   background: transparent;
   color: var(--text-main);
   border: 1px solid var(--border);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #d4af37, #c9a227);
+  color: #1b1506;
+  border-color: #c9a227;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(201, 162, 39, 0.35);
+}
+
+/* Corrección de color para botones CTA */
+.cta .btn,
+.cta .btn:link,
+.cta .btn:visited {
+  background-color: var(--accent-gold);
+  color: #1b1506;
+  text-decoration: none;
+}
+
+.cta .btn:hover,
+.cta .btn:focus-visible {
+  background-color: #d8b52f;
+  color: #1b1506;
 }
 
 /* =========================
@@ -314,13 +276,10 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-
-  height: 34px;          /* ↓ antes ~44–48 */
-  padding: 0 12px;       /* padding solo horizontal */
-
+  height: 34px;
+  padding: 0 12px;
   border-radius: 999px;
   font-size: 0.9rem;
-
   box-sizing: border-box;
 }
 
@@ -336,37 +295,32 @@ img {
 /* =========================
    BOTÓN SPOTIFY
    ========================= */
-
-.pill--spotify{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-
-  padding:6px 14px;
-  border-radius:999px;
-
-  background:#12151d;
-  border:1px solid #1db95433;
-
-  color:#e9eef7;
-  text-decoration:none;
-  font-weight:500;
-  font-size:0.92rem;
-
-  transition:all 0.2s ease;
+.pill--spotify {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #12151d;
+  border: 1px solid #1db95433;
+  color: #e9eef7;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.92rem;
+  transition: all 0.2s ease;
 }
 
-.pill--spotify:hover{
-  background:#1db954;
-  color:#ffffff;
-  border-color:#1db954;
-  transform:translateY(-1px);
+.pill--spotify:hover {
+  background: #1db954;
+  color: #ffffff;
+  border-color: #1db954;
+  transform: translateY(-1px);
 }
 
-.pill--spotify img{
-  width:18px;
-  height:18px;
-	filter: brightness(0) invert(1);
+.pill--spotify img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
 }
 
 /* =========================
@@ -435,13 +389,78 @@ textarea:focus {
   border-color: rgba(201, 162, 39, 0.7);
 }
 
-/* Unificar tipografía en formularios */
 input,
 select,
 textarea,
 button {
   font-family: inherit;
   font-size: 1rem;
+}
+
+/* =========================
+   SEARCHBAR
+   ========================= */
+.searchbar select {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  padding-right: 34px;
+  border-radius: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 13px) calc(50% - 4px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.searchbar select option {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+/* =========================
+   SUSCRIPCIÓN
+   ========================= */
+form select,
+form select option {
+  font-family: inherit;
+}
+
+form select {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  padding-right: 34px;
+  border-radius: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 13px) calc(50% - 4px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+form select option {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+form select:focus {
+  outline: none;
+  border-color: rgba(201, 162, 39, 0.7);
 }
 
 /* =========================
@@ -457,9 +476,9 @@ button {
 }
 
 .lead {
-  font-size: 1rem;      /* mismo tamaño que el texto normal */
-  font-weight: 500;     /* un poco más de peso */
-  opacity: 0.9;         /* sutileza visual */
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
 .center {
@@ -478,6 +497,35 @@ button {
 }
 
 /* =========================
+   ACCESIBILIDAD
+   ========================= */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================
+   TÍTULOS
+   ========================= */
+.card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* =========================
    FOOTER
    ========================= */
 .footer {
@@ -493,9 +541,9 @@ button {
   flex-wrap: wrap;
 }
 
-.footer .muted{
-  font-size:0.78rem;
-  opacity:.75;
+.footer .muted {
+  font-size: 0.78rem;
+  opacity: 0.75;
 }
 
 .footer__links {
@@ -510,41 +558,6 @@ button {
 
 .footer__links a:hover {
   color: var(--text-main);
-}
-
-/* =========================
-   RESPONSIVE
-   ========================= */
-@media (max-width: 900px) {
-  .hero__inner {
-    grid-template-columns: 1fr;
-  }
-
-  .grid2 {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .logo-text-wrap {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-	.logo-float {
-		flex-shrink: 0;
-		max-width: 140px;
-		height: auto;
-	}
-
-  .cta {
-    justify-content: center;
-  }
-
-  .platforms {
-    justify-content: center;
-  }
 }
 
 /* =========================
@@ -573,50 +586,30 @@ button {
   border-radius: 16px;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .autor-layout {
-    flex-direction: column;
-  }
-
-  .autor-imagen {
-    max-height: 360px;
-  }
-
-  .autor-imagen img {
-    height: auto;
-  }
-}
-
 /* =========================
    DONACIONES
    ========================= */
-
 .donate {
   display: flex;
-  gap: 18px;
+  gap: 14px;
   flex-wrap: wrap;
   align-items: center;
   overflow: visible;
+  margin: 18px 0 16px;
 }
 
 .donate .btn--icon {
   background-color: var(--accent-gold);
   color: #1b1506;
   border: none;
-
-  height: 48px;
-  min-height: 48px;
   padding: 0 18px;
   border-radius: 14px;
-
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   overflow: visible;
-  filter: none; /* evita conflicto con .btn:hover */
+  filter: none;
   text-decoration: none;
 }
 
@@ -630,23 +623,20 @@ button {
   height: 26px;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
 }
 
-/* Ajuste óptico Mercado Pago */
 .donate-icon--mp {
   width: 26px;
   height: 26px;
 }
 
-/* Tooltip debajo */
 .donate .btn--icon::after {
   content: attr(data-tooltip);
   position: absolute;
   left: 50%;
   top: calc(100% + 10px);
   transform: translateX(-50%) translateY(-4px);
-
   background-color: var(--bg-alt);
   color: var(--text-main);
   padding: 7px 12px;
@@ -654,7 +644,6 @@ button {
   font-size: 13px;
   line-height: 1.1;
   white-space: nowrap;
-
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.18s ease, transform 0.18s ease;
@@ -668,56 +657,18 @@ button {
   transform: translateX(-50%) translateY(0);
 }
 
-/* =========================
-   SEARCHBAR – SELECT CON CONTRASTE
-   ========================= */
-
-.searchbar select {
-  background: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border);
-  padding: 10px 12px;
-  border-radius: 12px;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
-    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 18px) calc(50% - 4px),
-    calc(100% - 13px) calc(50% - 4px);
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
-  padding-right: 34px;
+.donate-note {
+  margin-top: 10px;
+  line-height: 1.6;
 }
 
-.searchbar select option {
-  background-color: #ffffff;
-  color: #111111;
+#donaciones {
+  scroll-margin-top: 90px;
 }
 
 /* =========================
-   ACCESIBILIDAD
+   NOVEDADES
    ========================= */
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* =========================
-   NOVEDADES (MARQUEE + ROTACIÓN)
-   ========================= */
-
 .newsbar {
   margin-top: 14px;
   padding: 10px 12px;
@@ -741,99 +692,54 @@ button {
   white-space: nowrap;
 }
 
-/* Contenedor que recorta el texto para que "se mueva" */
 .newsbar__text {
   flex: 1;
   overflow: hidden;
   white-space: nowrap;
 }
 
-/* Oculta los mensajes base (solo los usa JS) */
 .newsbar__msg {
   display: none;
 }
 
-/* El elemento que se desplaza */
 #newsTicker {
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
 }
 
-/* Animación tipo marquee */
 @keyframes newsTickerScroll {
-  0%   { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
-/* Clase que activa el movimiento */
 #newsTicker.is-scrolling {
   animation: newsTickerScroll 14s linear infinite;
 }
 
 /* =========================
-   SUSCRIPCIÓN – SELECTS CON CONTRASTE
-   ========================= */
-
-form select,
-form select option {
-  font-family: inherit;
-}
-
-/* Select visible en tema oscuro */
-form select {
-  background-color: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border);
-  padding: 10px 12px;
-  border-radius: 12px;
-
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  /* flecha */
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
-    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 18px) calc(50% - 4px),
-    calc(100% - 13px) calc(50% - 4px);
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
-
-  padding-right: 34px;
-}
-
-/* Opciones del desplegable */
-form select option {
-  background-color: #ffffff;
-  color: #111111;
-}
-
-/* Focus */
-form select:focus {
-  outline: none;
-  border-color: rgba(201, 162, 39, 0.7);
-}
-
-/* =========================
-   TÍTULOS
-   ========================= */
-.card h3 {
-  font-size: 1.5rem;   /* mismo tamaño que h2 */
-  font-weight: 700;
-  margin-top: 0;
-}
-
-h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-/* =========================
    EPISODIO DESTACADO
    ========================= */
+.latest-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.episode-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+  filter: brightness(1.1);
+}
 
 .episode-meta {
   font-size: 0.82rem;
@@ -859,209 +765,134 @@ h2 {
 }
 
 /* =========================
-   TÍTULO DEL ÚLTIMO EPISODIO
-   ========================= */
-
-.latest-title{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:700;
-  font-size:1rem;
-  margin-bottom:6px;
-}
-
-.episode-icon{
-  width:20px;
-  height:20px;
-  margin-right:8px;
-  vertical-align:middle;
-  filter: brightness(1.1);
-}
-
-/* =========================
    LECTURAS RECOMENDADAS
    ========================= */
-
-.reading-box{
-  margin-top:20px;
+.reading-box {
+  margin-top: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.reading-subtitle{
-  font-size:0.85rem;
-  color:#9aa6bf;
-  margin-bottom:10px;
+.reading-card {
+  flex: 1;
 }
 
-.reading-list{
-  margin:0;
-  padding-left:18px;
+.reading-subtitle {
+  font-size: 0.85rem;
+  color: #9aa6bf;
+  margin-bottom: 10px;
 }
 
-.reading-list li{
-  margin-bottom:6px;
-  font-size:0.9rem;
-  color:#d6deef;
+.reading-list {
+  margin: 0;
+  padding-left: 18px;
 }
 
-.lista-libros{
-  display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
-  gap:14px;
-  margin-top:22px;
+.reading-list li {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #d6deef;
 }
 
-.libro-card{
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-  padding:8px 12px;
-  min-height:auto;
-  border:1px solid rgba(255,255,255,0.08);
-  border-left:3px solid rgba(201,162,39,0.35);
-  border-radius:12px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+.lista-libros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
 }
 
-.libro-card:hover{
-  border-color:rgba(212,175,55,0.35);
-  background:linear-gradient(180deg, rgba(212,175,55,0.04), rgba(255,255,255,0.02));
+.libro-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  min-height: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid rgba(201, 162, 39, 0.35);
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.015)
+  );
 }
 
-.libro-icono{
-  flex:0 0 28px;
-  width:28px;
-  height:28px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1.05rem;
-  border-radius:10px;
-  background:rgba(212,175,55,0.08);
-	border:none;
-  /*border:1px solid rgba(212,175,55,0.16);*/
+.libro-card:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(212, 175, 55, 0.04),
+    rgba(255, 255, 255, 0.02)
+  );
 }
 
-.libro-contenido{
-  min-width:0;
-  flex:1;
+.libro-icono {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.08);
+  border: none;
 }
-.libro-titulo{
-  margin:0 0 1px;
-  font-size:0.92rem;
-	letter-spacing:.2px;
-  line-height:1.35;
-  color:var(--text-main);
-  font-weight:700;
+
+.libro-contenido {
+  min-width: 0;
+  flex: 1;
+}
+
+.libro-titulo {
+  margin: 0 0 1px;
+  font-size: 0.92rem;
+  letter-spacing: 0.2px;
+  line-height: 1.35;
+  color: var(--text-main);
+  font-weight: 700;
 }
 
 .libro-autor,
-.libro-tema{
-  display:inline;
-  font-size:0.86rem;
+.libro-tema {
+  display: inline;
+  font-size: 0.86rem;
 }
 
-.libro-autor{
-  color:rgba(255,255,255,0.65);
+.libro-autor {
+  color: rgba(255, 255, 255, 0.65);
 }
 
-.libro-tema{
-  color:var(--accent-gold);
+.libro-tema {
+  color: var(--accent-gold);
 }
 
-.libro-tema::before{
-  content:" • ";
-  color:rgba(255,255,255,0.35);
-}
-
-@media (max-width: 980px){
-  .lista-libros{
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 640px){
-  .lista-libros{
-    grid-template-columns:1fr;
-  }
-}
-
-@media (max-width: 768px){
-  .libro-card{
-    padding:10px 12px;
-    gap:10px;
-    border-radius:14px;
-  }
-
-  .libro-icono{
-    width:34px;
-    height:34px;
-    flex-basis:34px;
-    font-size:1rem;
-    border-radius:10px;
-  }
-
-  .libro-titulo{
-    font-size:0.95rem;
-  }
-
-  .libro-autor,
-  .libro-tema{
-    font-size:0.85rem;
-  }
-}
-
-
-/* =========================
-   HERO ALTURA SINCRONIZADA
-   ========================= */
-
-.hero__inner{
-  align-items:stretch;
-}
-
-.hero__copy,
-.hero__card{
-  display:flex;
-  flex-direction:column;
-}
-
-.hero__card{
-  gap:20px;
-}
-
-.reading-box{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
-
-.reading-card{
-  flex:1;
+.libro-tema::before {
+  content: " • ";
+  color: rgba(255, 255, 255, 0.35);
 }
 
 /* =========================
    RESULTADOS DEL BUSCADOR
    ========================= */
-
-.cards3{
-  margin-top:18px;
-  display:grid;
-  grid-template-columns:1fr;
-  gap:18px;
+.cards3 {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
 }
 
-.cards3 .card{
+.cards3 .card {
   background: var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
 }
 
 /* =========================
    DONACIONES - CAJA IZQUIERDA
    ========================= */
-
 #donaciones .container > div:first-child {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1069,45 +900,185 @@ h2 {
   padding: 18px;
 }
 
-#donaciones .card h2{
-margin-top:0;
-}
-
-.participa-card{
-  padding: 28px 28px 32px;
-}
-
-.participa-card h2{
-  margin-bottom: 18px;
-}
-
-.participa-card p{
-  margin-bottom: 18px;
-}
-
-.participa-card hr{
-  margin: 22px 0 18px;
-}
-
-.donate{
-  display:flex;
-  gap:14px;
-  flex-wrap:wrap;
-  align-items:center;
-  margin:18px 0 16px;
-}
-
-.donate-note{
-  margin-top:10px;
-  line-height:1.6;
-}
-
-.card h3 + .muted{
+#donaciones .card h2 {
   margin-top: 0;
 }
 
-.sep{
-  border:none;
-  border-top:1px solid var(--border);
-  margin:20px 0;
+.participa-card {
+  padding: 28px 28px 32px;
+}
+
+.participa-card h2 {
+  margin-bottom: 18px;
+}
+
+.participa-card p {
+  margin-bottom: 18px;
+}
+
+.participa-card hr {
+  margin: 22px 0 18px;
+}
+
+.card h3 + .muted {
+  margin-top: 0;
+}
+
+.sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* =========================
+   BOLETINES
+   ========================= */
+.boletin-card {
+  padding: 16px 18px;
+}
+
+.boletin-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.boletin-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.boletin-main h3 {
+  margin: 0 0 8px 0;
+  line-height: 1.25;
+  font-size: 1.2rem;
+}
+
+.boletin-main .muted {
+  margin: 0;
+}
+
+.boletin-side {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.boletin-fecha {
+  font-size: 0.95rem;
+  color: #b8b8b8;
+}
+
+.boletin-side .btn {
+  min-width: 140px;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 980px) {
+  .lista-libros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .autor-layout {
+    flex-direction: column;
+  }
+
+  .autor-imagen {
+    max-height: 360px;
+  }
+
+  .autor-imagen img {
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-text-wrap {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo-float {
+    flex-shrink: 0;
+    max-width: 140px;
+    height: auto;
+  }
+
+  .cta,
+  .platforms {
+    justify-content: center;
+  }
+
+  .libro-card {
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 14px;
+  }
+
+  .libro-icono {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .libro-titulo {
+    font-size: 0.95rem;
+  }
+
+  .libro-autor,
+  .libro-tema {
+    font-size: 0.85rem;
+  }
+
+  .boletin-layout {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .boletin-side {
+    align-items: flex-start;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 640px) {
+  .lista-libros {
+    grid-template-columns: 1fr;
+  }
+}
+
+.boletin-side .cta {
+  margin: 0;
+}
+
+.boletin-side .btn {
+  min-width: 100px;
+  height: 30px;
+  min-height: 30px;
+  padding: 0 18px;
+  font-size: 0.9rem;
+  border-radius: 12px;
+}
+
+.boletin-side .btn {
+  min-width: 100px;
 }

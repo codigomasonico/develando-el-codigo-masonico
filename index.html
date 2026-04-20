@@ -33,6 +33,7 @@
       <nav class="nav">
         <a href="#presentacion">Inicio</a>
         <a href="episodios.html">Episodios</a>
+				<a href="boletines.html">Boletines</a>
         <a href="#donaciones">Donaciones</a>
         <a href="comunidad.html">Comunidad</a>
       </nav>
@@ -185,7 +186,7 @@
 					</p>
 
 					<ul class="bullets">
-						<li>Episodios de 30 a 45 minutos</li>
+						<li>Episodios semanales de 30 a 45 minutos</li>
 						<li>Explicaciones y entrevistas</li>
 						<li>Contenido accesible con profundidad</li>
 					</ul>
@@ -197,12 +198,14 @@
 					<h3>Boletín</h3>
 
 					<p class="muted">
-						Recibe avisos de nuevos episodios y encuestas de temas.
+						Recibe avisos de nuevos episodios, boletines y novedades del podcast.
 					</p>
 
-					<a class="btn btn-primary" href="suscribirse.html">
-						Ir a suscripción
-					</a>
+					<div class="cta">
+						<a class="btn" href="suscribirse.html">
+							Ir a suscripción
+						</a>
+					</div>
 
 					<p class="tiny muted">
 						Sin spam. Puedes darte de baja cuando quieras.
@@ -213,7 +216,6 @@
 			</div>
 
 		</section>
-
 
     <!-- AUTOR -->
 
@@ -263,45 +265,6 @@
       </div>
 
     </section>
-
-
-
-    <!-- BUSCADOR -->
-
-    <section class="section">
-
-      <div class="container">
-
-        <h2>Buscador rápido de episodios</h2>
-
-        <div class="searchbar">
-
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="Ejemplo: escuadra, compás, iniciación..."
-          >
-
-          <select id="categorySelect">
-
-            <option value="">Todas las categorías</option>
-            <option value="Introducción">Introducción</option>
-            <option value="Simbolismo">Simbolismo</option>
-            <option value="Historia">Historia</option>
-            <option value="Filosofía">Filosofía</option>
-            <option value="Entrevista">Entrevista</option>
-
-          </select>
-
-        </div>
-
-        <div id="episodeResults" class="cards3"></div>
-
-      </div>
-
-    </section>
-
-
 
     <!-- DONACIONES -->
 
@@ -439,16 +402,11 @@
 
   </main>
 
-
-
   <footer class="footer">
-
-    <div class="container footer__inner">
-      <p class="muted">© <span id="year"></span>2026 Develando el Código Masónico - Todos los derechos reservados.</p>
+    <div class="container footer__inner">      
+			<p class="muted">© <span id="year"></span> Develando el Código Masónico - Todos los derechos reservados.</p>
     </div>
-
   </footer>
-
 
   <script src="assets/js/app.js"></script>
 

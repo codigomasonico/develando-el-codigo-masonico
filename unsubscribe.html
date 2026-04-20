@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Darse de baja | Develando el Código Masónico</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta
+    name="description"
+    content="Solicita la baja del boletín de Develando el Código Masónico."
+  />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html">
+        <span class="brand__mark">⟡</span>
+        <span class="brand__name">Develando el Código Masónico</span>
+      </a>
+
+      <nav class="nav">
+        <a href="index.html">Inicio</a>
+        <a href="episodios.html">Episodios</a>
+        <a href="boletines.html">Boletines</a>
+        <a href="index.html#donaciones">Donaciones</a>
+        <a href="comunidad.html">Comunidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container grid2">
+
+        <div>
+          <h1>Darse de baja</h1>
+          <p class="muted">
+            Si ya no deseas recibir el boletín de Develando el Código Masónico,
+            puedes solicitar tu baja aquí.
+          </p>
+
+          <div class="card card--soft">
+            <h2>Información</h2>
+            <ul class="bullets">
+              <li>La baja se procesará con el correo que indiques.</li>
+              <li>Podrás volver a suscribirte cuando lo desees.</li>
+              <li>Tu solicitud quedará registrada en Netlify Forms.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Formulario de baja</h2>
+          <p class="muted">
+            Introduce el correo con el que estás suscrito.
+          </p>
+
+          <form
+            name="unsubscribe"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="unsubscribe-confirmado.html"
+          >
+            <input type="hidden" name="form-name" value="unsubscribe" />
+
+            <div hidden aria-hidden="true">
+              <label>No llenar: <input name="bot-field" /></label>
+            </div>
+
+            <label>
+              Email
+              <input
+                name="email"
+                type="email"
+                placeholder="tu@email.com"
+                required
+              />
+            </label>
+
+            <label>
+              Motivo (opcional)
+              <select name="motivo">
+								<option value=""></option>
+                <option value="demasiados-correos">Recibo demasiados correos</option>
+                <option value="contenido-no-relevante">El contenido ya no me resulta relevante</option>
+                <option value="pausa">Solo quiero hacer una pausa</option>
+                <option value="otro">Otro motivo</option>
+              </select>
+            </label>
+
+            <label>
+              Comentario adicional (opcional)
+              <textarea
+                name="comentario"
+                rows="5"
+                placeholder="Si deseas, puedes dejarnos un comentario"
+              ></textarea>
+            </label>
+
+            <div class="cta">
+              <button class="btn" type="submit">Solicitar baja</button>
+              <a class="btn btn--ghost" href="index.html">Volver al inicio</a>
+            </div>
+
+            <p class="tiny muted">
+              Tu solicitud será recibida y procesada a la brevedad.
+            </p>
+          </form>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">      
+			<p class="muted">© <span id="year"></span> Develando el Código Masónico - Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

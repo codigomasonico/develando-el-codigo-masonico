@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boletines | Develando el Código Masónico</title>
+  <meta name="description" content="Biblioteca de boletines de Develando el Código Masónico." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="index.html"><span class="brand__mark">⟡</span><span class="brand__name">Develando el Código Masónico</span></a>
+      <nav class="nav">
+        <a href="index.html">Inicio</a>
+        <a href="episodios.html">Episodios</a>
+        <a class="active" href="boletines.html">Boletines</a>
+        <a href="index.html#donaciones">Donaciones</a>
+        <a href="comunidad.html">Comunidad</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <h1>Boletines</h1>
+      <p class="muted">Explora, busca y descarga los boletines disponibles.</p>
+
+      <div class="searchbar">
+        <input id="searchBoletines" type="search" placeholder="Buscar boletín…" />
+        <select id="yearSelect">
+          <option value="">Todos los años</option>
+        </select>
+      </div>
+
+      <div id="boletinesResults" class="cards3"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="muted">© <span id="year"></span> Develando el Código Masónico - Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

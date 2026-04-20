@@ -1,0 +1,26 @@
+[
+  {
+    "numero": 1,
+    "titulo": "Introducción al lenguaje simbólico",
+    "fecha": "2026-04-03",
+    "descripcion": "Primer boletín de la serie, centrado en la lectura simbólica y su valor formativo.",
+    "archivo": "assets/newsletter/boletin_2601.pdf",
+    "portada": "assets/img/newsletter/boletin_1.jpg"
+  },
+  {
+    "numero": 2,
+    "titulo": "Las claves del símbolo",
+    "fecha": "2026-04-10",
+    "descripcion": "Una mirada al símbolo como lenguaje, método y vía de comprensión.",
+    "archivo": "assets/newsletter/boletin_2602.pdf",
+    "portada": "assets/img/newsletter/boletin_2.jpg"
+  },
+  {
+    "numero": 3,
+    "titulo": "Entre símbolos y silencios",
+    "fecha": "2026-04-18",
+    "descripcion": "Una reflexión breve sobre el silencio, el símbolo y su lugar en el trabajo interior.",
+    "archivo": "assets/newsletter/boletin_2603.pdf",
+    "portada": "assets/img/newsletter/boletin_3.jpg"
+  }
+]
