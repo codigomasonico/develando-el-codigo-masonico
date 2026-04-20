@@ -248,6 +248,14 @@ img {
   color: #1b1506;
 }
 
+.btn-icon-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
 /* =========================
    PLATAFORMAS
    ========================= */

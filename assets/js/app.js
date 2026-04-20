@@ -47,8 +47,10 @@ async function loadEpisodes() {
 
     allEpisodes.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-    renderLatestEpisode(allEpisodes[0]);
-    renderEpisodeLibrary(allEpisodes);
+		const latestEpisode = [...allEpisodes].sort((a, b) => Number(b.numero) - Number(a.numero))[0];
+
+		renderLatestEpisode(latestEpisode);
+		renderEpisodeLibrary(allEpisodes);
 
   } catch (err) {
     console.error("Error cargando episodios:", err);
