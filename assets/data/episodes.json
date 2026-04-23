@@ -2,7 +2,7 @@
   {
     "id": "ep-001",
     "numero": 1,
-    "titulo": "",
+    "titulo": "Qué es la Masonería y qué no es",
     "categoria": "Introducción",
     "fecha": "10 de marzo de 2026",
     "duracion": "40:16",
@@ -12,11 +12,10 @@
     "spotify": "https://open.spotify.com/episode/0X5A9keXdyp5z57UEwqv3L?si=sdn03C6VSzuGpF2Mk2PwnA",
     "youtube": ""
   },
-  
   {
     "id": "ep-002",
     "numero": 2,
-    "titulo": "",
+    "titulo": "Los Orígenes de la Orden",
     "categoria": "Introducción",
     "fecha": "18 de marzo de 2026",
     "duracion": "38:07",
@@ -26,11 +25,10 @@
     "spotify": "https://open.spotify.com/episode/3xb3piCSSHhbvFGY9FAn4v?si=_Ah5iwwVShiuyz2D0Ygcyw",
     "youtube": ""
   },
-	
   {
     "id": "ep-003",
     "numero": 3,
-    "titulo": "",
+    "titulo": "Los Grados en Masonería",
     "categoria": "Introducción",
     "fecha": "25 de marzo de 2026",
     "duracion": "36:23",
@@ -40,11 +38,10 @@
     "spotify": "https://open.spotify.com/episode/7DnbRAbMHGr2zKhZTfXBVJ?si=HT9YV8EIQyO_KWgzYeYbQg",
     "youtube": ""
   },
-	
   {
     "id": "ep-004",
     "numero": 4,
-    "titulo": "",
+    "titulo": "El Secreto Masónico",
     "categoria": "Introducción",
     "fecha": "1 de abril de 2026",
     "duracion": "37:53",
@@ -54,11 +51,10 @@
     "spotify": "https://open.spotify.com/episode/5icNbioy7Knyt7ysrwJcZB?si=qA0d02_nTHu4DVZH26X-NA",
     "youtube": ""
   },
-		
   {
     "id": "ep-005",
     "numero": 5,
-    "titulo": "",
+    "titulo": "La Cámara de Reflexiones",
     "categoria": "Simbolismo",
     "fecha": "8 de abril de 2026",
     "duracion": "36:46",
@@ -68,11 +64,10 @@
     "spotify": "https://open.spotify.com/episode/2iyrxpc4y4ZI2ed27ErfEA?si=ICPgvZ_zSdmw20EG3vhwJg",
     "youtube": ""
   },
-	
-	{
+  {
     "id": "ep-006",
     "numero": 6,
-    "titulo": "",
+    "titulo": "La Iniciación Masónica",
     "categoria": "Simbolismo",
     "fecha": "15 de abril de 2026",
     "duracion": "37:17",
@@ -82,18 +77,17 @@
     "spotify": "https://open.spotify.com/episode/5AZoYCqt7g8QTklfHq0jcb?si=mLQ4qnJ0SgiEtVB8ZZEXPw",
     "youtube": ""
   },
-	
-	{
+  {
     "id": "ep-007",
     "numero": 7,
-    "titulo": "",
+    "titulo": "La Piedra Bruta y la Piedra Cúbica",
     "categoria": "Simbolismo",
     "fecha": "22 de abril de 2026",
     "duracion": "37:41",
-    "descripcion": "La Piedra Bruta y la Piedra Cública, un viaje de trabajo interior, esfuerzo y transformación.",
+    "descripcion": "La Piedra Bruta y la Piedra Cúbica, un viaje de trabajo interior, esfuerzo y transformación.",
     "imagen": "assets/img/episodios/ep-001.jpg",
     "invitado": "",
-    "spotify": "https://open.spotify.com/episode/5AZoYCqt7g8QTklfHq0jcb?si=mLQ4qnJ0SgiEtVB8ZZEXPw",
+    "spotify": "https://open.spotify.com/episode/1IlHZQPuWipallNuWK1SCb?si=lwV6O5IjSpG-eU_GILI8cw",
     "youtube": ""
   }
 ]
