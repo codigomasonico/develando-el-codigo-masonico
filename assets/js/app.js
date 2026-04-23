@@ -45,12 +45,12 @@ async function loadEpisodes() {
       return;
     }
 
-    allEpisodes.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    const latestEpisode = [...allEpisodes].sort(
+      (a, b) => Number(b.numero) - Number(a.numero)
+    )[0];
 
-		const latestEpisode = [...allEpisodes].sort((a, b) => Number(b.numero) - Number(a.numero))[0];
-
-		renderLatestEpisode(latestEpisode);
-		renderEpisodeLibrary(allEpisodes);
+    renderLatestEpisode(latestEpisode);
+    renderEpisodeLibrary(allEpisodes);
 
   } catch (err) {
     console.error("Error cargando episodios:", err);
@@ -66,7 +66,7 @@ async function loadEpisodes() {
 
 function renderLatestEpisode(ep) {
   const container = document.getElementById("latestEpisode");
-  if (!container) return;
+  if (!container || !ep) return;
 
   const spotifyId = safeSpotifyId(ep.spotify);
 
@@ -91,7 +91,7 @@ function renderLatestEpisode(ep) {
       style="border-radius:12px"
       src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
       width="100%"
-      height="152"
+      height="84"
       frameBorder="0"
       allowfullscreen=""
       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
@@ -128,33 +128,65 @@ function renderEpisodeLibrary(episodes) {
     return;
   }
 
-  episodes.forEach(ep => {
+  episodes.forEach((ep, index) => {
     const spotifyId = safeSpotifyId(ep.spotify);
+    const descId = `episode-desc-${index}`;
 
     const card = document.createElement("div");
-    card.className = "card";
+    card.className = "card episode-card";
 
     card.innerHTML = `
-      <h3>${ep.titulo}</h3>
-      <p class="muted">${ep.descripcion}</p>
-
       ${
         spotifyId
           ? `
-      <iframe
-        style="border-radius:12px"
-        src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
-        width="100%"
-        height="152"
-        frameBorder="0"
-        allowfullscreen=""
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-      </iframe>`
+        <iframe
+          style="border-radius:12px"
+          src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
+          width="100%"
+          height="80"
+          frameBorder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+        </iframe>`
           : ""
       }
+
+      <button
+        class="episode-toggle-link"
+        type="button"
+        aria-expanded="false"
+        aria-controls="${descId}"
+      >
+        Ver descripción
+      </button>
+
+      <div id="${descId}" class="episode-card__desc" hidden>
+        <p><strong>${ep.titulo}</strong></p>
+        <p>${ep.descripcion}</p>
+      </div>
     `;
 
     container.appendChild(card);
+  });
+
+  initEpisodeToggles();
+}
+
+function initEpisodeToggles() {
+  const toggles = document.querySelectorAll(".episode-toggle-link");
+
+  toggles.forEach(toggle => {
+    toggle.addEventListener("click", () => {
+      const targetId = toggle.getAttribute("aria-controls");
+      const target = document.getElementById(targetId);
+      if (!target) return;
+
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+
+      toggle.setAttribute("aria-expanded", String(!isOpen));
+      toggle.textContent = isOpen ? "Ver descripción" : "Ocultar descripción";
+      target.hidden = isOpen;
+    });
   });
 }
 
@@ -252,7 +284,7 @@ function renderBoletines(lista) {
     const card = document.createElement("div");
     card.className = "card boletin-card";
 
-		const fechaMostrada = formatBoletinDate(b.fecha);
+    const fechaMostrada = formatBoletinDate(b.fecha);
 
     card.innerHTML = `
       <div class="boletin-layout">
@@ -280,30 +312,29 @@ function initBoletinesFilters() {
 
   if (!searchInput && !yearSelect) return;
 
-  // llenar años
-	if (yearSelect) {
-		const years = [
-			...new Set(
-				allBoletines
-					.map(b => {
-						const match = String(b.fecha).match(/\b(20\d{2}|19\d{2})\b/);
-						return match ? match[1] : null;
-					})
-					.filter(Boolean)
-			)
-		];
+  if (yearSelect) {
+    const years = [
+      ...new Set(
+        allBoletines
+          .map(b => {
+            const match = String(b.fecha).match(/\b(20\d{2}|19\d{2})\b/);
+            return match ? match[1] : null;
+          })
+          .filter(Boolean)
+      )
+    ];
 
-		years.sort((a, b) => Number(b) - Number(a));
+    years.sort((a, b) => Number(b) - Number(a));
 
-		yearSelect.innerHTML = '<option value="">Todos los años</option>';
+    yearSelect.innerHTML = '<option value="">Todos los años</option>';
 
-		years.forEach(y => {
-			const option = document.createElement("option");
-			option.value = y;
-			option.textContent = y;
-			yearSelect.appendChild(option);
-		});
-	}
+    years.forEach(y => {
+      const option = document.createElement("option");
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+    });
+  }
 
   function applyFilters() {
     let filtered = allBoletines;
@@ -316,12 +347,12 @@ function initBoletinesFilters() {
       );
     }
 
-		if (yearSelect && yearSelect.value) {
-			filtered = filtered.filter(b => {
-				const match = String(b.fecha).match(/\b(20\d{2}|19\d{2})\b/);
-				return match && match[1] === yearSelect.value;
-			});
-		}
+    if (yearSelect && yearSelect.value) {
+      filtered = filtered.filter(b => {
+        const match = String(b.fecha).match(/\b(20\d{2}|19\d{2})\b/);
+        return match && match[1] === yearSelect.value;
+      });
+    }
 
     renderBoletines(filtered);
   }
@@ -408,6 +439,10 @@ function loadLecturas() {
       contenedorLibros.innerHTML = "<p>Error al cargar las lecturas recomendadas.</p>";
     });
 }
+
+/* =========================
+   SCROLL HASH
+   ========================= */
 
 function scrollToHashWithOffset() {
   if (!window.location.hash) return;

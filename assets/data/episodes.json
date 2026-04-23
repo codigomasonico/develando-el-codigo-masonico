@@ -2,7 +2,7 @@
   {
     "id": "ep-001",
     "numero": 1,
-    "titulo": "Episodio 1: Qué es la Masonería y qué no es",
+    "titulo": "",
     "categoria": "Introducción",
     "fecha": "10 de marzo de 2026",
     "duracion": "40:16",
@@ -16,7 +16,7 @@
   {
     "id": "ep-002",
     "numero": 2,
-    "titulo": "Episodio 2: Los Orígenes de la Orden",
+    "titulo": "",
     "categoria": "Introducción",
     "fecha": "18 de marzo de 2026",
     "duracion": "38:07",
@@ -30,7 +30,7 @@
   {
     "id": "ep-003",
     "numero": 3,
-    "titulo": "Episodio 3: Los Grados en la Masonería",
+    "titulo": "",
     "categoria": "Introducción",
     "fecha": "25 de marzo de 2026",
     "duracion": "36:23",
@@ -44,7 +44,7 @@
   {
     "id": "ep-004",
     "numero": 4,
-    "titulo": "Episodio 4: El Secreto Masónico",
+    "titulo": "",
     "categoria": "Introducción",
     "fecha": "1 de abril de 2026",
     "duracion": "37:53",
@@ -58,7 +58,7 @@
   {
     "id": "ep-005",
     "numero": 5,
-    "titulo": "Episodio 5: La Cámara de Reflexiones",
+    "titulo": "",
     "categoria": "Simbolismo",
     "fecha": "8 de abril de 2026",
     "duracion": "36:46",
@@ -72,11 +72,25 @@
 	{
     "id": "ep-006",
     "numero": 6,
-    "titulo": "Episodio 6: La Iniciación Masónica",
+    "titulo": "",
     "categoria": "Simbolismo",
     "fecha": "15 de abril de 2026",
     "duracion": "37:17",
     "descripcion": "Una reflexión sobre la iniciación masónica, su sentido profundo y el compromiso interior que se pone en marcha.",
+    "imagen": "assets/img/episodios/ep-001.jpg",
+    "invitado": "",
+    "spotify": "https://open.spotify.com/episode/5AZoYCqt7g8QTklfHq0jcb?si=mLQ4qnJ0SgiEtVB8ZZEXPw",
+    "youtube": ""
+  },
+	
+	{
+    "id": "ep-007",
+    "numero": 7,
+    "titulo": "",
+    "categoria": "Simbolismo",
+    "fecha": "22 de abril de 2026",
+    "duracion": "37:41",
+    "descripcion": "La Piedra Bruta y la Piedra Cública, un viaje de trabajo interior, esfuerzo y transformación.",
     "imagen": "assets/img/episodios/ep-001.jpg",
     "invitado": "",
     "spotify": "https://open.spotify.com/episode/5AZoYCqt7g8QTklfHq0jcb?si=mLQ4qnJ0SgiEtVB8ZZEXPw",

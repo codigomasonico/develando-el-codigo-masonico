@@ -256,6 +256,15 @@ img {
   flex: 0 0 auto;
 }
 
+#presentacion .cta .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  min-height: 48px;
+	letter-spacing: 0.2px;
+}
+
 /* =========================
    PLATAFORMAS
    ========================= */
@@ -1089,4 +1098,72 @@ h2 {
 
 .boletin-side .btn {
   min-width: 100px;
+}
+
+/* =========================
+   EPISODIOS
+   ========================= */
+#episodeResults {
+  margin-top: 14px;
+}
+
+#episodeResults.cards3 {
+  gap: 12px;
+}
+
+#episodeResults .episode-card {
+  padding: 8px 10px;
+  border-radius: 14px;
+}
+
+#episodeResults .episode-card iframe {
+  display: block;
+  width: 100%;
+  margin: 0;
+}
+
+.episode-toggle-link {
+  margin-top: 6px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--accent-gold);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.episode-toggle-link:hover {
+  text-decoration: underline;
+}
+
+#episodeResults .episode-card__desc {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#episodeResults .episode-card__desc p {
+  margin: 0 0 6px 0;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+#episodeResults .episode-card__desc p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  #episodeResults .episode-card {
+    padding: 7px 8px;
+  }
+
+  .episode-toggle-link {
+    font-size: 0.82rem;
+  }
+
+  #episodeResults .episode-card__desc p {
+    font-size: 0.86rem;
+  }
 }
