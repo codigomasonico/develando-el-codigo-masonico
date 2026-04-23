@@ -160,10 +160,9 @@ function renderEpisodeLibrary(episodes) {
         Ver descripción
       </button>
 
-      <div id="${descId}" class="episode-card__desc" hidden>
-        <p><strong>${ep.titulo}</strong></p>
-        <p>${ep.descripcion}</p>
-      </div>
+			<div id="${descId}" class="episode-card__desc" hidden>
+				<p>${ep.descripcion}</p>
+			</div>
     `;
 
     container.appendChild(card);
