@@ -89,5 +89,18 @@
     "invitado": "",
     "spotify": "https://open.spotify.com/episode/1IlHZQPuWipallNuWK1SCb?si=lwV6O5IjSpG-eU_GILI8cw",
     "youtube": ""
+  },
+	{
+    "id": "ep-008",
+    "numero": 8,
+    "titulo": "Las Tres Grandes Luces",
+    "categoria": "Simbolismo",
+    "fecha": "28 de abril de 2026",
+    "duracion": "37:01",
+    "descripcion": "Porque hacer lo correcto no siempre es fácil, y cómo las Tres Grandes Luces lo ponen a prueba en el día a día.",
+    "imagen": "assets/img/episodios/ep-001.jpg",
+    "invitado": "",
+    "spotify": "https://open.spotify.com/episode/1IlHZQPuWipallNuWK1SCb?si=lwV6O5IjSpG-eU_GILI8cw",
+    "youtube": ""
   }
 ]
