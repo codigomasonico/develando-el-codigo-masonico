@@ -295,7 +295,7 @@ function renderBoletines(lista) {
         <div class="boletin-side">
           <span class="boletin-fecha">${fechaMostrada}</span>
           <div class="cta">
-            <a href="${b.archivo}" class="btn">Descargar</a>
+            <a href="${b.archivo}" class="btn" target="_blank" rel="noopener noreferrer">Descargar</a>
           </div>
         </div>
       </div>
