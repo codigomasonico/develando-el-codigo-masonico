@@ -190,24 +190,53 @@ function initEpisodeToggles() {
 }
 
 /* =========================
-   FILTRO POR CATEGORÍA
+   FILTROS DE EPISODIOS
    ========================= */
 
-function initCategoryFilter() {
-  const select = document.getElementById("categorySelect");
-  if (!select) return;
+function normalizeText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
 
-  select.addEventListener("change", () => {
-    const category = select.value;
+function initEpisodeFilters() {
+  const searchInput = document.getElementById("searchInput");
+  const categorySelect = document.getElementById("categorySelect");
 
-    let filtered = allEpisodes;
+  if (!searchInput && !categorySelect) return;
 
-    if (category) {
-      filtered = allEpisodes.filter(ep => ep.categoria === category);
-    }
+  function applyEpisodeFilters() {
+    const searchTerm = normalizeText(searchInput ? searchInput.value : "");
+    const selectedCategory = categorySelect ? categorySelect.value : "";
+
+    const filtered = allEpisodes.filter(ep => {
+      const searchableText = normalizeText([
+        ep.numero,
+        ep.titulo,
+        ep.categoria,
+        ep.fecha,
+        ep.duracion,
+        ep.descripcion,
+        ep.invitado
+      ].join(" "));
+
+      const matchesSearch = !searchTerm || searchableText.includes(searchTerm);
+      const matchesCategory = !selectedCategory || ep.categoria === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
 
     renderEpisodeLibrary(filtered);
-  });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", applyEpisodeFilters);
+  }
+
+  if (categorySelect) {
+    categorySelect.addEventListener("change", applyEpisodeFilters);
+  }
 }
 
 /* =========================
@@ -470,7 +499,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   ]);
 
   initNewsbar();
-  initCategoryFilter();
+  initEpisodeFilters();
 
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();

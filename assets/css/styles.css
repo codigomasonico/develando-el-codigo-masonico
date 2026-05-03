@@ -1,6 +1,7 @@
 /* =========================
    VARIABLES DE COLOR
    ========================= */
+
 :root {
   --bg-main: #0b0c10;
   --bg-alt: #0f1118;
@@ -15,9 +16,11 @@
   --accent-ivory: #f2ede4;
 }
 
+
 /* =========================
    RESET
    ========================= */
+
 *,
 *::before,
 *::after {
@@ -40,17 +43,37 @@ img {
   display: block;
 }
 
+
 /* =========================
    LAYOUT BASE
    ========================= */
+
 .container {
   width: min(1100px, 92vw);
   margin: 0 auto;
 }
 
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.section {
+  padding: 48px 0;
+}
+
+.section--alt {
+  background: var(--bg-main);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+
 /* =========================
    TOPBAR
    ========================= */
+
 .topbar {
   position: sticky;
   top: 0;
@@ -94,14 +117,108 @@ img {
   text-decoration: none;
 }
 
-.nav a:hover {
+.nav a:hover,
+.nav a.active {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-main);
 }
 
+
+/* =========================
+   BOTONES
+   ========================= */
+
+.cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+
+.btn {
+  height: 48px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 22px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  letter-spacing: 0.2px;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+.btn-primary,
+.btn-secondary,
+.btn--ghost {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn--ghost:hover {
+  background: linear-gradient(135deg, #d4af37, #c9a227);
+  color: #1b1506;
+  border-color: #c9a227;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(201, 162, 39, 0.35);
+}
+
+.cta .btn,
+.cta .btn:link,
+.cta .btn:visited,
+.section .card > .btn.btn-primary,
+form .btn.btn-primary {
+  background-color: var(--accent-gold);
+  color: #1b1506;
+  border: 1px solid var(--accent-gold);
+  text-decoration: none;
+}
+
+.cta .btn:hover,
+.cta .btn:focus-visible,
+.section .card > .btn.btn-primary:hover,
+.section .card > .btn.btn-primary:focus-visible,
+form .btn.btn-primary:hover,
+form .btn.btn-primary:focus-visible {
+  background-color: #d8b52f;
+  color: #1b1506;
+  border-color: #d8b52f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(201, 162, 39, 0.35);
+}
+
+.btn-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-icon-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+
 /* =========================
    HERO
    ========================= */
+
 .hero {
   border-bottom: 1px solid var(--border);
   background: radial-gradient(
@@ -133,9 +250,37 @@ img {
   gap: 20px;
 }
 
+.hero .cta .btn {
+  min-width: 210px;
+  white-space: nowrap;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+
+.hero-actions__main {
+  margin: 0;
+}
+
+.hero-actions .platforms {
+  margin-top: 0;
+}
+
+.platforms--inline {
+  padding-left: 18px;
+  border-left: 1px solid rgba(201, 162, 39, 0.25);
+}
+
+
 /* =========================
    BLOQUE LOGO + TEXTO
    ========================= */
+
 .logo-text-wrap {
   display: flex;
   align-items: flex-start;
@@ -155,15 +300,15 @@ img {
   gap: 14px;
 }
 
+.logo-text h1 {
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+}
+
 .logo-text p {
   margin: 0;
   line-height: 1.65;
   max-width: 680px;
-}
-
-.logo-text h1 {
-  margin: 0 0 6px 0;
-  line-height: 1.2;
 }
 
 @media (min-width: 769px) {
@@ -173,101 +318,11 @@ img {
   }
 }
 
-/* =========================
-   CTAS Y BOTONES
-   ========================= */
-.cta {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin: 18px 0;
-}
-
-.btn,
-.donate .btn--icon {
-  height: 48px;
-  min-height: 48px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 22px;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.18s ease;
-  letter-spacing: 0.2px;
-}
-
-.btn:hover {
-  filter: brightness(1.05);
-}
-
-.btn-icon {
-  font-size: 1.05rem;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-}
-
-.btn-primary,
-.btn-secondary,
-.btn--ghost {
-  background: transparent;
-  color: var(--text-main);
-  border: 1px solid var(--border);
-}
-
-.btn-primary:hover,
-.btn-secondary:hover {
-  background: linear-gradient(135deg, #d4af37, #c9a227);
-  color: #1b1506;
-  border-color: #c9a227;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(201, 162, 39, 0.35);
-}
-
-/* Corrección de color para botones CTA */
-.cta .btn,
-.cta .btn:link,
-.cta .btn:visited {
-  background-color: var(--accent-gold);
-  color: #1b1506;
-  text-decoration: none;
-}
-
-.cta .btn:hover,
-.cta .btn:focus-visible {
-  background-color: #d8b52f;
-  color: #1b1506;
-}
-
-.btn-icon-img {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  display: inline-block;
-  flex: 0 0 auto;
-}
-
-#presentacion .cta .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 48px;
-  min-height: 48px;
-	letter-spacing: 0.2px;
-}
 
 /* =========================
    PLATAFORMAS
    ========================= */
+
 .platforms {
   display: flex;
   gap: 10px;
@@ -309,9 +364,6 @@ img {
   transform: translateZ(0);
 }
 
-/* =========================
-   BOTÓN SPOTIFY
-   ========================= */
 .pill--spotify {
   display: inline-flex;
   align-items: center;
@@ -340,9 +392,11 @@ img {
   filter: brightness(0) invert(1);
 }
 
+
 /* =========================
    CARDS
    ========================= */
+
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -358,134 +412,38 @@ img {
   margin-top: 12px;
 }
 
-/* =========================
-   SECCIONES
-   ========================= */
-.section {
-  padding: 48px 0;
-}
-
-.section--alt {
-  background: var(--bg-main);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-
-/* =========================
-   FORMULARIOS
-   ========================= */
-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 10px;
+.card p,
+.card li {
   color: var(--text-main);
 }
 
-input,
-select,
-textarea {
-  width: 100%;
-  margin-top: 6px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text-main);
-  outline: none;
+.card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: rgba(201, 162, 39, 0.7);
+.card h3 + .muted {
+  margin-top: 0;
 }
 
-input,
-select,
-textarea,
-button {
-  font-family: inherit;
-  font-size: 1rem;
-}
 
 /* =========================
-   SEARCHBAR
+   TEXTOS, LISTAS Y ENLACES
    ========================= */
-.searchbar select {
-  background: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border);
-  padding: 10px 12px;
-  padding-right: 34px;
-  border-radius: 12px;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
-    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 18px) calc(50% - 4px),
-    calc(100% - 13px) calc(50% - 4px);
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
-.searchbar select option {
-  background-color: #ffffff;
-  color: #111111;
-}
-
-/* =========================
-   SUSCRIPCIÓN
-   ========================= */
-form select,
-form select option {
-  font-family: inherit;
-}
-
-form select {
-  background-color: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border);
-  padding: 10px 12px;
-  padding-right: 34px;
-  border-radius: 12px;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
-    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 18px) calc(50% - 4px),
-    calc(100% - 13px) calc(50% - 4px);
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
-}
-
-form select option {
-  background-color: #ffffff;
-  color: #111111;
-}
-
-form select:focus {
-  outline: none;
-  border-color: rgba(201, 162, 39, 0.7);
-}
-
-/* =========================
-   LISTAS Y TEXTOS
-   ========================= */
 .bullets {
   padding-left: 18px;
   color: var(--text-muted);
+}
+
+.bullets li::marker {
+  color: var(--accent-gold);
 }
 
 .muted {
@@ -513,9 +471,103 @@ form select:focus {
   text-decoration: underline;
 }
 
+.sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+
+/* =========================
+   FORMULARIOS
+   ========================= */
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-main);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  background: var(--bg-card);
+  color: var(--text-main);
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+form select:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.18);
+}
+
+/* Evitar fondo claro del autocompletado del navegador */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-main);
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-card) inset;
+  box-shadow: 0 0 0 1000px var(--bg-card) inset;
+  caret-color: var(--text-main);
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.searchbar select,
+form select {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  padding: 10px 12px;
+  padding-right: 34px;
+  border-radius: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 13px) calc(50% - 4px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.searchbar select option,
+form select option {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+
 /* =========================
    ACCESIBILIDAD
    ========================= */
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -528,58 +580,11 @@ form select:focus {
   border: 0;
 }
 
-/* =========================
-   TÍTULOS
-   ========================= */
-.card h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-top: 0;
-}
-
-h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-/* =========================
-   FOOTER
-   ========================= */
-.footer {
-  border-top: 1px solid var(--border);
-  padding: 18px 0;
-}
-
-.footer__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.footer .muted {
-  font-size: 0.78rem;
-  opacity: 0.75;
-}
-
-.footer__links {
-  display: flex;
-  gap: 14px;
-}
-
-.footer__links a {
-  color: var(--text-muted);
-  text-decoration: none;
-}
-
-.footer__links a:hover {
-  color: var(--text-main);
-}
 
 /* =========================
    AUTOR
    ========================= */
+
 .autor-layout {
   display: flex;
   align-items: stretch;
@@ -603,9 +608,26 @@ h2 {
   border-radius: 16px;
 }
 
+
 /* =========================
-   DONACIONES
+   APOYOS
    ========================= */
+
+#apoyos {
+  scroll-margin-top: 90px;
+}
+
+#apoyos .container > div:first-child {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+#apoyos .card h2 {
+  margin-top: 0;
+}
+
 .donate {
   display: flex;
   gap: 14px;
@@ -616,10 +638,13 @@ h2 {
 }
 
 .donate .btn--icon {
+  width: 170px;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 16px;
   background-color: var(--accent-gold);
   color: #1b1506;
   border: none;
-  padding: 0 18px;
   border-radius: 14px;
   position: relative;
   display: inline-flex;
@@ -636,11 +661,12 @@ h2 {
 }
 
 .donate-icon {
-  width: 26px;
-  height: 26px;
+  width: 125px;
+  height: 30px;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+  filter: none;
+  image-rendering: auto;
 }
 
 .donate-icon--mp {
@@ -679,13 +705,11 @@ h2 {
   line-height: 1.6;
 }
 
-#donaciones {
-  scroll-margin-top: 90px;
-}
 
 /* =========================
    NOVEDADES
    ========================= */
+
 .newsbar {
   margin-top: 14px;
   padding: 10px 12px;
@@ -695,6 +719,7 @@ h2 {
   display: flex;
   align-items: center;
   gap: 12px;
+  overflow: hidden;
 }
 
 .newsbar__tag {
@@ -707,12 +732,14 @@ h2 {
   background: rgba(201, 162, 39, 0.08);
   font-weight: 700;
   white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .newsbar__text {
   flex: 1;
   overflow: hidden;
   white-space: nowrap;
+  color: var(--text-main);
 }
 
 .newsbar__msg {
@@ -725,22 +752,25 @@ h2 {
   will-change: transform;
 }
 
+#newsTicker.is-scrolling {
+  animation: newsTickerScroll 14s linear infinite;
+}
+
 @keyframes newsTickerScroll {
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(-100%);
   }
 }
 
-#newsTicker.is-scrolling {
-  animation: newsTickerScroll 14s linear infinite;
-}
 
 /* =========================
    EPISODIO DESTACADO
    ========================= */
+
 .latest-title {
   display: flex;
   align-items: center;
@@ -781,9 +811,11 @@ h2 {
   text-decoration: underline;
 }
 
+
 /* =========================
    LECTURAS RECOMENDADAS
    ========================= */
+
 .reading-box {
   margin-top: 20px;
   flex: 1;
@@ -890,9 +922,11 @@ h2 {
   color: rgba(255, 255, 255, 0.35);
 }
 
+
 /* =========================
    RESULTADOS DEL BUSCADOR
    ========================= */
+
 .cards3 {
   margin-top: 18px;
   display: grid;
@@ -907,19 +941,10 @@ h2 {
   padding: 18px;
 }
 
-/* =========================
-   DONACIONES - CAJA IZQUIERDA
-   ========================= */
-#donaciones .container > div:first-child {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 18px;
-}
 
-#donaciones .card h2 {
-  margin-top: 0;
-}
+/* =========================
+   PARTICIPACIÓN
+   ========================= */
 
 .participa-card {
   padding: 28px 28px 32px;
@@ -937,19 +962,11 @@ h2 {
   margin: 22px 0 18px;
 }
 
-.card h3 + .muted {
-  margin-top: 0;
-}
-
-.sep {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 20px 0;
-}
 
 /* =========================
    BOLETINES
    ========================= */
+
 .boletin-card {
   padding: 16px 18px;
 }
@@ -990,119 +1007,111 @@ h2 {
   color: #b8b8b8;
 }
 
-.boletin-side .btn {
-  min-width: 140px;
-}
-
-/* =========================
-   RESPONSIVE
-   ========================= */
-@media (max-width: 980px) {
-  .lista-libros {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) {
-  .hero__inner {
-    grid-template-columns: 1fr;
-  }
-
-  .grid2 {
-    grid-template-columns: 1fr;
-  }
-
-  .autor-layout {
-    flex-direction: column;
-  }
-
-  .autor-imagen {
-    max-height: 360px;
-  }
-
-  .autor-imagen img {
-    height: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .logo-text-wrap {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .logo-float {
-    flex-shrink: 0;
-    max-width: 140px;
-    height: auto;
-  }
-
-  .cta,
-  .platforms {
-    justify-content: center;
-  }
-
-  .libro-card {
-    padding: 10px 12px;
-    gap: 10px;
-    border-radius: 14px;
-  }
-
-  .libro-icono {
-    width: 34px;
-    height: 34px;
-    flex-basis: 34px;
-    font-size: 1rem;
-    border-radius: 10px;
-  }
-
-  .libro-titulo {
-    font-size: 0.95rem;
-  }
-
-  .libro-autor,
-  .libro-tema {
-    font-size: 0.85rem;
-  }
-
-  .boletin-layout {
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .boletin-side {
-    align-items: flex-start;
-    white-space: normal;
-  }
-}
-
-@media (max-width: 640px) {
-  .lista-libros {
-    grid-template-columns: 1fr;
-  }
-}
-
 .boletin-side .cta {
   margin: 0;
 }
 
 .boletin-side .btn {
   min-width: 100px;
-  height: 30px;
-  min-height: 30px;
+  height: 34px;
+  min-height: 34px;
   padding: 0 18px;
-  font-size: 0.9rem;
-  border-radius: 12px;
+  font-size: 0.95rem;
+  border-radius: 14px;
 }
 
-.boletin-side .btn {
-  min-width: 100px;
-}
 
 /* =========================
    EPISODIOS
    ========================= */
+
+.episode-subscribe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 22px 0 24px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(201, 162, 39, 0.06);
+}
+
+.episode-subscribe > div {
+  flex: 1 1 auto;
+}
+
+.episode-subscribe strong {
+  display: block;
+  color: var(--text-main);
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.episode-subscribe p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.episode-subscribe-form {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.episode-subscribe-form input {
+  width: 320px;
+  height: 42px;
+  min-height: 42px;
+  margin-top: 0;
+  padding: 0 12px;
+  line-height: 42px;
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  background-color: var(--bg-card);
+}
+
+.episode-subscribe-form input:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.18);
+}
+
+.episode-subscribe-form .btn {
+  width: auto;
+  height: 42px;
+  min-height: 42px;
+  padding: 0 22px;
+  background-color: var(--accent-gold);
+  color: #1b1506;
+  border: 1px solid var(--accent-gold);
+  white-space: nowrap;
+}
+
+.episode-subscribe-form .btn:hover,
+.episode-subscribe-form .btn:focus-visible {
+  background-color: #d8b52f;
+  color: #1b1506;
+  border-color: #d8b52f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(201, 162, 39, 0.35);
+}
+
+.episode-search-intro {
+  margin: 24px 0 10px;
+}
+
+.episode-search-intro h2 {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+}
+
+.episode-search-intro p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
 #episodeResults {
   margin-top: 14px;
 }
@@ -1154,7 +1163,178 @@ h2 {
   margin-bottom: 0;
 }
 
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 18px 0;
+}
+
+.footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.footer .muted {
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+.footer__links {
+  display: flex;
+  gap: 14px;
+}
+
+.footer__links a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.footer__links a:hover {
+  color: var(--text-main);
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 980px) {
+  .lista-libros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .episode-subscribe {
+    align-items: flex-start;
+  }
+
+  .episode-subscribe-form input {
+    width: 280px;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero__inner,
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .autor-layout {
+    flex-direction: column;
+  }
+
+  .autor-imagen {
+    max-height: 360px;
+  }
+
+  .autor-imagen img {
+    height: auto;
+  }
+
+  .episode-subscribe {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .episode-subscribe-form {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .episode-subscribe-form input {
+    width: min(420px, 100%);
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-text-wrap {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo-float {
+    flex-shrink: 0;
+    max-width: 140px;
+    height: auto;
+  }
+
+  .cta,
+  .platforms {
+    justify-content: center;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .platforms--inline {
+    padding-left: 0;
+    border-left: none;
+    justify-content: center;
+  }
+
+  .libro-card {
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 14px;
+  }
+
+  .libro-icono {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .libro-titulo {
+    font-size: 0.95rem;
+  }
+
+  .libro-autor,
+  .libro-tema {
+    font-size: 0.85rem;
+  }
+
+  .boletin-layout {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .boletin-side {
+    align-items: flex-start;
+    white-space: normal;
+  }
+}
+
 @media (max-width: 640px) {
+  .lista-libros {
+    grid-template-columns: 1fr;
+  }
+
+  .hero .cta .btn {
+    min-width: 100%;
+    white-space: normal;
+  }
+
+  .episode-subscribe-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .episode-subscribe-form input,
+  .episode-subscribe-form .btn {
+    width: 100%;
+  }
+
   #episodeResults .episode-card {
     padding: 7px 8px;
   }

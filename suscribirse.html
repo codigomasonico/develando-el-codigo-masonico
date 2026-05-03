@@ -20,7 +20,7 @@
         <a href="index.html">Inicio</a>
         <a href="episodios.html">Episodios</a>
 				<a href="boletines.html">Boletines</a>
-        <a href="index.html#donaciones">Donaciones</a>
+        <a href="index.html#apoyos">Apoyar</a>
         <a href="comunidad.html">Comunidad</a>
       </nav>
     </div>
@@ -49,7 +49,7 @@
 
         <div class="card">
           <h2>Formulario de suscripción</h2>
-          <p class="muted">Completa tu email y, si quieres, tu nombre.</p>
+          <p class="muted">Completa tu nombre y email para suscribirte.</p>
 
           <form
             name="newsletter"
@@ -64,10 +64,10 @@
               <label>No llenar: <input name="bot-field" /></label>
             </div>
 
-            <label>
-              Nombre (opcional)
-              <input name="nombre" type="text" placeholder="Tu nombre" />
-            </label>
+						<label>
+							Nombre
+							<input name="nombre" type="text" placeholder="Tu nombre" required />
+						</label>
 
             <label>
               Email
@@ -94,7 +94,7 @@
               </select>
             </label>
 
-            <button class="btn" type="submit">Suscribirme</button>
+            <button class="btn btn-primary" type="submit">Suscribirme</button>
             <p class="tiny muted">Al enviar, aceptas recibir correos del podcast. Puedes darte de baja cuando quieras.</p>
           </form>
         </div>

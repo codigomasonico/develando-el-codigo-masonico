@@ -17,7 +17,7 @@
         <a href="index.html">Inicio</a>
         <a class="active" href="episodios.html">Episodios</a>
 				<a href="boletines.html">Boletines</a>
-        <a href="index.html#donaciones">Donaciones</a>
+        <a href="index.html#apoyos">Apoyar</a>
         <a href="comunidad.html">Comunidad</a>
       </nav>
     </div>
@@ -25,10 +25,56 @@
 
   <main class="section">
     <div class="container">
-      <h1>Episodios</h1>
-      <p class="muted">Explora, busca y filtra por categoría. Reemplaza los links de reproducción por los tuyos.</p>
+			<h1>Episodios</h1>
 
-      <div class="searchbar">
+			<p class="muted">
+				Explora los episodios disponibles y encuentra el tema que más te interese.
+			</p>
+
+			<div class="episode-subscribe">
+				<div>
+					<strong>¿Quieres enterarte cuando salga un nuevo episodio?</strong>
+					<p>
+						Deja tu correo y recibirás un aviso cuando se publique un nuevo episodio.
+					</p>
+				</div>
+
+				<form
+					name="avisos-episodios"
+					method="POST"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+					action="aviso-episodio-enviado.html"
+					class="episode-subscribe-form"
+				>
+					<input type="hidden" name="form-name" value="avisos-episodios" />
+
+					<div hidden aria-hidden="true">
+						<label>No llenar: <input name="bot-field" /></label>
+					</div>
+
+					<input
+						name="email"
+						type="email"
+						placeholder="tu@email.com"
+						required
+					/>
+
+					<button class="btn btn-primary" type="submit">
+						Avisarme
+					</button>
+				</form>
+			</div>
+
+			<div class="episode-search-intro">
+				<h2>Buscar episodios</h2>
+				<p>
+					Usa el buscador para encontrar episodios por título, tema o palabra clave.
+					También puedes filtrar por categoría para explorar contenidos relacionados.
+				</p>
+			</div>
+
+			<div class="searchbar">
         <input id="searchInput" type="search" placeholder="Buscar episodio…" />
         <select id="categorySelect">
           <option value="">Todas las categorías</option>
