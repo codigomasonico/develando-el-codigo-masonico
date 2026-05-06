@@ -102,5 +102,18 @@
     "invitado": "",
     "spotify": "https://open.spotify.com/episode/5QAGeb0L1mz2WHbQG3Qx9D?si=fO9ztuTST7aBIs0ZRsUVcw",
     "youtube": ""
+  },
+	{
+    "id": "ep-009",
+    "numero": 9,
+    "titulo": "Los Pilares del Templo",
+    "categoria": "Simbolismo",
+    "fecha": "6 de mayo de 2026",
+    "duracion": "43:21",
+    "descripcion": "No basta saber qué es lo correcto. También hace falta Fuerza para sostenerlo cuando cuesta, Belleza para no destruir lo que se construye, y Sabiduría para recordar hacia dónde vale la pena levantarlo.",
+    "imagen": "assets/img/episodios/ep-009.jpg",
+    "invitado": "",
+    "spotify": "https://open.spotify.com/episode/65hoxTwTD3PHAIegUetAp1?si=mhtRyBHiSaaXtPLHwO3XxA",
+    "youtube": ""
   }
 ]
