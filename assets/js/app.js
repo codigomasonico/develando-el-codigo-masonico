@@ -32,10 +32,10 @@ function safeSpotifyId(url) {
 
 async function loadEpisodes() {
   try {
-    const res = await fetch("assets/data/episodes.json");
+    const res = await fetch("assets/data/episodios.json");
 
     if (!res.ok) {
-      throw new Error("No se pudo cargar episodes.json");
+      throw new Error("No se pudo cargar episodios.json");
     }
 
     allEpisodes = await res.json();
@@ -314,21 +314,23 @@ function renderBoletines(lista) {
 
     const fechaMostrada = formatBoletinDate(b.fecha);
 
-    card.innerHTML = `
-      <div class="boletin-layout">
-        <div class="boletin-main">
-          <h3>Boletín ${b.numero}: ${b.titulo}</h3>
-          <p class="muted">${b.descripcion}</p>
-        </div>
+		card.className = "responde-card boletin-card";
 
-        <div class="boletin-side">
-          <span class="boletin-fecha">${fechaMostrada}</span>
-          <div class="cta">
-            <a href="${b.archivo}" class="btn" target="_blank" rel="noopener noreferrer">Descargar</a>
-          </div>
-        </div>
-      </div>
-    `;
+		card.innerHTML = `
+			<div class="responde-card__content">
+				<p class="responde-meta-line">
+					<span>Boletín ${b.numero}</span>
+					<span aria-hidden="true">|</span>
+					<span>${fechaMostrada}</span>
+				</p>
+
+				<h2>${b.titulo}</h2>
+			</div>
+
+			<a href="${b.archivo}" class="btn btn-primary responde-link" target="_blank" rel="noopener noreferrer">
+				Descargar
+			</a>
+		`;
 
     container.appendChild(card);
   });
