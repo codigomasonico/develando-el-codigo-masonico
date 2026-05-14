@@ -184,8 +184,7 @@ img {
 
 .btn-secondary .btn-icon-img,
 .btn--ghost .btn-icon-img {
-  filter: brightness(0); 
-	saturate(100%) invert(70%) sepia(57%) saturate(532%) hue-rotate(5deg) brightness(92%) contrast(86%);
+  filter: brightness(0) saturate(100%) invert(70%) sepia(57%) saturate(532%) hue-rotate(5deg) brightness(92%) contrast(86%);
 }
 
 .btn-secondary:hover .btn-icon-img,
