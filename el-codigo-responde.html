@@ -1,30 +1,22 @@
 <!doctype html>
 <html lang="es">
-
 <head>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="index, follow">
 
   <title>El Código Responde | Develando el Código Masónico</title>
 
-  <meta
-    name="description"
-    content="Preguntas reales y respuestas honestas sobre la Masonería, la iniciación, la búsqueda interior y las inquietudes que aparecen antes y después de tocar la puerta."
-  >
+  <meta name="description" content="Preguntas reales y respuestas honestas sobre la Masonería, la iniciación, la búsqueda interior y las inquietudes que aparecen antes y después de tocar la puerta.">
 
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
-
 </head>
 
 <body>
 
   <header class="topbar">
-
     <div class="container topbar__inner">
-
       <a class="brand" href="index.html" aria-label="Ir al inicio">
         <span class="brand__mark">⟡</span>
         <span class="brand__name">Develando el Código Masónico</span>
@@ -38,42 +30,26 @@
         <a href="index.html#apoyos">Apoya el proyecto</a>
         <a href="comunidad.html">Comunidad</a>
       </nav>
-
     </div>
-
   </header>
-
 
   <main class="section">
 
-    <!-- HERO -->
-
     <section>
-
       <div class="container">
+        <div class="hero__copy">
+          <h1>El Código Responde</h1>
 
-				<div class="hero__copy">					
-
-					<h1>El Código Responde</h1>
-
-					<p class="lead">
-						 Un espacio para responder preguntas reales de oyentes y lectores sobre la Masonería, sus símbolos, su camino interior y su relación con la vida cotidiana. Algunas nacen de la curiosidad, otras de la duda o de experiencias personales. Esta sección no busca dar respuestas definitivas ni verdades absolutas, sino abrir una conversación clara, honesta y accesible.
-					</p>
-				</div>
-
+          <p class="lead">
+            Un espacio para responder preguntas reales de oyentes y lectores sobre la Masonería, sus símbolos, su camino interior y su relación con la vida cotidiana. Algunas nacen de la curiosidad, otras de la duda o de experiencias personales. Esta sección no busca dar respuestas definitivas ni verdades absolutas, sino abrir una conversación clara, honesta y accesible.
+          </p>
+        </div>
       </div>
-
     </section>
 
-
-    <!-- BUSCADOR -->
-
     <section class="section responde-search-section">
-
       <div class="container">
-
         <div class="responde-toolbar searchbar" aria-label="Buscar preguntas">
-
           <input
             id="qaSearch"
             type="search"
@@ -84,7 +60,6 @@
           <select id="qaFilter" aria-label="Filtrar por categoría">
             <option value="todas">Todas</option>
           </select>
-
         </div>
 
         <div class="episodes-divider" aria-hidden="true">
@@ -96,78 +71,112 @@
         <div id="emptyState" class="card responde-empty">
           No encontré preguntas con ese criterio. Prueba con otra palabra o categoría.
         </div>
-
       </div>
-
     </section>
 
-
-    <!-- ENVIAR PREGUNTA -->
-
     <section class="section">
-
       <div class="container">
-
         <div class="card responde-submit" aria-label="Enviar pregunta">
-
           <div>
-
             <h2>¿Tienes una pregunta?</h2>
 
             <p class="muted">
               Puedes enviarla para una futura respuesta. No hace falta que esté perfectamente formulada. A veces las mejores preguntas empiezan como una inquietud sencilla.
             </p>
-
           </div>
 
-          <a class="btn btn-primary" href="comunidad.html#proponer">
+          <button class="btn btn-primary" id="openQuestionForm" type="button">
             Enviar pregunta
-          </a>
-
+          </button>
         </div>
-
       </div>
-
     </section>
 
   </main>
 
-
-  <!-- MODAL DE RESPUESTA -->
-
   <div id="answerModal" class="responde-modal" aria-hidden="true">
-
-    <div class="responde-modal__overlay" data-close-modal></div>
+    <div class="responde-modal__overlay" data-close-answer-modal></div>
 
     <div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-
-      <button class="responde-modal__close" type="button" aria-label="Cerrar respuesta" data-close-modal>
+      <button class="responde-modal__close" type="button" aria-label="Cerrar respuesta" data-close-answer-modal>
         ×
       </button>
 
       <div id="modalCategory" class="responde-modal__tag"></div>
-
       <h2 id="modalTitle"></h2>
-
       <div id="modalBody" class="responde-modal__body"></div>
-
     </div>
-
   </div>
 
+  <div id="questionModal" class="responde-modal" aria-hidden="true">
+    <div class="responde-modal__overlay" data-close-question-modal></div>
+
+    <div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+      <button class="responde-modal__close" type="button" aria-label="Cerrar formulario" data-close-question-modal>
+        ×
+      </button>
+
+      <div class="responde-modal__tag">Enviar pregunta</div>
+
+      <h2 id="questionModalTitle">¿Tienes una pregunta?</h2>
+
+      <form
+        name="preguntas"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        action="/gracias.html"
+        class="question-form"
+      >
+        <input type="hidden" name="form-name" value="preguntas">
+
+        <p hidden>
+          <label>No llenar: <input name="bot-field"></label>
+        </p>
+
+        <label>
+          Nombre
+          <input type="text" name="nombre" required>
+        </label>
+
+        <label>
+          Email
+          <input type="email" name="email" required>
+        </label>
+
+        <label>
+          Tema
+          <input type="text" name="tema" required>
+        </label>
+
+        <label>
+          Tipo
+          <select name="tipo" required>
+            <option value="">Selecciona</option>
+            <option value="Pregunta">Pregunta</option>
+            <option value="Propuesta">Propuesta</option>
+          </select>
+        </label>
+
+        <label>
+          Detalle
+          <textarea name="detalle" rows="6" required></textarea>
+        </label>
+
+        <button class="btn btn-primary" type="submit">
+          Enviar pregunta
+        </button>
+      </form>
+    </div>
+  </div>
 
   <footer class="footer">
-
     <div class="container footer__inner">
-
       <p class="muted">
         © <span id="year"></span> Develando el Código Masónico - Todos los derechos reservados.
       </p>
-
     </div>
-
   </footer>
-
 
   <script>
     const DATA_URL = 'assets/data/respuestas.json';
@@ -176,10 +185,15 @@
     const filterSelect = document.getElementById('qaFilter');
     const qaGrid = document.getElementById('qaGrid');
     const emptyState = document.getElementById('emptyState');
-    const modal = document.getElementById('answerModal');
+
+    const answerModal = document.getElementById('answerModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalCategory = document.getElementById('modalCategory');
     const modalBody = document.getElementById('modalBody');
+
+    const questionModal = document.getElementById('questionModal');
+    const openQuestionForm = document.getElementById('openQuestionForm');
+
     const year = document.getElementById('year');
 
     let respuestas = [];
@@ -192,7 +206,7 @@
       return String(value || '')
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '');
+        .replace(/[\u0300-\u036f]/g, '');
     }
 
     function escapeHTML(value) {
@@ -215,6 +229,8 @@
     }
 
     function buildCategoryOptions(items) {
+      if (!filterSelect) return;
+
       const categories = new Map();
 
       items.forEach((item) => {
@@ -231,10 +247,13 @@
     }
 
     function renderCards(items) {
+      if (!qaGrid) return;
+
       qaGrid.innerHTML = '';
 
       items.forEach((item) => {
         const article = document.createElement('article');
+
         article.className = 'card responde-card';
         article.dataset.category = item.categoriaId || '';
         article.dataset.text = getSearchText(item);
@@ -247,10 +266,10 @@
               <span>${escapeHTML(item.duracion ? item.duracion.replace('Lectura de', 'Tiempo de lectura') : 'Tiempo de lectura breve')}</span>
             </p>
 
-            <h2>Pregunta: ${escapeHTML(item.titulo)}</h2>
+            <h2>Pregunta: ${escapeHTML(item.titulo || '')}</h2>
           </div>
 
-          <button class="btn btn-primary responde-link" type="button" data-answer-id="${escapeHTML(item.id)}">
+          <button class="btn btn-primary responde-link" type="button" data-answer-id="${escapeHTML(item.id || '')}">
             Ver respuesta
           </button>
         `;
@@ -259,67 +278,126 @@
       });
     }
 
+    function addTooltips(text) {
+      return escapeHTML(text).replace(
+        /\baplomaciones\b/gi,
+        '<span class="responde-tooltip" tabindex="0">aplomaciones<span class="responde-tooltip__text">Entrevistas e investigaciones previas al ingreso a la Masonería.</span></span>'
+      );
+    }
+
     function openAnswerModal(item) {
+      if (!item || !answerModal) return;
+
       const paragraphs = Array.isArray(item.respuesta)
         ? item.respuesta
         : [item.respuesta];
 
       modalCategory.textContent = `Tema: ${item.categoria || 'Pregunta'} | ${item.duracion ? item.duracion.replace('Lectura de', 'Tiempo de lectura') : 'Tiempo de lectura breve'}`;
       modalTitle.textContent = item.titulo || '';
-			function addTooltips(text) {
-				return escapeHTML(text).replace(
-					/\baplomaciones\b/gi,
-					'<span class="responde-tooltip" tabindex="0">aplomaciones<span class="responde-tooltip__text">Entrevistas e investigaciones previas al ingreso a la Masonería.</span></span>'
-				);
-			}
 
-			modalBody.innerHTML = `
-				<div class="responde-modal__question">
-					<h3>Pregunta</h3>
-					<p>${addTooltips(item.pregunta)}</p>
-				</div>
+      modalBody.innerHTML = `
+        <div class="responde-modal__question">
+          <h3>Pregunta</h3>
+          <p>${addTooltips(item.pregunta || '')}</p>
+        </div>
 
-				<div class="responde-modal__answer">
-					<h3>Respuesta</h3>
-					${paragraphs.map((paragraph) => {
-						return `<p>${addTooltips(paragraph)}</p>`;
-					}).join('')}
-				</div>
-			`;
+        <div class="responde-modal__answer">
+          <h3>Respuesta</h3>
+          ${paragraphs.map((paragraph) => `<p>${addTooltips(paragraph || '')}</p>`).join('')}
+        </div>
+      `;
+
+      answerModal.classList.add('is-open');
+      answerModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
     }
 
     function closeAnswerModal() {
-      modal.classList.remove('is-open');
-      modal.setAttribute('aria-hidden', 'true');
+      if (!answerModal) return;
+
+      answerModal.classList.remove('is-open');
+      answerModal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('modal-open');
     }
 
-    function bindAnswerButtons() {
-      qaGrid.addEventListener('click', (event) => {
-        const button = event.target.closest('[data-answer-id]');
-        if (!button) return;
+    function openQuestionModal() {
+      if (!questionModal) return;
 
-        const answer = respuestas.find((item) => item.id === button.dataset.answerId);
-        if (answer) openAnswerModal(answer);
-      });
+      questionModal.classList.add('is-open');
+      questionModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
 
-      modal.addEventListener('click', (event) => {
-        if (event.target.matches('[data-close-modal]')) {
-          closeAnswerModal();
-        }
-      });
+    function closeQuestionModal() {
+      if (!questionModal) return;
+
+      questionModal.classList.remove('is-open');
+      questionModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    function bindEvents() {
+      if (qaGrid) {
+        qaGrid.addEventListener('click', (event) => {
+          const button = event.target.closest('[data-answer-id]');
+          if (!button) return;
+
+          const answer = respuestas.find((item) => item.id === button.dataset.answerId);
+
+          if (answer) {
+            openAnswerModal(answer);
+          }
+        });
+      }
+
+      if (answerModal) {
+        answerModal.addEventListener('click', (event) => {
+          if (event.target.matches('[data-close-answer-modal]')) {
+            closeAnswerModal();
+          }
+        });
+      }
+
+      if (openQuestionForm) {
+        openQuestionForm.addEventListener('click', openQuestionModal);
+      }
+
+      if (questionModal) {
+        questionModal.addEventListener('click', (event) => {
+          if (event.target.matches('[data-close-question-modal]')) {
+            closeQuestionModal();
+          }
+        });
+      }
 
       document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+        if (event.key !== 'Escape') return;
+
+        if (answerModal && answerModal.classList.contains('is-open')) {
           closeAnswerModal();
         }
+
+        if (questionModal && questionModal.classList.contains('is-open')) {
+          closeQuestionModal();
+        }
       });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', filterCards);
+      }
+
+      if (filterSelect) {
+        filterSelect.addEventListener('change', filterCards);
+      }
     }
 
     function filterCards() {
+      if (!searchInput || !filterSelect || !emptyState) return;
+
       const query = normalizeText(searchInput.value.trim());
       const category = filterSelect.value;
       const cards = Array.from(document.querySelectorAll('.responde-card'));
+
       let visibleCount = 0;
 
       cards.forEach((card) => {
@@ -328,7 +406,10 @@
         const shouldShow = matchesQuery && matchesCategory;
 
         card.style.display = shouldShow ? 'flex' : 'none';
-        if (shouldShow) visibleCount += 1;
+
+        if (shouldShow) {
+          visibleCount += 1;
+        }
       });
 
       emptyState.style.display = visibleCount ? 'none' : 'block';
@@ -351,18 +432,22 @@
         renderCards(respuestas);
         buildCategoryOptions(respuestas);
         filterCards();
+
       } catch (error) {
         console.error(error);
-        qaGrid.innerHTML = '';
-        emptyState.style.display = 'block';
-        emptyState.textContent = 'No se pudieron cargar las preguntas. Revisa la ruta assets/data/respuestas.json.';
+
+        if (qaGrid) {
+          qaGrid.innerHTML = '';
+        }
+
+        if (emptyState) {
+          emptyState.style.display = 'block';
+          emptyState.textContent = 'No se pudieron cargar las preguntas. Revisa la ruta assets/data/respuestas.json.';
+        }
       }
     }
 
-    searchInput.addEventListener('input', filterCards);
-    filterSelect.addEventListener('change', filterCards);
-    bindAnswerButtons();
-
+    bindEvents();
     loadRespuestas();
   </script>
 
