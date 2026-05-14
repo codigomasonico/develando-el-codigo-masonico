@@ -34,7 +34,13 @@
           <h2>Enviar una pregunta o propuesta</h2>
 
           <!-- Opción A: Netlify Forms -->
-          <form name="propuestas" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="propuesta-enviada.html">
+					<form
+						id="proposalForm"
+						name="propuestas"
+						method="POST"
+						data-netlify="true"
+						netlify-honeypot="bot-field"
+					>
 
             <input type="hidden" name="form-name" value="propuestas" />
 
@@ -80,11 +86,17 @@
           </form>
         </div>
 
-        <div class="card card--soft">
+        <div id="contacto" class="card card--soft">
           <h2>Contacto</h2>
 
           <!-- Opción A: Netlify Forms -->
-          <form name="contacto" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="mensaje-enviado.html">
+          <form
+						id="contactForm"
+						name="contacto"
+						method="POST"
+						data-netlify="true"
+						netlify-honeypot="bot-field"
+					>
 
             <input type="hidden" name="form-name" value="contacto" />
             <div hidden aria-hidden="true">
@@ -187,12 +199,70 @@
     </div>
   </main>
 
+	<div id="proposalSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-proposal-modal></div>
+
+		<div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="proposalSuccessTitle">
+
+			<button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-proposal-modal>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Comunidad</div>
+
+			<h2 id="proposalSuccessTitle">Propuesta enviada</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Gracias por compartir tu propuesta.<br>
+					La revisaremos con atención y, si encaja con el enfoque del proyecto, la consideraremos para una futura respuesta o episodio.
+				</p>
+			</div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-proposal-modal>
+					Cerrar
+				</button>
+			</div>
+
+		</div>
+	</div>
+
+	<div id="contactSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-contact-modal></div>
+
+		<div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="contactSuccessTitle">
+
+			<button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-contact-modal>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Contacto</div>
+
+			<h2 id="contactSuccessTitle">Mensaje enviado</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Tu mensaje fue enviado correctamente.<br>
+					Te responderemos a la brevedad posible. Muchas gracias. 
+				</p>
+			</div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-contact-modal>
+					Cerrar
+				</button>
+			</div>
+
+		</div>
+	</div>
+
   <footer class="footer">
     <div class="container footer__inner">
       <p class="muted">© <span id="year"></span> Develando el Código Masónico - Todos los derechos reservados.</p>
     </div>
   </footer>
 
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js" defer></script>
 </body>
 </html>

@@ -64,7 +64,7 @@
             method="POST"
             data-netlify="true"
             netlify-honeypot="bot-field"
-            action="unsubscribe-episodios-confirmado.html"
+            action="unsubscribe-confirmado.html"
           >
             <input type="hidden" name="form-name" value="unsubscribe-episodios" />
 
@@ -103,7 +103,7 @@
             </label>
 
             <div class="cta">
-              <button class="btn" type="submit">Solicitar baja</button>
+              <button class="btn btn-primary" type="submit">Solicitar baja</button>
               <a class="btn btn--ghost" href="episodios.html">Ver episodios</a>
             </div>
 
@@ -122,9 +122,6 @@
       <p class="muted">© <span id="year"></span> Develando el Código Masónico - Todos los derechos reservados.</p>
     </div>
   </footer>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  <script src="assets/js/year.js" defer></script>
 </body>
 </html>

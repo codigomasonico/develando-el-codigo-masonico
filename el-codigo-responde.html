@@ -39,7 +39,6 @@
       <div class="container">
         <div class="hero__copy">
           <h1>El Código Responde</h1>
-
           <p class="lead">
             Un espacio para responder preguntas reales de oyentes y lectores sobre la Masonería, sus símbolos, su camino interior y su relación con la vida cotidiana. Algunas nacen de la curiosidad, otras de la duda o de experiencias personales. Esta sección no busca dar respuestas definitivas ni verdades absolutas, sino abrir una conversación clara, honesta y accesible.
           </p>
@@ -50,12 +49,7 @@
     <section class="section responde-search-section">
       <div class="container">
         <div class="responde-toolbar searchbar" aria-label="Buscar preguntas">
-          <input
-            id="qaSearch"
-            type="search"
-            placeholder="Buscar por tema, palabra o inquietud..."
-            aria-label="Buscar preguntas"
-          >
+          <input id="qaSearch" type="search" placeholder="Buscar por tema, palabra o inquietud..." aria-label="Buscar preguntas">
 
           <select id="qaFilter" aria-label="Filtrar por categoría">
             <option value="todas">Todas</option>
@@ -79,7 +73,6 @@
         <div class="card responde-submit" aria-label="Enviar pregunta">
           <div>
             <h2>¿Tienes una pregunta?</h2>
-
             <p class="muted">
               Puedes enviarla para una futura respuesta. No hace falta que esté perfectamente formulada. A veces las mejores preguntas empiezan como una inquietud sencilla.
             </p>
@@ -94,6 +87,7 @@
 
   </main>
 
+  <!-- MODAL DE RESPUESTA -->
   <div id="answerModal" class="responde-modal" aria-hidden="true">
     <div class="responde-modal__overlay" data-close-answer-modal></div>
 
@@ -108,6 +102,7 @@
     </div>
   </div>
 
+  <!-- MODAL DE PREGUNTA -->
   <div id="questionModal" class="responde-modal" aria-hidden="true">
     <div class="responde-modal__overlay" data-close-question-modal></div>
 
@@ -120,14 +115,7 @@
 
       <h2 id="questionModalTitle">¿Tienes una pregunta?</h2>
 
-      <form
-        name="preguntas"
-        method="POST"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
-        action="/gracias.html"
-        class="question-form"
-      >
+      <form id="questionForm" name="preguntas" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="question-form">
         <input type="hidden" name="form-name" value="preguntas">
 
         <p hidden>
@@ -150,16 +138,7 @@
         </label>
 
         <label>
-          Tipo
-          <select name="tipo" required>
-            <option value="">Selecciona</option>
-            <option value="Pregunta">Pregunta</option>
-            <option value="Propuesta">Propuesta</option>
-          </select>
-        </label>
-
-        <label>
-          Detalle
+          Tu pregunta
           <textarea name="detalle" rows="6" required></textarea>
         </label>
 
@@ -167,6 +146,34 @@
           Enviar pregunta
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE ÉXITO -->
+  <div id="successModal" class="responde-modal" aria-hidden="true">
+    <div class="responde-modal__overlay" data-close-success-modal></div>
+
+    <div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="successModalTitle">
+      <button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-success-modal>
+        ×
+      </button>
+
+      <div class="responde-modal__tag">El Código Responde</div>
+
+      <h2 id="successModalTitle">Pregunta recibida</h2>
+
+      <div class="responde-modal__body">
+				<p>
+					Tu pregunta fue recibida correctamente.<br>
+					Gracias por tomarte el tiempo de escribir y compartir tu inquietud. Te responderemos a la brevedad posible.
+				</p>
+      </div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-success-modal>
+					Cerrar
+				</button>
+			</div>
     </div>
   </div>
 
@@ -178,278 +185,7 @@
     </div>
   </footer>
 
-  <script>
-    const DATA_URL = 'assets/data/respuestas.json';
-
-    const searchInput = document.getElementById('qaSearch');
-    const filterSelect = document.getElementById('qaFilter');
-    const qaGrid = document.getElementById('qaGrid');
-    const emptyState = document.getElementById('emptyState');
-
-    const answerModal = document.getElementById('answerModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalCategory = document.getElementById('modalCategory');
-    const modalBody = document.getElementById('modalBody');
-
-    const questionModal = document.getElementById('questionModal');
-    const openQuestionForm = document.getElementById('openQuestionForm');
-
-    const year = document.getElementById('year');
-
-    let respuestas = [];
-
-    if (year) {
-      year.textContent = new Date().getFullYear();
-    }
-
-    function normalizeText(value) {
-      return String(value || '')
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-    }
-
-    function escapeHTML(value) {
-      return String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function getSearchText(item) {
-      return normalizeText([
-        item.titulo,
-        item.categoria,
-        item.pregunta,
-        item.resumen,
-        Array.isArray(item.tags) ? item.tags.join(' ') : ''
-      ].join(' '));
-    }
-
-    function buildCategoryOptions(items) {
-      if (!filterSelect) return;
-
-      const categories = new Map();
-
-      items.forEach((item) => {
-        if (!item.categoriaId || !item.categoria) return;
-        categories.set(item.categoriaId, item.categoria);
-      });
-
-      categories.forEach((label, value) => {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = label;
-        filterSelect.appendChild(option);
-      });
-    }
-
-    function renderCards(items) {
-      if (!qaGrid) return;
-
-      qaGrid.innerHTML = '';
-
-      items.forEach((item) => {
-        const article = document.createElement('article');
-
-        article.className = 'card responde-card';
-        article.dataset.category = item.categoriaId || '';
-        article.dataset.text = getSearchText(item);
-
-        article.innerHTML = `
-          <div class="responde-card__content">
-            <p class="responde-meta-line">
-              <span>Tema: ${escapeHTML(item.categoria || 'Pregunta')}</span>
-              <span aria-hidden="true">|</span>
-              <span>${escapeHTML(item.duracion ? item.duracion.replace('Lectura de', 'Tiempo de lectura') : 'Tiempo de lectura breve')}</span>
-            </p>
-
-            <h2>Pregunta: ${escapeHTML(item.titulo || '')}</h2>
-          </div>
-
-          <button class="btn btn-primary responde-link" type="button" data-answer-id="${escapeHTML(item.id || '')}">
-            Ver respuesta
-          </button>
-        `;
-
-        qaGrid.appendChild(article);
-      });
-    }
-
-    function addTooltips(text) {
-      return escapeHTML(text).replace(
-        /\baplomaciones\b/gi,
-        '<span class="responde-tooltip" tabindex="0">aplomaciones<span class="responde-tooltip__text">Entrevistas e investigaciones previas al ingreso a la Masonería.</span></span>'
-      );
-    }
-
-    function openAnswerModal(item) {
-      if (!item || !answerModal) return;
-
-      const paragraphs = Array.isArray(item.respuesta)
-        ? item.respuesta
-        : [item.respuesta];
-
-      modalCategory.textContent = `Tema: ${item.categoria || 'Pregunta'} | ${item.duracion ? item.duracion.replace('Lectura de', 'Tiempo de lectura') : 'Tiempo de lectura breve'}`;
-      modalTitle.textContent = item.titulo || '';
-
-      modalBody.innerHTML = `
-        <div class="responde-modal__question">
-          <h3>Pregunta</h3>
-          <p>${addTooltips(item.pregunta || '')}</p>
-        </div>
-
-        <div class="responde-modal__answer">
-          <h3>Respuesta</h3>
-          ${paragraphs.map((paragraph) => `<p>${addTooltips(paragraph || '')}</p>`).join('')}
-        </div>
-      `;
-
-      answerModal.classList.add('is-open');
-      answerModal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('modal-open');
-    }
-
-    function closeAnswerModal() {
-      if (!answerModal) return;
-
-      answerModal.classList.remove('is-open');
-      answerModal.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('modal-open');
-    }
-
-    function openQuestionModal() {
-      if (!questionModal) return;
-
-      questionModal.classList.add('is-open');
-      questionModal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('modal-open');
-    }
-
-    function closeQuestionModal() {
-      if (!questionModal) return;
-
-      questionModal.classList.remove('is-open');
-      questionModal.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('modal-open');
-    }
-
-    function bindEvents() {
-      if (qaGrid) {
-        qaGrid.addEventListener('click', (event) => {
-          const button = event.target.closest('[data-answer-id]');
-          if (!button) return;
-
-          const answer = respuestas.find((item) => item.id === button.dataset.answerId);
-
-          if (answer) {
-            openAnswerModal(answer);
-          }
-        });
-      }
-
-      if (answerModal) {
-        answerModal.addEventListener('click', (event) => {
-          if (event.target.matches('[data-close-answer-modal]')) {
-            closeAnswerModal();
-          }
-        });
-      }
-
-      if (openQuestionForm) {
-        openQuestionForm.addEventListener('click', openQuestionModal);
-      }
-
-      if (questionModal) {
-        questionModal.addEventListener('click', (event) => {
-          if (event.target.matches('[data-close-question-modal]')) {
-            closeQuestionModal();
-          }
-        });
-      }
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key !== 'Escape') return;
-
-        if (answerModal && answerModal.classList.contains('is-open')) {
-          closeAnswerModal();
-        }
-
-        if (questionModal && questionModal.classList.contains('is-open')) {
-          closeQuestionModal();
-        }
-      });
-
-      if (searchInput) {
-        searchInput.addEventListener('input', filterCards);
-      }
-
-      if (filterSelect) {
-        filterSelect.addEventListener('change', filterCards);
-      }
-    }
-
-    function filterCards() {
-      if (!searchInput || !filterSelect || !emptyState) return;
-
-      const query = normalizeText(searchInput.value.trim());
-      const category = filterSelect.value;
-      const cards = Array.from(document.querySelectorAll('.responde-card'));
-
-      let visibleCount = 0;
-
-      cards.forEach((card) => {
-        const matchesQuery = !query || card.dataset.text.includes(query);
-        const matchesCategory = category === 'todas' || card.dataset.category === category;
-        const shouldShow = matchesQuery && matchesCategory;
-
-        card.style.display = shouldShow ? 'flex' : 'none';
-
-        if (shouldShow) {
-          visibleCount += 1;
-        }
-      });
-
-      emptyState.style.display = visibleCount ? 'none' : 'block';
-    }
-
-    async function loadRespuestas() {
-      try {
-        const response = await fetch(DATA_URL);
-
-        if (!response.ok) {
-          throw new Error(`No se pudo cargar ${DATA_URL}`);
-        }
-
-        const data = await response.json();
-
-        respuestas = Array.isArray(data)
-          ? data.filter((item) => item.publicado !== false)
-          : [];
-
-        renderCards(respuestas);
-        buildCategoryOptions(respuestas);
-        filterCards();
-
-      } catch (error) {
-        console.error(error);
-
-        if (qaGrid) {
-          qaGrid.innerHTML = '';
-        }
-
-        if (emptyState) {
-          emptyState.style.display = 'block';
-          emptyState.textContent = 'No se pudieron cargar las preguntas. Revisa la ruta assets/data/respuestas.json.';
-        }
-      }
-    }
-
-    bindEvents();
-    loadRespuestas();
-  </script>
+  <script src="assets/js/el-codigo-responde.js" defer></script>
 
 </body>
 </html>

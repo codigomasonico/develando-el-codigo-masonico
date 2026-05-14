@@ -44,9 +44,9 @@
 					name="avisos-episodios"
 					method="POST"
 					data-netlify="true"
-					netlify-honeypot="bot-field"
-					action="aviso-episodio-enviado.html"
+					netlify-honeypot="bot-field"				
 					class="episode-subscribe-form"
+					id="episodeAlertForm"
 				>
 					<input type="hidden" name="form-name" value="avisos-episodios" />
 
@@ -96,6 +96,33 @@
       <div id="episodeResults" class="cards3"></div>
     </div>
   </main>
+	
+	<div id="episodeAlertSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-episode-alert-modal></div>
+
+		<div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="episodeAlertSuccessTitle">
+			<button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-episode-alert-modal>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Aviso de episodios</div>
+
+			<h2 id="episodeAlertSuccessTitle">Registro confirmado</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Te avisaremos por correo cuando haya un nuevo episodio disponible.<br>
+					Muchas gracias.
+				</p>
+			</div>
+			
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-episode-alert-modal>
+					Cerrar
+				</button>
+			</div>
+		</div>
+	</div>	
 
   <footer class="footer">
     <div class="container footer__inner">
@@ -103,6 +130,6 @@
     </div>
   </footer>
 
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js" defer></script>
 </body>
 </html>

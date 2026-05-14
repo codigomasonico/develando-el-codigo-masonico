@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Suscribirse | Develando el Código Masónico</title>
-  <meta name="description" content="Suscríbete para recibir avisos de nuevos episodios y encuestas de temas." />
+  <title>Suscribirse al boletín | Develando el Código Masónico</title>
+  <meta name="description" content="Suscríbete para recibir los boletines de Develando el Código Masónico directamente en tu correo." />
   <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
 </head>
 
 <body>
@@ -19,8 +20,8 @@
       <nav class="nav">
         <a href="index.html">Inicio</a>
         <a href="episodios.html">Episodios</a>
-				<a href="boletines.html">Boletines</a>
-				<a href="el-codigo-responde.html">El Código Responde</a>
+        <a href="boletines.html" class="active">Boletines</a>
+        <a href="el-codigo-responde.html">El Código Responde</a>
         <a href="index.html#apoyos">Apoya el proyecto</a>
         <a href="comunidad.html">Comunidad</a>
       </nav>
@@ -31,33 +32,44 @@
     <section class="section">
       <div class="container grid2">
 
-        <div>
-          <h1>Suscribirse</h1>
-          <p class="muted">
-            Recibe avisos de nuevos episodios, novedades del podcast y encuestas para proponer temas.
-            Sin spam. Puedes darte de baja cuando quieras.
+        <div class="newsletter-intro">
+
+          <h1>Suscríbete al boletín</h1>
+
+          <p class="lead">
+            Recibe en tu correo los boletines de Develando el Código Masónico.
           </p>
 
-          <div class="card card--soft">
-            <h2>Qué vas a recibir</h2>
-            <ul class="bullets">
-              <li>Notificación semanal del nuevo episodio.</li>
-              <li>Encuestas para elegir temas e invitados.</li>
-              <li>Noticias, lecturas y referencias recomendadas.</li>
-            </ul>
+          <p class="muted">
+            Cada boletín es una invitación breve para seguir pensando, leyendo y acompañando el proyecto desde otro lugar.
+          </p>
+
+          <div class="card card--soft newsletter-info-card">
+            <h2>Qué recibirás</h2>
+
+            <p class="muted">
+              El boletín directamente en tu correo cada vez que se publique una nueva edición.
+            </p>
+
+            <p class="muted">
+              Sin spam ni envíos innecesarios.
+            </p>
           </div>
         </div>
 
         <div class="card">
           <h2>Formulario de suscripción</h2>
-          <p class="muted">Completa tu nombre y email para suscribirte.</p>
+
+          <p class="muted">
+            Completa tus datos para quedar registrado en la lista de boletines.
+          </p>
 
           <form
+            id="subscribeForm"
             name="newsletter"
             method="POST"
             data-netlify="true"
             netlify-honeypot="bot-field"
-            action="suscripcion-enviada.html"
           >
             <input type="hidden" name="form-name" value="newsletter" />
 
@@ -65,38 +77,23 @@
               <label>No llenar: <input name="bot-field" /></label>
             </div>
 
-						<label>
-							Nombre
-							<input name="nombre" type="text" placeholder="Tu nombre" required />
-						</label>
+            <label>
+              Nombre
+              <input name="nombre" type="text" placeholder="Tu nombre" required />
+            </label>
 
             <label>
               Email
               <input name="email" type="email" placeholder="tu@email.com" required />
             </label>
 
-            <label>
-              Frecuencia
-              <select name="frecuencia">
-                <option value="semanal" selected>Semanal</option>
-                <option value="quincenal">Quincenal</option>
-                <option value="solo-novedades">Solo novedades importantes</option>
-              </select>
-            </label>
+            <button class="btn btn-primary" type="submit">
+              Suscribirme
+            </button>
 
-            <label>
-              Temas de interés
-              <select name="interes">
-                <option value="general" selected>General</option>
-                <option value="simbolismo">Simbolismo</option>
-                <option value="historia">Historia</option>
-                <option value="filosofia">Filosofía</option>
-                <option value="entrevistas">Entrevistas</option>
-              </select>
-            </label>
-
-            <button class="btn btn-primary" type="submit">Suscribirme</button>
-            <p class="tiny muted">Al enviar, aceptas recibir correos del podcast. Puedes darte de baja cuando quieras.</p>
+            <p class="tiny muted">
+              Al enviar, aceptas recibir boletines del proyecto. Puedes darte de baja cuando quieras.
+            </p>
           </form>
         </div>
 
@@ -104,19 +101,41 @@
     </section>
   </main>
 
+  <div id="subscribeSuccessModal" class="responde-modal" aria-hidden="true">
+    <div class="responde-modal__overlay" data-close-subscribe-modal></div>
+
+    <div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="subscribeSuccessTitle">
+      <button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-subscribe-modal>
+        ×
+      </button>
+
+      <div class="responde-modal__tag">Boletín</div>
+
+      <h2 id="subscribeSuccessTitle">Suscripción confirmada</h2>
+
+      <div class="responde-modal__body">
+				<p>
+					Gracias por suscribirte.<br>
+					Recibirás el boletín en tu correo cuando se publique una nueva edición.
+				</p>
+      </div>
+
+      <div class="responde-modal__actions">
+        <button class="btn btn-primary" type="button" data-close-subscribe-modal>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer">
     <div class="container footer__inner">
       <p class="muted">© <span id="year"></span> Develando el Código Masónico</p>
-      <div class="footer__links">
-        <a href="comunidad.html">Comunidad</a>
-        <a href="episodios.html">Episodios</a>
-      </div>
     </div>
   </footer>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  <script src="assets/js/year.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+	
 </body>
 </html>
-

@@ -4,10 +4,6 @@
 
 "use strict";
 
-/* =========================
-   VARIABLES GLOBALES
-   ========================= */
-
 let allEpisodes = [];
 let allBoletines = [];
 
@@ -26,24 +22,47 @@ function safeSpotifyId(url) {
   }
 }
 
+function normalizeText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function encodeFormData(formElement) {
+  return new URLSearchParams(new FormData(formElement)).toString();
+}
+
+function openModal(modal) {
+  if (!modal) return;
+
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeModal(modal) {
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+
+  if (!document.querySelector(".responde-modal.is-open")) {
+    document.body.classList.remove("modal-open");
+  }
+}
+
 /* =========================
-   CARGA DE EPISODIOS
+   EPISODIOS
    ========================= */
 
 async function loadEpisodes() {
   try {
     const res = await fetch("assets/data/episodios.json");
-
-    if (!res.ok) {
-      throw new Error("No se pudo cargar episodios.json");
-    }
+    if (!res.ok) throw new Error("No se pudo cargar episodios.json");
 
     allEpisodes = await res.json();
-
-    if (!Array.isArray(allEpisodes) || allEpisodes.length === 0) {
-      console.warn("No hay episodios");
-      return;
-    }
+    if (!Array.isArray(allEpisodes) || allEpisodes.length === 0) return;
 
     const latestEpisode = [...allEpisodes].sort(
       (a, b) => Number(b.numero) - Number(a.numero)
@@ -51,18 +70,12 @@ async function loadEpisodes() {
 
     renderLatestEpisode(latestEpisode);
     renderEpisodeLibrary(allEpisodes);
-
   } catch (err) {
     console.error("Error cargando episodios:", err);
-
     const latest = document.getElementById("latestEpisode");
     if (latest) latest.textContent = "No se pudo cargar el episodio.";
   }
 }
-
-/* =========================
-   ÚLTIMO EPISODIO
-   ========================= */
 
 function renderLatestEpisode(ep) {
   const container = document.getElementById("latestEpisode");
@@ -80,22 +93,19 @@ function renderLatestEpisode(ep) {
       ${ep.fecha} • ${ep.duracion} • ${ep.categoria}
     </div>
 
-    <p class="episode-description">
-      ${ep.descripcion}
-    </p>
+    <p class="episode-description">${ep.descripcion}</p>
 
     ${
       spotifyId
-        ? `
-    <iframe
-      style="border-radius:12px"
-      src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
-      width="100%"
-      height="84"
-      frameBorder="0"
-      allowfullscreen=""
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-    </iframe>`
+        ? `<iframe
+            style="border-radius:12px"
+            src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
+            width="100%"
+            height="84"
+            frameBorder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+          </iframe>`
         : ""
     }
 
@@ -107,10 +117,6 @@ function renderLatestEpisode(ep) {
   `;
 }
 
-/* =========================
-   BIBLIOTECA DE EPISODIOS
-   ========================= */
-
 function renderEpisodeLibrary(episodes) {
   const container = document.getElementById("episodeResults");
   if (!container) return;
@@ -120,9 +126,7 @@ function renderEpisodeLibrary(episodes) {
   if (!episodes.length) {
     container.innerHTML = `
       <div class="card">
-        <p class="muted">
-          No hay episodios disponibles en esta categoría.
-        </p>
+        <p class="muted">No hay episodios disponibles en esta categoría.</p>
       </div>
     `;
     return;
@@ -131,38 +135,32 @@ function renderEpisodeLibrary(episodes) {
   episodes.forEach((ep, index) => {
     const spotifyId = safeSpotifyId(ep.spotify);
     const descId = `episode-desc-${index}`;
-
     const card = document.createElement("div");
+
     card.className = "card episode-card";
 
     card.innerHTML = `
       ${
         spotifyId
-          ? `
-        <iframe
-          style="border-radius:12px"
-          src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
-          width="100%"
-          height="80"
-          frameBorder="0"
-          allowfullscreen=""
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-        </iframe>`
+          ? `<iframe
+              style="border-radius:12px"
+              src="https://open.spotify.com/embed/episode/${spotifyId}?theme=0"
+              width="100%"
+              height="80"
+              frameBorder="0"
+              allowfullscreen=""
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+            </iframe>`
           : ""
       }
 
-      <button
-        class="episode-toggle-link"
-        type="button"
-        aria-expanded="false"
-        aria-controls="${descId}"
-      >
+      <button class="episode-toggle-link" type="button" aria-expanded="false" aria-controls="${descId}">
         Ver descripción
       </button>
 
-			<div id="${descId}" class="episode-card__desc" hidden>
-				<p>${ep.descripcion}</p>
-			</div>
+      <div id="${descId}" class="episode-card__desc" hidden>
+        <p>${ep.descripcion}</p>
+      </div>
     `;
 
     container.appendChild(card);
@@ -174,7 +172,7 @@ function renderEpisodeLibrary(episodes) {
 function initEpisodeToggles() {
   const toggles = document.querySelectorAll(".episode-toggle-link");
 
-  toggles.forEach(toggle => {
+  toggles.forEach((toggle) => {
     toggle.addEventListener("click", () => {
       const targetId = toggle.getAttribute("aria-controls");
       const target = document.getElementById(targetId);
@@ -189,17 +187,6 @@ function initEpisodeToggles() {
   });
 }
 
-/* =========================
-   FILTROS DE EPISODIOS
-   ========================= */
-
-function normalizeText(value) {
-  return String(value || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
 function initEpisodeFilters() {
   const searchInput = document.getElementById("searchInput");
   const categorySelect = document.getElementById("categorySelect");
@@ -210,7 +197,7 @@ function initEpisodeFilters() {
     const searchTerm = normalizeText(searchInput ? searchInput.value : "");
     const selectedCategory = categorySelect ? categorySelect.value : "";
 
-    const filtered = allEpisodes.filter(ep => {
+    const filtered = allEpisodes.filter((ep) => {
       const searchableText = normalizeText([
         ep.numero,
         ep.titulo,
@@ -230,13 +217,102 @@ function initEpisodeFilters() {
     renderEpisodeLibrary(filtered);
   }
 
-  if (searchInput) {
-    searchInput.addEventListener("input", applyEpisodeFilters);
-  }
+  if (searchInput) searchInput.addEventListener("input", applyEpisodeFilters);
+  if (categorySelect) categorySelect.addEventListener("change", applyEpisodeFilters);
+}
 
-  if (categorySelect) {
-    categorySelect.addEventListener("change", applyEpisodeFilters);
-  }
+/* =========================
+   FORMULARIOS CON MODAL
+   ========================= */
+
+function initAjaxForm({ formId, modalId, closeSelector, errorLabel }) {
+  const form = document.getElementById(formId);
+  const modal = document.getElementById(modalId);
+
+  if (!form || !modal) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton ? submitButton.textContent : "";
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Enviando...";
+    }
+
+    try {
+      await fetch("/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: encodeFormData(form)
+      });
+
+      form.reset();
+      openModal(modal);
+    } catch (error) {
+      console.error(errorLabel, error);
+
+      form.reset();
+      openModal(modal);
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+    }
+  });
+
+  modal.addEventListener("click", (event) => {
+    if (event.target.matches(closeSelector)) {
+      closeModal(modal);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && modal.classList.contains("is-open")) {
+      closeModal(modal);
+    }
+  });
+}
+
+function initEpisodeAlertForm() {
+  initAjaxForm({
+    formId: "episodeAlertForm",
+    modalId: "episodeAlertSuccessModal",
+    closeSelector: "[data-close-episode-alert-modal]",
+    errorLabel: "Error enviando aviso de episodio:"
+  });
+}
+
+function initSubscribeForm() {
+  initAjaxForm({
+    formId: "subscribeForm",
+    modalId: "subscribeSuccessModal",
+    closeSelector: "[data-close-subscribe-modal]",
+    errorLabel: "Error enviando suscripción:"
+  });
+}
+
+function initProposalForm() {
+  initAjaxForm({
+    formId: "proposalForm",
+    modalId: "proposalSuccessModal",
+    closeSelector: "[data-close-proposal-modal]",
+    errorLabel: "Error enviando propuesta:"
+  });
+}
+
+function initContactForm() {
+  initAjaxForm({
+    formId: "contactForm",
+    modalId: "contactSuccessModal",
+    closeSelector: "[data-close-contact-modal]",
+    errorLabel: "Error enviando contacto:"
+  });
 }
 
 /* =========================
@@ -249,10 +325,7 @@ async function loadBoletines() {
 
   try {
     const res = await fetch("assets/data/boletines.json");
-
-    if (!res.ok) {
-      throw new Error("No se pudo cargar boletines.json");
-    }
+    if (!res.ok) throw new Error("No se pudo cargar boletines.json");
 
     allBoletines = await res.json();
 
@@ -263,7 +336,6 @@ async function loadBoletines() {
 
     renderBoletines(allBoletines);
     initBoletinesFilters();
-
   } catch (err) {
     console.error("Error cargando boletines:", err);
     container.innerHTML = "<p>Error al cargar boletines.</p>";
@@ -308,29 +380,27 @@ function renderBoletines(lista) {
     return;
   }
 
-  lista.forEach(b => {
+  lista.forEach((b) => {
     const card = document.createElement("div");
-    card.className = "card boletin-card";
-
     const fechaMostrada = formatBoletinDate(b.fecha);
 
-		card.className = "responde-card boletin-card";
+    card.className = "responde-card boletin-card";
 
-		card.innerHTML = `
-			<div class="responde-card__content">
-				<p class="responde-meta-line">
-					<span>Boletín ${b.numero}</span>
-					<span aria-hidden="true">|</span>
-					<span>${fechaMostrada}</span>
-				</p>
+    card.innerHTML = `
+      <div class="responde-card__content">
+        <p class="responde-meta-line">
+          <span>Boletín ${b.numero}</span>
+          <span aria-hidden="true">|</span>
+          <span>${fechaMostrada}</span>
+        </p>
 
-				<h2>${b.titulo}</h2>
-			</div>
+        <h2>${b.titulo}</h2>
+      </div>
 
-			<a href="${b.archivo}" class="btn btn-primary responde-link" target="_blank" rel="noopener noreferrer">
-				Descargar
-			</a>
-		`;
+      <a href="${b.archivo}" class="btn btn-primary responde-link" target="_blank" rel="noopener noreferrer">
+        Descargar
+      </a>
+    `;
 
     container.appendChild(card);
   });
@@ -346,7 +416,7 @@ function initBoletinesFilters() {
     const years = [
       ...new Set(
         allBoletines
-          .map(b => {
+          .map((b) => {
             const match = String(b.fecha).match(/\b(20\d{2}|19\d{2})\b/);
             return match ? match[1] : null;
           })
@@ -355,10 +425,9 @@ function initBoletinesFilters() {
     ];
 
     years.sort((a, b) => Number(b) - Number(a));
-
     yearSelect.innerHTML = '<option value="">Todos los años</option>';
 
-    years.forEach(y => {
+    years.forEach((y) => {
       const option = document.createElement("option");
       option.value = y;
       option.textContent = y;
@@ -371,14 +440,15 @@ function initBoletinesFilters() {
 
     if (searchInput && searchInput.value) {
       const text = searchInput.value.toLowerCase();
-      filtered = filtered.filter(b =>
+
+      filtered = filtered.filter((b) =>
         b.titulo.toLowerCase().includes(text) ||
         b.descripcion.toLowerCase().includes(text)
       );
     }
 
     if (yearSelect && yearSelect.value) {
-      filtered = filtered.filter(b => {
+      filtered = filtered.filter((b) => {
         const match = String(b.fecha).match(/\b(20\d{2}|19\d{2})\b/);
         return match && match[1] === yearSelect.value;
       });
@@ -387,13 +457,8 @@ function initBoletinesFilters() {
     renderBoletines(filtered);
   }
 
-  if (searchInput) {
-    searchInput.addEventListener("input", applyFilters);
-  }
-
-  if (yearSelect) {
-    yearSelect.addEventListener("change", applyFilters);
-  }
+  if (searchInput) searchInput.addEventListener("input", applyFilters);
+  if (yearSelect) yearSelect.addEventListener("change", applyFilters);
 }
 
 /* =========================
@@ -408,7 +473,7 @@ function initNewsbar() {
   if (!container) return;
 
   const msgs = [...container.querySelectorAll(".newsbar__msg")]
-    .map(el => el.textContent.trim())
+    .map((el) => el.textContent.trim())
     .filter(Boolean);
 
   if (!msgs.length) return;
@@ -418,14 +483,12 @@ function initNewsbar() {
 
   setInterval(() => {
     i = (i + 1) % msgs.length;
-
     ticker.classList.add("is-fading");
 
     setTimeout(() => {
       ticker.textContent = msgs[i];
       ticker.classList.remove("is-fading");
     }, 200);
-
   }, 4500);
 }
 
@@ -435,17 +498,17 @@ function initNewsbar() {
 
 function loadLecturas() {
   const contenedorLibros = document.getElementById("listaLibros");
-
   if (!contenedorLibros) return Promise.resolve();
 
   return fetch("assets/data/libros.json")
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error(`No se pudo cargar libros.json: ${response.status}`);
       }
+
       return response.json();
     })
-    .then(data => {
+    .then((data) => {
       const libros = data.libros || [];
 
       if (!libros.length) {
@@ -453,7 +516,7 @@ function loadLecturas() {
         return;
       }
 
-      contenedorLibros.innerHTML = libros.map(libro => `
+      contenedorLibros.innerHTML = libros.map((libro) => `
         <article class="libro-card">
           <div class="libro-icono">📘</div>
           <div class="libro-contenido">
@@ -464,7 +527,7 @@ function loadLecturas() {
         </article>
       `).join("");
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       contenedorLibros.innerHTML = "<p>Error al cargar las lecturas recomendadas.</p>";
     });
@@ -502,6 +565,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initNewsbar();
   initEpisodeFilters();
+	initEpisodeAlertForm();
+	initSubscribeForm();
+	initProposalForm();
+	initContactForm();
 
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
