@@ -15,23 +15,7 @@
 
 <body>
 
-  <header class="topbar">
-    <div class="container topbar__inner">
-      <a class="brand" href="index.html" aria-label="Ir al inicio">
-        <span class="brand__mark">⟡</span>
-        <span class="brand__name">Develando el Código Masónico</span>
-      </a>
-
-      <nav class="nav" aria-label="Navegación principal">
-        <a href="index.html">Inicio</a>
-        <a href="episodios.html">Episodios</a>
-        <a href="boletines.html">Boletines</a>
-        <a href="el-codigo-responde.html" class="active">El Código Responde</a>
-        <a href="index.html#apoyos">Apoya el proyecto</a>
-        <a href="comunidad.html">Comunidad</a>
-      </nav>
-    </div>
-  </header>
+	<div data-header></div>
 
   <main class="section">
 
@@ -56,9 +40,11 @@
           </select>
         </div>
 
-        <div class="episodes-divider" aria-hidden="true">
-          <span class="episodes-divider__diamond"></span>
-        </div>
+				<div class="container">
+					<div class="section-divider">
+						<span>✦</span>
+					</div>
+				</div>	
 
         <div id="qaGrid" class="responde-grid" aria-live="polite"></div>
 
@@ -67,6 +53,12 @@
         </div>
       </div>
     </section>
+		
+    <div class="container">
+      <div class="section-divider">
+        <span>✦</span>
+      </div>
+    </div>		
 
     <section class="section">
       <div class="container">
@@ -177,15 +169,11 @@
     </div>
   </div>
 
-  <footer class="footer">
-    <div class="container footer__inner">
-      <p class="muted">
-        © <span id="year"></span> Develando el Código Masónico - Todos los derechos reservados.
-      </p>
-    </div>
-  </footer>
-
-  <script src="assets/js/el-codigo-responde.js" defer></script>
+	<div data-footer></div>
+	
+	<script src="assets/js/header.js" defer></script>
+	<script src="assets/js/footer.js" defer></script>
+	<script src="assets/js/el-codigo-responde.js" defer></script>
 
 </body>
 </html>

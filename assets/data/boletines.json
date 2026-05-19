@@ -30,5 +30,29 @@
     "descripcion": "No es lo que escuchas en el Taller, es lo que haces con eso afuera, en lo cotidiano, en tus decisiones y en lo que ya no puedes ignorar.",
     "archivo": "assets/newsletter/boletin_2604.pdf",
     "portada": "assets/img/newsletter/boletin_4.jpg"
-  }	
+  },
+  {
+    "numero": 5,
+    "titulo": "Luces de la Masonería",
+    "fecha": "2026-05-03",
+    "descripcion": "Una reflexión sobre la luz masónica como una claridad que no deslumbra, sino que nos ayuda a mirar mejor nuestras propias sombras y a actuar con más conciencia.",
+    "archivo": "assets/newsletter/boletin_2605.pdf",
+    "portada": "assets/img/newsletter/boletin_5.jpg"
+  },
+  {
+    "numero": 6,
+    "titulo": "Tras las columnas",
+    "fecha": "2026-05-10",
+    "descripcion": "Las columnas nos recuerdan que cruzar no siempre es cambiar de lugar, a veces es aprender a mirar distinto, mantener mejor el equilibrio y vivir con más conciencia.",
+    "archivo": "assets/newsletter/boletin_2606.pdf",
+    "portada": "assets/img/newsletter/boletin_6.jpg"
+  },
+  {
+    "numero": 7,
+    "titulo": "Cuando el símbolo habla",
+    "fecha": "2026-05-17",
+    "descripcion": "El símbolo aparece como un lenguaje silencioso que no busca dar respuestas inmediatas, sino enseñarnos a mirar con más atención, preguntar mejor y comprender con mayor profundidad.",
+    "archivo": "assets/newsletter/boletin_2607.pdf",
+    "portada": "assets/img/newsletter/boletin_7.jpg"
+  }				
 ]
