@@ -128,5 +128,18 @@
     "invitado": "",
     "spotify": "https://open.spotify.com/episode/4OQou9PDn9GrR4qD90r5xX?si=bobvsPP8T1CnEOKK9VddDw",
     "youtube": ""
+  },
+	{
+    "id": "ep-011",
+    "numero": 11,
+    "titulo": "El Compañero",
+    "categoria": "Formación",
+    "fecha": "20 de mayo de 2026",
+    "duracion": "34:45",
+    "descripcion": "El Compañero es la etapa en la que saber ya no alcanza, lo comprendido empieza a medirse en la palabra, la conducta y la forma de responder ante la vida.",
+    "imagen": "assets/img/episodios/ep-009.jpg",
+    "invitado": "",
+    "spotify": "https://open.spotify.com/episode/5US91wmYvkBgcHZ7uwxhlk?si=mAIQTm2oRuao_2MIfY6wDw",
+    "youtube": ""
   }
 ]
