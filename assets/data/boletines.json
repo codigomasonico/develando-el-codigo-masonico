@@ -54,5 +54,13 @@
     "descripcion": "El símbolo aparece como un lenguaje silencioso que no busca dar respuestas inmediatas, sino enseñarnos a mirar con más atención, preguntar mejor y comprender con mayor profundidad.",
     "archivo": "assets/newsletter/boletin_2607.pdf",
     "portada": "assets/img/newsletter/boletin_7.jpg"
-  }				
+  },
+  {
+    "numero": 8,
+    "titulo": "Trazos de sabiduría",
+    "fecha": "2026-05-24",
+    "descripcion": "Una reflexión sobre cómo la verdadera sabiduría suele notarse menos en lo que una persona dice y más en la forma en que vive, escucha y trata a los demás.",
+    "archivo": "assets/newsletter/boletin_2608.pdf",
+    "portada": "assets/img/newsletter/boletin_7.jpg"
+  }	
 ]

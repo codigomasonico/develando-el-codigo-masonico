@@ -134,12 +134,25 @@
     "numero": 11,
     "titulo": "El Compañero",
     "categoria": "Formación",
-    "fecha": "20 de mayo de 2026",
-    "duracion": "34:45",
+    "fecha": "20 de mayo de 2026",    
+		"duracion": "34:45",
     "descripcion": "El Compañero es la etapa en la que saber ya no alcanza, lo comprendido empieza a medirse en la palabra, la conducta y la forma de responder ante la vida.",
     "imagen": "assets/img/episodios/ep-009.jpg",
     "invitado": "",
     "spotify": "https://open.spotify.com/episode/5US91wmYvkBgcHZ7uwxhlk?si=mAIQTm2oRuao_2MIfY6wDw",
+    "youtube": ""
+  },
+	{
+    "id": "ep-012",
+    "numero": 12,
+    "titulo": "El Maestro Masón",
+    "categoria": "Formación",
+    "fecha": "27 de mayo de 2026",
+		"duracion": "26:41",
+    "descripcion": "El Maestro Masón no es el final del camino. Es el momento en que el símbolo deja de ser discurso y empieza a exigir coherencia, responsabilidad y una forma distinta de vivir lo que ya se comprendió.",
+    "imagen": "assets/img/episodios/ep-009.jpg",
+    "invitado": "",
+    "spotify": "https://open.spotify.com/episode/21qwn42h8aqfwHCK1Rg2wr?si=9Q4y23XeSNqduCICzl1RUg",
     "youtube": ""
   }
 ]
