@@ -154,5 +154,18 @@
     "invitado": "",
     "spotify": "https://open.spotify.com/episode/21qwn42h8aqfwHCK1Rg2wr?si=9Q4y23XeSNqduCICzl1RUg",
     "youtube": ""
+  },
+	{
+    "id": "ep-013",
+    "numero": 13,
+    "titulo": "El Mandil",
+    "categoria": "Simbolismo",
+    "fecha": "3 de junio de 2026",
+		"duracion": "34:49",
+    "descripcion": "El mandil es mucho más que una prenda simbólica. Es un recordatorio de trabajo, responsabilidad y coherencia entre lo que decimos valorar y la forma en que actuamos. Una reflexión sobre el ego, la humildad y aquello que todavía sigue pendiente de construir.",
+    "imagen": "assets/img/episodios/ep-009.jpg",
+    "invitado": "",
+    "spotify": "https://open.spotify.com/episode/1iL8PMCrQxx9dUixGpjpVi?si=OHAXrhLeSFWgMTeNLyE5kg",
+    "youtube": ""
   }
 ]

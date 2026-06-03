@@ -61,6 +61,14 @@
     "fecha": "2026-05-24",
     "descripcion": "Una reflexión sobre cómo la verdadera sabiduría suele notarse menos en lo que una persona dice y más en la forma en que vive, escucha y trata a los demás.",
     "archivo": "assets/newsletter/boletin_2608.pdf",
-    "portada": "assets/img/newsletter/boletin_7.jpg"
-  }	
+    "portada": "assets/img/newsletter/boletin_8.jpg"
+  },
+  {
+    "numero": 9,
+    "titulo": "Puertas entreabiertas",
+    "fecha": "2026-05-31",
+    "descripcion": "Una reflexión sobre las puertas simbólicas del conocimiento masónico, entendidas no como accesos inmediatos a respuestas, sino como invitaciones a mirar con más atención, paciencia y disposición interior.",
+    "archivo": "assets/newsletter/boletin_2608.pdf",
+    "portada": "assets/img/newsletter/boletin_9.jpg"
+  }		
 ]
