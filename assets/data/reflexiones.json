@@ -1,0 +1,43 @@
+[
+  {
+    "id": "ref-013-mandil",
+    "episodioId": "ep-013",
+    "episodioNumero": 13,
+    "titulo": "¿Qué significa el mandil en la Masonería?",
+    "slug": "reflexion-2613",
+    "url": "/archivo-reflexiones/reflexion-2613.html",
+    "fecha": "2026-06-05",
+    "categoria": "Simbolismo",
+    "descripcion": "Una reflexión sobre el mandil masónico como símbolo de trabajo, responsabilidad y coherencia entre lo que se dice valorar y la forma en que se actúa.",
+    "palabrasClave": [
+      "mandil masónico",
+      "símbolos de la masonería",
+      "significado del mandil masónico",
+      "masonería"
+    ],
+    "episodioRelacionado": "El Mandil",
+    "spotify": "https://open.spotify.com/episode/1iL8PMCrQxx9dUixGpjpVi?si=OHAXrhLeSFWgMTeNLyE5kg"
+  },
+	{
+		"id": "ref-014-la-palabra-que-no-deberia-volverse-ligera",
+		"episodioId": "ep-014",
+		"episodioNumero": 14,
+		"titulo": "La palabra que no debería volverse ligera",
+		"slug": "reflexion-2614",
+		"url": "/archivo-reflexiones/reflexion-2614.html",
+		"fecha": "2026-06-10",
+		"categoria": "Ética",
+		"descripcion": "Una mirada sobre el juramento masónico como responsabilidad ética, discreción consciente y peso real de la palabra dada.",
+		"palabrasClave": [
+			"juramento masónico",
+			"palabra dada",
+			"responsabilidad ética",
+			"discreción masónica",
+			"compromiso masónico",
+			"conciencia moral",
+			"Masonería contemporánea"
+		],
+		"episodioRelacionado": "El Juramento Masónico",
+		"spotify": "https://open.spotify.com/episode/15RT8NrdPqNt2JuIwKvTkk?si=Ng5K61T_RR-Zh5yZNoBkUg"
+  }	
+]

@@ -18,38 +18,20 @@
 
   <main>
     <section class="section">
-      <div class="container grid2">
-
-        <div>
-          <h1>Darse de baja de avisos de nuevos episodios</h1>
+      <div class="container">
+        <div class="card unsubscribe-card">
+          <h1>Formulario de baja</h1>
           <p class="muted">
-            Si ya no deseas recibir avisos cuando se publique un nuevo episodio de
-            Develando el Código Masónico, puedes solicitar tu baja aquí.
+            Introduce el correo con el que estás suscrito a los avisos de episodios y reflexiones.
           </p>
 
-          <div class="card card--soft">
-            <h2>Información</h2>
-            <ul class="bullets">
-              <li>La baja se procesará con el correo que indiques.</li>
-              <li>Podrás volver a activar los avisos cuando lo desees.</li>
-              <li>Tu solicitud quedará registrada en Netlify Forms.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Formulario de baja</h2>
-          <p class="muted">
-            Introduce el correo con el que estás suscrito a los avisos de episodios.
-          </p>
-
-          <form
-            name="unsubscribe-episodios"
-            method="POST"
-            data-netlify="true"
-            netlify-honeypot="bot-field"
-            action="unsubscribe-confirmado.html"
-          >
+						<form
+							name="unsubscribe-episodios"
+							method="POST"
+							data-netlify="true"
+							netlify-honeypot="bot-field"
+							id="unsubscribeEpisodesForm"
+						>
             <input type="hidden" name="form-name" value="unsubscribe-episodios" />
 
             <div hidden aria-hidden="true">
@@ -91,9 +73,9 @@
               <a class="btn btn--ghost" href="episodios.html">Ver episodios</a>
             </div>
 
-            <p class="tiny muted">
-              Tu solicitud será recibida y procesada a la brevedad.
-            </p>
+						<p class="unsubscribe-note">
+							Tu solicitud será recibida y procesada a la brevedad.
+						</p>
           </form>
         </div>
 
@@ -102,6 +84,32 @@
   </main>
 
 	<div data-footer></div>
+	
+	<div id="unsubscribeEpisodesSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-unsubscribe-episodes-modal></div>
+
+		<div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="unsubscribeEpisodesSuccessTitle">
+			<button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-unsubscribe-episodes-modal>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Avisos de episodios</div>
+
+			<h2 id="unsubscribeEpisodesSuccessTitle">Solicitud de baja enviada</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Hemos recibido tu solicitud de baja de los avisos de episodios. Gracias por haber acompañado este proyecto.
+				</p>
+			</div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-unsubscribe-episodes-modal>
+					Cerrar
+				</button>
+			</div>
+		</div>
+	</div>	
 	
 	<script src="assets/js/header.js" defer></script>
 	<script src="assets/js/footer.js" defer></script>

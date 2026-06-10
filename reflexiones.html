@@ -3,57 +3,47 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Episodios | Develando el Código Masónico</title>
-	<meta name="description" content="Biblioteca de episodios del podcast Develando el Código Masónico." />
+	<title>Reflexiones | Develando el Código Masónico</title>
+	<meta name="description" content="Artículos y reflexiones del podcast Develando el Código Masónico para comprender a la Masonería desde otra mirada." />
 	<link rel="stylesheet" href="assets/css/styles.css" />
 	<link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
 </head>
 
 <body>
-	<div data-header></div>
-  
-	<main class="section">
-    <div class="container">
-			<h1>Episodios</h1>
+  <div data-header></div>
 
-			<p class="muted">
-				Todos los episodios del podcast, ordenados del más reciente al más antiguo, para escuchar y explorar los símbolos, ideas y preguntas de la Masonería desde otra perspectiva.
+	<main class="section">
+		<div class="container">
+			<h1>Reflexiones</h1>
+			<p class="muted">        
+				Artículos derivados de los episodios para profundizar en símbolos, ideas y preguntas de la Masonería, más allá del audio y desde una mirada sobria, humana y crítica.
 			</p>
 
 			<div class="searchbar">
-				<input id="searchInput" type="search" placeholder="Buscar episodio…" />
-				<select id="categorySelect" aria-label="Filtrar episodios por categoría">
+				<input id="searchReflexiones" type="search" placeholder="Busca artículos por título, episodio, categoría o palabra clave." />
+				<select id="reflexionCategorySelect" aria-label="Filtrar reflexiones por categoría">
 					<option value="">Todas las categorías</option>
-					<option value="Introducción">Introducción</option>
-					<option value="Formación">Formación Masónica</option>
-					<option value="Simbolismo">Simbolismo</option>
-					<option value="Filosofía">Filosofía</option>
-					<option value="Historia">Historia</option>          
-					<option value="Entrevista">Entrevistas</option>
-					
 				</select>
 			</div>
-				
-			<div class="container">
-				<div class="section-divider">
-					<span>✦</span>
-				</div>
-			</div>
-
-			<div id="episodeResults" class="cards3"></div>
-
-			<div class="container">
-				<div class="section-divider">
-					<span>✦</span>
-				</div>
-			</div>
 			
-			<div class="episode-subscribe">
+			<div class="container">
+				<div class="section-divider">
+					<span>✦</span>
+				</div>
+			</div>
+
+			<div id="reflexionesResults" class="cards3"></div>
+
+			<div class="container">
+				<div class="section-divider">
+					<span>✦</span>
+				</div>
+			</div>
+
+			<div class="episode-subscribe reflexiones-subscribe">
 				<div>
-					<strong>¿Quieres enterarte cuando salga un nuevo episodio?</strong>
-					<p>
-						Recibe un correo cuando publiquemos un nuevo episodio junto con su reflexión.
-					</p>
+					<strong>¿Quieres recibir nuevas reflexiones?</strong>
+					<p>Recibe un correo cuando publiquemos un nuevo episodio junto con su reflexión.</p>
 				</div>
 
 				<form
@@ -82,15 +72,17 @@
 					</button>
 				</form>
 				
-				<p class="episode-subscribe-note">
-					Al suscribirte aceptas recibir correos de Develando el Código Masónico. Puedes darte de baja cuando quieras en este 
-					<a class="newsletter-unsubscribe-link" href="unsubscribe-episodios.html">enlace</a>.
+					<p class="reflexiones-subscribe-note">
+						Al suscribirte aceptas recibir correos de Develando el Código Masónico.
+						Puedes darte de baja cuando quieras en este 
+						<a href="unsubscribe-episodios.html" class="newsletter-unsubscribe-link">enlace</a>.
+					</p>
 				</p>
 			</div>
-			
+
 		</div>
 	</main>
-	
+
 	<div id="episodeAlertSuccessModal" class="responde-modal" aria-hidden="true">
 		<div class="responde-modal__overlay" data-close-episode-alert-modal></div>
 
@@ -109,17 +101,17 @@
 					Muchas gracias.
 				</p>
 			</div>
-			
+
 			<div class="responde-modal__actions">
 				<button class="btn btn-primary" type="button" data-close-episode-alert-modal>
 					Cerrar
 				</button>
 			</div>
 		</div>
-	</div>	
+	</div>
 
 	<div data-footer></div>
-	
+
 	<script src="assets/js/header.js" defer></script>
 	<script src="assets/js/footer.js" defer></script>
 	<script src="assets/js/app.js" defer></script>

@@ -4,71 +4,79 @@
     "titulo": "Introducción al lenguaje simbólico",
     "fecha": "2026-04-03",
     "descripcion": "Primer boletín de la serie, centrado en la lectura simbólica y su valor formativo.",
-    "archivo": "assets/newsletter/boletin_2601.pdf",
-    "portada": "assets/img/newsletter/boletin_1.jpg"
+    "archivo": "archivo-boletines/boletin_2601.pdf",
+		"imagen": ""
   },
   {
     "numero": 2,
     "titulo": "Las claves del símbolo",
     "fecha": "2026-04-10",
     "descripcion": "Una mirada al símbolo como lenguaje, método y vía de comprensión.",
-    "archivo": "assets/newsletter/boletin_2602.pdf",
-    "portada": "assets/img/newsletter/boletin_2.jpg"
+    "archivo": "archivo-boletines/boletin_2602.pdf",
+		"imagen": ""
   },
   {
     "numero": 3,
     "titulo": "Entre símbolos y silencios",
     "fecha": "2026-04-18",
     "descripcion": "Una reflexión breve sobre el silencio, el símbolo y su lugar en el trabajo interior.",
-    "archivo": "assets/newsletter/boletin_2603.pdf",
-    "portada": "assets/img/newsletter/boletin_3.jpg"
+    "archivo": "archivo-boletines/boletin_2603.pdf",
+		"imagen": ""
   },
   {
     "numero": 4,
     "titulo": "Ecos del Taller",
     "fecha": "2026-04-27",
     "descripcion": "No es lo que escuchas en el Taller, es lo que haces con eso afuera, en lo cotidiano, en tus decisiones y en lo que ya no puedes ignorar.",
-    "archivo": "assets/newsletter/boletin_2604.pdf",
-    "portada": "assets/img/newsletter/boletin_4.jpg"
+    "archivo": "archivo-boletines/boletin_2604.pdf",
+		"imagen": ""
   },
   {
     "numero": 5,
     "titulo": "Luces de la Masonería",
     "fecha": "2026-05-03",
     "descripcion": "Una reflexión sobre la luz masónica como una claridad que no deslumbra, sino que nos ayuda a mirar mejor nuestras propias sombras y a actuar con más conciencia.",
-    "archivo": "assets/newsletter/boletin_2605.pdf",
-    "portada": "assets/img/newsletter/boletin_5.jpg"
+    "archivo": "archivo-boletines/boletin_2605.pdf",
+		"imagen": ""
   },
   {
     "numero": 6,
     "titulo": "Tras las columnas",
     "fecha": "2026-05-10",
     "descripcion": "Las columnas nos recuerdan que cruzar no siempre es cambiar de lugar, a veces es aprender a mirar distinto, mantener mejor el equilibrio y vivir con más conciencia.",
-    "archivo": "assets/newsletter/boletin_2606.pdf",
-    "portada": "assets/img/newsletter/boletin_6.jpg"
+    "archivo": "archivo-boletines/boletin_2606.pdf",
+		"imagen": ""
   },
   {
     "numero": 7,
     "titulo": "Cuando el símbolo habla",
     "fecha": "2026-05-17",
     "descripcion": "El símbolo aparece como un lenguaje silencioso que no busca dar respuestas inmediatas, sino enseñarnos a mirar con más atención, preguntar mejor y comprender con mayor profundidad.",
-    "archivo": "assets/newsletter/boletin_2607.pdf",
-    "portada": "assets/img/newsletter/boletin_7.jpg"
+    "archivo": "archivo-boletines/boletin_2607.pdf",
+		"imagen": ""
   },
   {
     "numero": 8,
     "titulo": "Trazos de sabiduría",
     "fecha": "2026-05-24",
     "descripcion": "Una reflexión sobre cómo la verdadera sabiduría suele notarse menos en lo que una persona dice y más en la forma en que vive, escucha y trata a los demás.",
-    "archivo": "assets/newsletter/boletin_2608.pdf",
-    "portada": "assets/img/newsletter/boletin_8.jpg"
+    "archivo": "archivo-boletines/boletin_2608.pdf",
+		"imagen": ""
   },
   {
     "numero": 9,
     "titulo": "Puertas entreabiertas",
     "fecha": "2026-05-31",
-    "descripcion": "Una reflexión sobre las puertas simbólicas del conocimiento masónico, entendidas no como accesos inmediatos a respuestas, sino como invitaciones a mirar con más atención, paciencia y disposición interior.",
-    "archivo": "assets/newsletter/boletin_2608.pdf",
-    "portada": "assets/img/newsletter/boletin_9.jpg"
+    "descripcion": "Una mirada sobre las puertas simbólicas del conocimiento masónico, no como accesos inmediatos a respuestas, sino como invitaciones a observar con más atención, paciencia y disposición interior.",
+    "archivo": "archivo-boletines/boletin_2609.pdf",
+		"imagen": ""
+  },
+  {
+    "numero": 10,
+    "titulo": "Entre símbolos y silencios",
+    "fecha": "2026-06-07",
+    "descripcion": "Una mirada serena sobre el valor de detenerse, escuchar y permitir que los símbolos revelen su sentido con el tiempo, recordándonos que algunas de las enseñanzas más profundas no se encuentran en las respuestas inmediatas, sino en la atención y la reflexión.",
+    "archivo": "archivo-boletines/boletin_2610.pdf",
+		"imagen": ""
   }		
 ]

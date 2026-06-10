@@ -1,10 +1,21 @@
+const headerScript = document.currentScript;
+const headerScriptUrl = headerScript ? headerScript.src : '';
+
 document.addEventListener('DOMContentLoaded', () => {
   const headerMount = document.querySelector('[data-header]');
-
   if (!headerMount) return;
 
-  fetch('assets/partials/header.html')
-    .then((response) => response.text())
+  const headerUrl = headerScriptUrl
+    ? new URL('../partials/header.html', headerScriptUrl).href
+    : 'assets/partials/header.html';
+
+  fetch(headerUrl)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`No se pudo cargar el header: ${response.status}`);
+      }
+      return response.text();
+    })
     .then((html) => {
       headerMount.innerHTML = html;
 
@@ -27,24 +38,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-		const currentPage = window.location.pathname
-			.split('/')
-			.pop()
-			.replace('.html', '') || 'index';
+      const path = window.location.pathname;
+      const currentPage = path.split('/').pop().replace('.html', '') || 'index';
 
-		const pageMap = {
-			suscribirse: 'boletines'
-		};
+      const pageMap = {
+        suscribirse: 'boletines'
+      };
 
-		const activePage = pageMap[currentPage] || currentPage;
+      let activePage = pageMap[currentPage] || currentPage;
+
+      if (path.includes('/reflexiones/') || path.includes('/archivo-reflexiones/')) {
+        activePage = 'reflexiones';
+      }
 
       document.querySelectorAll('.nav-link').forEach((link) => {
-				if (link.dataset.page === activePage) {
-					link.classList.add('active');
-				}
+        if (link.dataset.page === activePage) {
+          link.classList.add('active');
+        }
       });
     })
     .catch((error) => {
-      console.error('No se pudo cargar el header:', error);
+      console.error(error);
     });
 });
