@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Reflexiones | Develando el Código Masónico</title>
+	<meta name="description" content="Artículos y reflexiones del podcast Develando el Código Masónico para comprender a la Masonería desde otra mirada." />
+	<link rel="stylesheet" href="assets/css/styles.css" />
+	<link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
+</head>
+
+<body>
+  <div data-header></div>
+
+	<main class="section">
+		<div class="container">
+			<h1>Reflexiones</h1>
+			<p class="muted">        
+				Artículos derivados de los episodios para profundizar en símbolos, ideas y preguntas de la Masonería, más allá del audio y desde una mirada sobria, humana y crítica.
+			</p>
+
+			<div class="searchbar">
+				<input id="searchReflexiones" type="search" placeholder="Busca artículos por título, episodio, categoría o palabra clave." />
+				<select id="reflexionCategorySelect">
+					<option value="">Todas las categorías</option>
+				</select>
+			</div>
+			
+			<div class="container">
+				<div class="section-divider">
+					<span>✦</span>
+				</div>
+			</div>
+
+			<div id="reflexionesResults" class="cards3"></div>
+
+			<div class="container">
+				<div class="section-divider">
+					<span>✦</span>
+				</div>
+			</div>
+
+			<div class="episode-subscribe reflexiones-subscribe">
+				<div>
+					<strong>¿Quieres recibir nuevas reflexiones?</strong>
+					<p>Recibe un correo cuando publiquemos un nuevo episodio junto con su reflexión.</p>
+				</div>
+
+				<form
+					name="avisos-episodios"
+					method="POST"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+					class="episode-subscribe-form"
+					id="episodeAlertForm"
+				>
+					<input type="hidden" name="form-name" value="avisos-episodios" />
+
+					<div hidden aria-hidden="true">
+						<label>No llenar: <input name="bot-field" /></label>
+					</div>
+
+					<input
+						name="email"
+						type="email"
+						placeholder="tu@email.com"
+						required
+					/>
+
+					<button class="btn btn-primary" type="submit">
+						Avisarme
+					</button>
+				</form>
+				
+				<p class="reflexiones-subscribe-note">
+					Al suscribirte aceptas recibir correos de Develando el Código Masónico. Puedes darte de baja cuando quieras.
+				</p>
+			</div>
+
+		</div>
+	</main>
+
+	<div id="episodeAlertSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-episode-alert-modal></div>
+
+		<div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="episodeAlertSuccessTitle">
+			<button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-episode-alert-modal>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Aviso de episodios</div>
+
+			<h2 id="episodeAlertSuccessTitle">Registro confirmado</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Te avisaremos por correo cuando haya un nuevo episodio disponible junto con su reflexión.<br>
+					Muchas gracias.
+				</p>
+			</div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-episode-alert-modal>
+					Cerrar
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div data-footer></div>
+
+	<script src="assets/js/header.js" defer></script>
+	<script src="assets/js/footer.js" defer></script>
+	<script src="assets/js/app.js" defer></script>
+	
+</body>
+</html>

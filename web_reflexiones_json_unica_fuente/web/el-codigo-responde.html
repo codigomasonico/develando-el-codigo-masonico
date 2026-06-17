@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index, follow">
+
+  <title>El Código Responde | Develando el Código Masónico</title>
+
+  <meta name="description" content="Preguntas reales y respuestas honestas sobre la Masonería, la iniciación, la búsqueda interior y las inquietudes que aparecen antes y después de tocar la puerta.">
+
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
+</head>
+
+<body>
+
+	<div data-header></div>
+
+  <main class="section">
+
+    <section>
+      <div class="container">
+        <div class="hero__copy">
+          <h1>El Código Responde</h1>
+          <p class="lead">
+            Un espacio para responder preguntas reales de oyentes y lectores sobre la Masonería, sus símbolos, su camino interior y su relación con la vida cotidiana. Algunas nacen de la curiosidad, otras de la duda o de experiencias personales. Esta sección no busca dar respuestas definitivas ni verdades absolutas, sino abrir una conversación clara, honesta y accesible.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section responde-search-section">
+      <div class="container">
+        <div class="responde-toolbar searchbar" aria-label="Buscar preguntas">
+          <input id="qaSearch" type="search" placeholder="Buscar por tema, palabra o inquietud..." aria-label="Buscar preguntas">
+
+          <select id="qaFilter" aria-label="Filtrar por categoría">
+            <option value="todas">Todas</option>
+          </select>
+        </div>
+
+				<div class="container">
+					<div class="section-divider">
+						<span>✦</span>
+					</div>
+				</div>	
+
+        <div id="qaGrid" class="responde-grid" aria-live="polite"></div>
+
+        <div id="emptyState" class="card responde-empty">
+          No encontré preguntas con ese criterio. Prueba con otra palabra o categoría.
+        </div>
+      </div>
+    </section>
+		
+    <div class="container">
+      <div class="section-divider">
+        <span>✦</span>
+      </div>
+    </div>		
+
+    <section class="section">
+      <div class="container">
+        <div class="card responde-submit" aria-label="Enviar pregunta">
+          <div>
+            <h2>¿Tienes una pregunta?</h2>
+            <p class="muted">
+              Puedes enviarla para una futura respuesta. No hace falta que esté perfectamente formulada. A veces las mejores preguntas empiezan como una inquietud sencilla.
+            </p>
+          </div>
+
+          <button class="btn btn-primary" id="openQuestionForm" type="button">
+            Enviar pregunta
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DE RESPUESTA -->
+  <div id="answerModal" class="responde-modal" aria-hidden="true">
+    <div class="responde-modal__overlay" data-close-answer-modal></div>
+
+    <div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="responde-modal__close" type="button" aria-label="Cerrar respuesta" data-close-answer-modal>
+        ×
+      </button>
+
+      <div id="modalCategory" class="responde-modal__tag"></div>
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody" class="responde-modal__body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL DE PREGUNTA -->
+  <div id="questionModal" class="responde-modal" aria-hidden="true">
+    <div class="responde-modal__overlay" data-close-question-modal></div>
+
+    <div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+      <button class="responde-modal__close" type="button" aria-label="Cerrar formulario" data-close-question-modal>
+        ×
+      </button>
+
+      <div class="responde-modal__tag">Enviar pregunta</div>
+
+      <h2 id="questionModalTitle">¿Tienes una pregunta?</h2>
+
+      <form id="questionForm" name="preguntas" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="question-form">
+        <input type="hidden" name="form-name" value="preguntas">
+
+        <p hidden>
+          <label>No llenar: <input name="bot-field"></label>
+        </p>
+
+        <label>
+          Nombre
+          <input type="text" name="nombre" required>
+        </label>
+
+        <label>
+          Email
+          <input type="email" name="email" required>
+        </label>
+
+        <label>
+          Tema
+          <input type="text" name="tema" required>
+        </label>
+
+        <label>
+          Tu pregunta
+          <textarea name="detalle" rows="6" required></textarea>
+        </label>
+
+        <button class="btn btn-primary" type="submit">
+          Enviar pregunta
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE ÉXITO -->
+  <div id="successModal" class="responde-modal" aria-hidden="true">
+    <div class="responde-modal__overlay" data-close-success-modal></div>
+
+    <div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="successModalTitle">
+      <button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-success-modal>
+        ×
+      </button>
+
+      <div class="responde-modal__tag">El Código Responde</div>
+
+      <h2 id="successModalTitle">Pregunta recibida</h2>
+
+      <div class="responde-modal__body">
+				<p>
+					Tu pregunta fue recibida correctamente.<br>
+					Gracias por tomarte el tiempo de escribir y compartir tu inquietud. Te responderemos a la brevedad posible.
+				</p>
+      </div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-success-modal>
+					Cerrar
+				</button>
+			</div>
+    </div>
+  </div>
+
+	<div data-footer></div>
+	
+	<script src="assets/js/header.js" defer></script>
+	<script src="assets/js/footer.js" defer></script>
+	<script src="assets/js/el-codigo-responde.js" defer></script>
+
+</body>
+</html>

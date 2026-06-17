@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comunidad | Develando el Código Masónico</title>
+  <meta name="description" content="Participa: propone temas, deja comentarios y apoya el proyecto." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+	<link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
+</head>
+
+<body>
+
+	<div data-header></div>
+
+  <main class="section">
+    <div class="container">
+      <h1>Comunidad</h1>
+      <p class="muted">Tu participación guía el rumbo del podcast.</p>
+
+      <section id="proponer" class="grid2">
+        <div class="card">
+          <h2>Enviar una pregunta o propuesta</h2>
+
+          <!-- Opción A: Netlify Forms -->
+					<form
+						id="proposalForm"
+						name="propuestas"
+						method="POST"
+						data-netlify="true"
+						netlify-honeypot="bot-field"
+					>
+
+            <input type="hidden" name="form-name" value="propuestas" />
+
+            <!-- Honeypot anti-spam -->
+            <div hidden aria-hidden="true">
+              <label>No llenar: <input name="bot-field" /></label>
+            </div>
+
+            <label>
+              Nombre
+              <input name="nombre" type="text" placeholder="Tu nombre" required />
+            </label>
+
+            <label>
+              Email
+              <input name="email" type="email" placeholder="tu@email.com" required />
+            </label>
+
+            <label>
+              Tema propuesto
+              <input name="tema" type="text" placeholder="Ejemplo: La escuadra y el compás" required />
+            </label>
+
+            <label>
+              ¿Qué deseas enviar o solicitar?
+              <select name="tipo" required>
+                <option value="">Selecciona</option>
+                <option>Explicación</option>
+                <option>Entrevista</option>
+								<option>Episodio</option>
+                <option>Historia</option>
+                <option>Preguntas y respuestas</option>
+              </select>
+            </label>
+
+            <label>
+              ¿Qué te gustaría aprender o aclarar?
+              <textarea name="detalle" rows="5" placeholder="Escribe contexto, dudas o enfoque deseado" required></textarea>
+            </label>
+
+            <button class="btn btn-primary" type="submit">Enviar propuesta</button>
+            <p class="tiny muted">Al enviar aceptas que podamos leer y resumir tu propuesta al aire, sin datos personales.</p>
+          </form>
+        </div>
+
+        <div id="contacto" class="card card--soft">
+          <h2>Contacto</h2>
+
+          <!-- Opción A: Netlify Forms -->
+          <form
+						id="contactForm"
+						name="contacto"
+						method="POST"
+						data-netlify="true"
+						netlify-honeypot="bot-field"
+					>
+
+            <input type="hidden" name="form-name" value="contacto" />
+            <div hidden aria-hidden="true">
+              <label>No llenar: <input name="bot-field" /></label>
+            </div>
+
+            <label>
+              Asunto
+              <input name="asunto" type="text" placeholder="Motivo de tu mensaje" required />
+            </label>
+
+            <label>
+              Mensaje
+              <textarea name="mensaje" rows="6" placeholder="Escribe tu mensaje" required></textarea>
+            </label>
+
+            <button class="btn btn-primary" type="submit">Enviar</button>
+          </form>
+
+          <hr class="sep" />
+
+					<div class="card">
+						<h3>Apoya este proyecto</h3>
+
+						<p class="muted">
+							Si este espacio te resulta valioso, tu apoyo ayuda a sostener la
+							producción, la investigación, la edición y la mejora continua del proyecto.
+						</p>
+						
+						<p class="tiny muted donate-note">
+							Toda contribución, por pequeña que sea, ayuda a seguir compartiendo
+							contenidos con más profundidad y mejor calidad.
+						</p>
+					
+						<div class="donate" aria-label="Formas de apoyar el proyecto">
+
+							<a
+								class="btn btn--icon"
+								href="https://paypal.me/codigomasonico"
+								target="_blank"
+								rel="noopener"
+								aria-label="Apoyar el proyecto con PayPal"
+								data-tooltip="Apoyar el proyecto con PayPal"
+							>
+								<img
+									src="assets/img/icon-paypal.png"
+									class="donate-icon"
+									alt="PayPal"
+								>
+								<span class="sr-only">Apoyar el proyecto con PayPal</span>
+							</a>
+
+							<a
+								class="btn btn--icon"
+								href="https://www.buymeacoffee.com/develandoelcodigomasonico"
+								target="_blank"
+								rel="noopener"
+								aria-label="Apoyar el proyecto con Buy Me a Coffee"
+								data-tooltip="Apoyar el proyecto con Buy Me a Coffee"
+							>
+								<img
+									src="assets/img/icon-bmc.png"
+									class="donate-icon"
+									alt="Buy Me a Coffee"
+								>
+								<span class="sr-only">Apoyar el proyecto con Buy Me a Coffee</span>
+							</a>
+
+						</div>
+						
+            <!-- <a class="btn btn--icon" href="TU_LINK_MERCADOPAGO" target="_blank" rel="noopener"
+               aria-label="Donar con Mercado Pago" data-tooltip="Donar con Mercado Pago">
+              <img src="assets/img/icon-mercadopago.png" alt="" class="donate-icon donate-icon--mp" />
+              <span class="sr-only">Donar con Mercado Pago</span>
+            </a>
+						-->						
+					</div>
+        </div>
+      </section>
+
+      <section aria-label="Participación" class="participa">
+        <div class="card participa-card">
+          <h2>Participa</h2>
+          <p class="muted">
+            Tu participación guía el rumbo del podcast. Puedes proponer temas, enviar preguntas para una sección de Q&A
+            y apoyar el proyecto para mejorar la producción y la investigación.
+          </p>
+      
+          <hr class="sep" />
+      
+          <h3>Normas de la comunidad</h3>
+          <ul class="bullets">
+            <li>Respeto y buena fe en el intercambio.</li>
+            <li>Sin datos personales de terceros.</li>
+            <li>Sin ataques, odio o contenido ofensivo.</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+	<div id="proposalSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-proposal-modal></div>
+
+		<div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="proposalSuccessTitle">
+
+			<button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-proposal-modal>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Comunidad</div>
+
+			<h2 id="proposalSuccessTitle">Propuesta enviada</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Gracias por compartir tu propuesta.<br>
+					La revisaremos con atención y, si encaja con el enfoque del proyecto, la consideraremos para una futura respuesta o episodio.
+				</p>
+			</div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-proposal-modal>
+					Cerrar
+				</button>
+			</div>
+
+		</div>
+	</div>
+
+	<div id="contactSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-contact-modal></div>
+
+		<div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="contactSuccessTitle">
+
+			<button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-contact-modal>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Contacto</div>
+
+			<h2 id="contactSuccessTitle">Mensaje enviado</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Tu mensaje fue enviado correctamente.<br>
+					Te responderemos a la brevedad posible. Muchas gracias. 
+				</p>
+			</div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-contact-modal>
+					Cerrar
+				</button>
+			</div>
+
+		</div>
+	</div>
+
+	<div data-footer></div>
+	
+	<script src="assets/js/header.js" defer></script>
+	<script src="assets/js/footer.js" defer></script>
+	<script src="assets/js/app.js" defer></script>
+	
+</body>
+</html>

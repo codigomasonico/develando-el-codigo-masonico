@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boletines | Develando el Código Masónico</title>
+  <meta name="description" content="Biblioteca de boletines de Develando el Código Masónico." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico">
+</head>
+
+<body>
+
+	<div data-header></div>
+
+	<main class="section">
+		<div class="container">
+			<h1>Boletines</h1>
+			<p class="muted">Publicaciones periódicas con novedades del podcast, recomendaciones de lectura, recursos complementarios y contenidos exclusivos para la comunidad de Develando el Código Masónico.</p>
+
+			<div class="searchbar">
+				<input id="searchBoletines" type="search" placeholder="Busca boletines por título o contenido…" />
+				<select id="yearSelect" aria-label="Filtrar boletines por año">
+					<option value="">Todos los años</option>
+				</select>
+			</div>
+			
+			<div class="container">
+				<div class="section-divider">
+					<span>✦</span>
+				</div>
+			</div>		
+
+			<div id="boletinesResults" class="cards3"></div>
+			
+			<div class="container">
+				<div class="section-divider">
+					<span>✦</span>
+				</div>
+			</div>
+			
+			<div class="boletin-subscribe">
+				<div>
+					<strong>¿Quieres recibir los boletines en tu correo?</strong>
+					<p>
+						Recibe novedades del podcast, recomendaciones de lectura y recursos complementarios directamente en tu correo.
+					</p>
+				</div>
+
+				<form
+					name="boletin"
+					method="POST"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+					class="boletin-subscribe-form"
+					id="subscribeForm"
+				>
+					<input type="hidden" name="form-name" value="boletin" />
+
+					<input name="nombre" type="text" placeholder="Tu nombre" required />
+
+					<div hidden aria-hidden="true">
+						<label>No llenar: <input name="bot-field" /></label>
+					</div>
+
+					<input
+						required
+						name="email"
+						type="email"
+						placeholder="tu@email.com"
+						autocomplete="email"
+						autocapitalize="none"
+					/>
+
+					<button class="btn btn-primary" type="submit">
+						Suscribirme
+					</button>
+				</form>
+
+				<p class="newsletter-subscribe-note">
+					Al suscribirte aceptas recibir correos de Develando el Código Masónico.
+					Puedes darte de baja cuando quieras en este 
+					<a class="newsletter-unsubscribe-link" href="unsubscribe-boletines.html">enlace</a>.
+				</p>
+			</div>
+
+		</div>
+	</main>
+
+	<div id="subscribeSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-subscribe-modal></div>
+
+		<div
+			class="responde-modal__dialog"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="subscribeSuccessTitle"
+		>
+			<button
+				class="responde-modal__close"
+				type="button"
+				aria-label="Cerrar mensaje"
+				data-close-subscribe-modal
+			>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Boletines</div>
+
+			<h2 id="subscribeSuccessTitle">Registro confirmado</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Hemos registrado tu suscripción correctamente.<br>
+					Recibirás los próximos boletines de Develando el Código Masónico en tu correo.
+				</p>
+			</div>
+
+			<div class="responde-modal__actions">
+				<button
+					class="btn btn-primary"
+					type="button"
+					data-close-subscribe-modal
+				>
+					Cerrar
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div data-footer></div>
+	
+	<script src="assets/js/header.js" defer></script>
+	<script src="assets/js/footer.js" defer></script>
+	<script src="assets/js/app.js" defer></script>
+	
+</body>
+</html>

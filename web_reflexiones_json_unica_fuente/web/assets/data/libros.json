@@ -1,0 +1,19 @@
+{
+  "libros": [
+    {
+      "titulo": "El hombre y sus símbolos",
+      "autor": "Carl G. Jung",
+      "tema": "Introducción al simbolismo"
+    },
+    {
+      "titulo": "El poder del mito",
+      "autor": "Joseph Campbell",
+      "tema": "Mitología y significado"
+    },
+    {
+      "titulo": "Siddhartha",
+      "autor": "Hermann Hesse",
+      "tema": "Búsqueda espiritual"
+    }
+  ]
+}

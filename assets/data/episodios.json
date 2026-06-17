@@ -180,5 +180,18 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/15RT8NrdPqNt2JuIwKvTkk?si=Ng5K61T_RR-Zh5yZNoBkUg",
 		"youtube": ""
-	}	
+	},
+	{
+		"id": "ep-015",
+		"numero": 15,
+		"titulo": "El Silencio",
+		"categoria": "Filosófico",
+		"fecha": "2026-06-17",
+		"duracion": "40:51",
+		"descripcion": "Escuchar de verdad exige algo más difícil que permanecer callado, exige suspender por un momento la necesidad de responder.",
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/35QjAQv8V7ztPkXwpPZAgg?si=MgK1XI9IRli1o9PDc0MPbQ",
+		"youtube": ""
+	}		
 ]

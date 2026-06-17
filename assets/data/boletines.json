@@ -3,7 +3,7 @@
     "numero": 1,
     "titulo": "Introducción al lenguaje simbólico",
     "fecha": "2026-04-03",
-    "descripcion": "Primer boletín de la serie, centrado en la lectura simbólica y su valor formativo.",
+    "descripcion": "Los símbolos no transmiten información. Despiertan preguntas. Y a veces, una buena pregunta vale más que una respuesta inmediata.",
     "archivo": "archivo-boletines/boletin_2601.pdf",
 		"imagen": ""
   },
@@ -11,7 +11,7 @@
     "numero": 2,
     "titulo": "Las claves del símbolo",
     "fecha": "2026-04-10",
-    "descripcion": "Una mirada al símbolo como lenguaje, método y vía de comprensión.",
+    "descripcion": "El símbolo no está diseñado para ser explicado de una vez. Está hecho para acompañarnos mientras aprendemos a observar mejor.",
     "archivo": "archivo-boletines/boletin_2602.pdf",
 		"imagen": ""
   },
@@ -19,7 +19,7 @@
     "numero": 3,
     "titulo": "Entre símbolos y silencios",
     "fecha": "2026-04-18",
-    "descripcion": "Una reflexión breve sobre el silencio, el símbolo y su lugar en el trabajo interior.",
+    "descripcion": "Algunas enseñanzas llegan en palabras. Otras aparecen cuando el ruido se detiene y somos capaces de escuchar de verdad.",
     "archivo": "archivo-boletines/boletin_2603.pdf",
 		"imagen": ""
   },
@@ -27,7 +27,7 @@
     "numero": 4,
     "titulo": "Ecos del Taller",
     "fecha": "2026-04-27",
-    "descripcion": "No es lo que escuchas en el Taller, es lo que haces con eso afuera, en lo cotidiano, en tus decisiones y en lo que ya no puedes ignorar.",
+    "descripcion": "Lo importante no es lo que escuchas en Logia. Lo importante es aquello que sigue resonando cuando regresas a tu vida cotidiana.",
     "archivo": "archivo-boletines/boletin_2604.pdf",
 		"imagen": ""
   },
@@ -35,7 +35,7 @@
     "numero": 5,
     "titulo": "Luces de la Masonería",
     "fecha": "2026-05-03",
-    "descripcion": "Una reflexión sobre la luz masónica como una claridad que no deslumbra, sino que nos ayuda a mirar mejor nuestras propias sombras y a actuar con más conciencia.",
+    "descripcion": "La luz masónica no elimina las sombras. Nos ayuda a reconocerlas y a decidir qué hacer con ellas.",
     "archivo": "archivo-boletines/boletin_2605.pdf",
 		"imagen": ""
   },
@@ -43,7 +43,7 @@
     "numero": 6,
     "titulo": "Tras las columnas",
     "fecha": "2026-05-10",
-    "descripcion": "Las columnas nos recuerdan que cruzar no siempre es cambiar de lugar, a veces es aprender a mirar distinto, mantener mejor el equilibrio y vivir con más conciencia.",
+    "descripcion": "Hay umbrales que no se cruzan con los pies. Se cruzan cuando cambia nuestra forma de comprender el mundo.",
     "archivo": "archivo-boletines/boletin_2606.pdf",
 		"imagen": ""
   },
@@ -51,7 +51,7 @@
     "numero": 7,
     "titulo": "Cuando el símbolo habla",
     "fecha": "2026-05-17",
-    "descripcion": "El símbolo aparece como un lenguaje silencioso que no busca dar respuestas inmediatas, sino enseñarnos a mirar con más atención, preguntar mejor y comprender con mayor profundidad.",
+    "descripcion": "El símbolo rara vez responde de inmediato. Prefiere acompañarnos hasta que aprendemos a formular mejores preguntas.",
     "archivo": "archivo-boletines/boletin_2607.pdf",
 		"imagen": ""
   },
@@ -59,7 +59,7 @@
     "numero": 8,
     "titulo": "Trazos de sabiduría",
     "fecha": "2026-05-24",
-    "descripcion": "Una reflexión sobre cómo la verdadera sabiduría suele notarse menos en lo que una persona dice y más en la forma en que vive, escucha y trata a los demás.",
+    "descripcion": "La sabiduría suele ser discreta. Se reconoce menos por lo que una persona sabe y más por cómo vive lo que sabe.",
     "archivo": "archivo-boletines/boletin_2608.pdf",
 		"imagen": ""
   },
@@ -67,7 +67,7 @@
     "numero": 9,
     "titulo": "Puertas entreabiertas",
     "fecha": "2026-05-31",
-    "descripcion": "Una mirada sobre las puertas simbólicas del conocimiento masónico, no como accesos inmediatos a respuestas, sino como invitaciones a observar con más atención, paciencia y disposición interior.",
+    "descripcion": "No todas las puertas existen para ser atravesadas de inmediato. Algunas están ahí para enseñarnos a mirar antes de avanzar.",
     "archivo": "archivo-boletines/boletin_2609.pdf",
 		"imagen": ""
   },
@@ -75,8 +75,16 @@
     "numero": 10,
     "titulo": "Entre símbolos y silencios",
     "fecha": "2026-06-07",
-    "descripcion": "Una mirada serena sobre el valor de detenerse, escuchar y permitir que los símbolos revelen su sentido con el tiempo, recordándonos que algunas de las enseñanzas más profundas no se encuentran en las respuestas inmediatas, sino en la atención y la reflexión.",
+    "descripcion": "Detenerse también es una forma de avanzar. Hay comprensiones que solo aparecen cuando dejamos de correr detrás de respuestas.",
     "archivo": "archivo-boletines/boletin_2610.pdf",
+		"imagen": ""
+  },
+  {
+    "numero": 11,
+    "titulo": "La luz que no se impone",
+    "fecha": "2026-06-14",
+    "descripcion": "La verdadera luz no obliga, no presiona y no deslumbra. Simplemente permite ver con mayor claridad aquello que antes pasaba inadvertido.",
+    "archivo": "archivo-boletines/boletin_2611.pdf",
 		"imagen": ""
   }		
 ]
