@@ -61,5 +61,26 @@
     ],
     "episodioRelacionado": "El Silencio",
     "spotify": "https://open.spotify.com/episode/35QjAQv8V7ztPkXwpPZAgg?si=MgK1XI9IRli1o9PDc0MPbQ"
-  }
+  },
+	{
+		"id": "ref-016-cuando-el-simbolo-deja-de-interpelar",
+		"episodioId": "ep-016",
+		"episodioNumero": 16,
+		"titulo": "Cuando el símbolo deja de interpelar",
+		"slug": "reflexion-2616",
+		"url": "archivo-reflexiones/reflexion-2616.html",
+		"fecha": "2026-06-24",
+		"categoria": "Reflexión",
+		"descripcion": "Una reflexión sobre cómo los símbolos pueden perder fuerza cuando dejan de cuestionar la conducta de quienes los reconocen.",
+		"palabrasClave": [
+			"escuadra y compas",
+			"simbolismo",
+			"masoneria",
+			"coherencia",
+			"reflexion",
+			"conducta"
+		],
+    "episodioRelacionado": "La Escuadra y el Compás",
+    "spotify": "https://open.spotify.com/episode/5aTvhjX8X8gSO8g1UaMUo5?si=E1UVb9yYRPmx7ilgGYzQfA"
+	}	
 ]

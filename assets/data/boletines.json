@@ -86,5 +86,13 @@
     "descripcion": "La verdadera luz no obliga, no presiona y no deslumbra. Simplemente permite ver con mayor claridad aquello que antes pasaba inadvertido.",
     "archivo": "archivo-boletines/boletin_2611.pdf",
 		"imagen": ""
-  }		
+  },
+  {
+    "numero": 12,
+    "titulo": "La senda que transforma",
+    "fecha": "2026-06-24",
+    "descripcion": "La transformación rara vez hace ruido. Mientras muchos buscan respuestas, hay comprensiones que solo llegan cuando la mirada cambia y aprende a ver lo que antes pasaba inadvertido.",
+    "archivo": "archivo-boletines/boletin_2612.pdf",
+		"imagen": ""
+  }	
 ]
