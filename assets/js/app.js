@@ -532,7 +532,11 @@ function renderBoletines(lista) {
 		card.innerHTML = `
 			<div class="responde-card__content">
 				<p class="responde-meta-line">
-					<span>📄 Boletín ${String(b.numero).padStart(3, "0")}</span>
+					<span>
+						📄 ${b.especial
+							? "Edición Especial"
+							: `Boletín ${String(b.numero).padStart(3, "0")}`}
+					</span>
 					<span aria-hidden="true">|</span>
 					<span>${fechaMostrada}</span>
 				</p>

@@ -1,6 +1,7 @@
 [
   {
     "numero": 1,
+		"especial": false,
     "titulo": "Introducción al lenguaje simbólico",
     "fecha": "2026-04-03",
     "descripcion": "Los símbolos no transmiten información. Despiertan preguntas. Y a veces, una buena pregunta vale más que una respuesta inmediata.",
@@ -9,6 +10,7 @@
   },
   {
     "numero": 2,
+		"especial": false,
     "titulo": "Las claves del símbolo",
     "fecha": "2026-04-10",
     "descripcion": "El símbolo no está diseñado para ser explicado de una vez. Está hecho para acompañarnos mientras aprendemos a observar mejor.",
@@ -17,6 +19,7 @@
   },
   {
     "numero": 3,
+		"especial": false,
     "titulo": "Entre símbolos y silencios",
     "fecha": "2026-04-18",
     "descripcion": "Algunas enseñanzas llegan en palabras. Otras aparecen cuando el ruido se detiene y somos capaces de escuchar de verdad.",
@@ -25,6 +28,7 @@
   },
   {
     "numero": 4,
+		"especial": false,
     "titulo": "Ecos del Taller",
     "fecha": "2026-04-27",
     "descripcion": "Lo importante no es lo que escuchas en Logia. Lo importante es aquello que sigue resonando cuando regresas a tu vida cotidiana.",
@@ -33,6 +37,7 @@
   },
   {
     "numero": 5,
+		"especial": false,
     "titulo": "Luces de la Masonería",
     "fecha": "2026-05-03",
     "descripcion": "La luz masónica no elimina las sombras. Nos ayuda a reconocerlas y a decidir qué hacer con ellas.",
@@ -41,6 +46,7 @@
   },
   {
     "numero": 6,
+		"especial": false,
     "titulo": "Tras las columnas",
     "fecha": "2026-05-10",
     "descripcion": "Hay umbrales que no se cruzan con los pies. Se cruzan cuando cambia nuestra forma de comprender el mundo.",
@@ -49,6 +55,7 @@
   },
   {
     "numero": 7,
+		"especial": false,
     "titulo": "Cuando el símbolo habla",
     "fecha": "2026-05-17",
     "descripcion": "El símbolo rara vez responde de inmediato. Prefiere acompañarnos hasta que aprendemos a formular mejores preguntas.",
@@ -57,6 +64,7 @@
   },
   {
     "numero": 8,
+		"especial": false,
     "titulo": "Trazos de sabiduría",
     "fecha": "2026-05-24",
     "descripcion": "La sabiduría suele ser discreta. Se reconoce menos por lo que una persona sabe y más por cómo vive lo que sabe.",
@@ -65,6 +73,7 @@
   },
   {
     "numero": 9,
+		"especial": false,
     "titulo": "Puertas entreabiertas",
     "fecha": "2026-05-31",
     "descripcion": "No todas las puertas existen para ser atravesadas de inmediato. Algunas están ahí para enseñarnos a mirar antes de avanzar.",
@@ -73,6 +82,7 @@
   },
   {
     "numero": 10,
+		"especial": false,
     "titulo": "Entre símbolos y silencios",
     "fecha": "2026-06-07",
     "descripcion": "Detenerse también es una forma de avanzar. Hay comprensiones que solo aparecen cuando dejamos de correr detrás de respuestas.",
@@ -81,6 +91,7 @@
   },
   {
     "numero": 11,
+		"especial": false,
     "titulo": "La luz que no se impone",
     "fecha": "2026-06-14",
     "descripcion": "La verdadera luz no obliga, no presiona y no deslumbra. Simplemente permite ver con mayor claridad aquello que antes pasaba inadvertido.",
@@ -89,10 +100,20 @@
   },
   {
     "numero": 12,
+		"especial": false,
     "titulo": "La senda que transforma",
     "fecha": "2026-06-24",
     "descripcion": "La transformación rara vez hace ruido. Mientras muchos buscan respuestas, hay comprensiones que solo llegan cuando la mirada cambia y aprende a ver lo que antes pasaba inadvertido.",
     "archivo": "archivo-boletines/boletin_2612.pdf",
+		"imagen": ""
+  },
+  {
+    "numero": 13,
+		"especial": true,
+    "titulo": "La fraternidad no se aprende en los libros",
+    "fecha": "2026-06-29",
+    "descripcion": "Una reflexión nacida de una experiencia vivida durante la visita a la Gran Logia de la República de Venezuela. Cuando la celebración dio paso a la tragedia, la fraternidad dejó de ser una palabra para convertirse en una realidad.",
+    "archivo": "archivo-boletines/boletin_especial_01.pdf",
 		"imagen": ""
   }	
 ]
