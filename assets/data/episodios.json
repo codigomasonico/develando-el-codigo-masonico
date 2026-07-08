@@ -206,6 +206,19 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/5aTvhjX8X8gSO8g1UaMUo5?si=E1UVb9yYRPmx7ilgGYzQfA",
 		"youtube": ""
-	}
+	},
+	{
+		"id": "ep-017",
+		"numero": 17,
+		"titulo": "Las columnas J y B",
+		"categoria": "Simbolismo",
+		"fecha": "2026-07-08",
+		"duracion": "41:60",
+		"descripcion": "Las columnas J y B invitan a mirar el umbral, la responsabilidad y los fundamentos sobre los que construimos nuestra vida.",
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/6xuvPa15IKJrTqEld1QpwD?si=1oWYQ5iJSEqmbCkQEpYpWA",
+		"youtube": ""
+	}	
 ]
 

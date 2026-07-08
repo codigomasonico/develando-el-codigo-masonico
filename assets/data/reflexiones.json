@@ -82,5 +82,27 @@
 		],
     "episodioRelacionado": "La Escuadra y el Compás",
     "spotify": "https://open.spotify.com/episode/5aTvhjX8X8gSO8g1UaMUo5?si=E1UVb9yYRPmx7ilgGYzQfA"
-	}	
+	},
+{
+  "id": "ref-017-el-umbral-no-transforma-por-si-solo",
+  "episodioId": "ep-017",
+  "episodioNumero": 17,
+  "titulo": "El umbral no transforma por sí solo",
+  "slug": "reflexion-2617",
+  "url": "/archivo-reflexiones/reflexion-2617.html",
+  "fecha": "2026-07-08",
+  "categoria": "Simbolismo",
+  "descripcion": "Una reflexión sobre las columnas J y B como umbral simbólico y la responsabilidad de cruzarlo con conciencia, firmeza y criterio.",
+  "palabrasClave": [
+    "columnas J y B",
+    "masoneria",
+    "simbolo",
+    "umbral",
+    "reflexion",
+    "formacion masonica",
+    "Templo de Salomon"
+  ],
+  "episodioRelacionado": "Las Columnas J y B",
+  "spotify": ""
+}
 ]

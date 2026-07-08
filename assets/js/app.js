@@ -449,7 +449,7 @@ async function loadBoletines() {
 		if (!res.ok) throw new Error("No se pudo cargar boletines.json");
 
 		allBoletines = (await res.json()).sort(
-			(a, b) => Number(b.numero) - Number(a.numero)
+			(a, b) => getBoletinOrden(b) - getBoletinOrden(a)
 		);
 
 		if (!Array.isArray(allBoletines) || allBoletines.length === 0) {
@@ -510,6 +510,17 @@ function formatSpanishDate(value) {
 	}
 
 	return value;
+}
+
+
+function getBoletinOrden(value) {
+	const orden = Number(value && value.orden);
+	if (Number.isFinite(orden)) return orden;
+
+	const numero = Number(value && value.numero);
+	if (Number.isFinite(numero)) return numero;
+
+	return 0;
 }
 
 function renderBoletines(lista) {
@@ -660,7 +671,9 @@ function updateBoletinesLoadMoreButton(total) {
 			});
 		}
 
-		boletinesFiltered = filtered;
+		boletinesFiltered = filtered.sort(
+			(a, b) => getBoletinOrden(b) - getBoletinOrden(a)
+		);
 		boletinesVisible = BOLETINES_PER_PAGE;
 		renderBoletines(boletinesFiltered);
 	}
