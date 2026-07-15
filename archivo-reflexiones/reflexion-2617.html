@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const episodioNumero = Number(boton.dataset.episodioNumero);
 
   try {
-    const respuesta = await fetch("../reflexiones.json");
+    const respuesta = await fetch("/assets/data/reflexiones.json");
     if (!respuesta.ok) return;
 
     const reflexiones = await respuesta.json();
