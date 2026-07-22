@@ -1,0 +1,350 @@
+{
+  "schema_version": "1.0.0",
+  "content_version": "2026-07-20",
+  "description": "Catálogo maestro de contenidos verificables disponibles para recomendación del Cartes.",
+  "rules": {
+    "recommend_only_published": true,
+    "never_invent_urls": true,
+    "prefer_exact_topic_matches": true,
+    "maximum_recommendations": 3
+  },
+  "items": [
+    {
+      "id": "ep-001",
+      "tipo": "episodio",
+      "numero": 1,
+      "titulo": "Qué es la Masonería y qué no es",
+      "categoria": "Introducción",
+      "fecha_publicacion": "2026-03-10",
+      "duracion": "40:16",
+      "descripcion": "Una reflexión honesta sobre qué es realmente la Masonería, desmontando mitos, prejuicios y romanticismos para mirarla desde una perspectiva más humana y crítica.",
+      "temas": [
+        "masonería",
+        "definición",
+        "mitos",
+        "identidad"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/0X5A9keXdyp5z57UEwqv3L?si=sdn03C6VSzuGpF2Mk2PwnA",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-002",
+      "tipo": "episodio",
+      "numero": 2,
+      "titulo": "Los Orígenes de la Orden",
+      "categoria": "Introducción",
+      "fecha_publicacion": "2026-03-18",
+      "duracion": "38:07",
+      "descripcion": "El origen de la Masonería no es solo una fecha ni un hecho histórico, es una pregunta que te obliga a mirar qué estás buscando realmente.",
+      "temas": [
+        "masonería",
+        "definición",
+        "mitos",
+        "identidad",
+        "historia",
+        "orígenes",
+        "1717",
+        "masonería operativa",
+        "masonería especulativa"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/3xb3piCSSHhbvFGY9FAn4v?si=_Ah5iwwVShiuyz2D0Ygcyw",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-003",
+      "tipo": "episodio",
+      "numero": 3,
+      "titulo": "Los Grados en Masonería",
+      "categoria": "Introducción",
+      "fecha_publicacion": "2026-03-25",
+      "duracion": "36:23",
+      "descripcion": "Los grados no te transforman por sí solos, lo importante es lo que hacés con el lugar en el que estás.",
+      "temas": [
+        "masonería",
+        "definición",
+        "mitos",
+        "identidad",
+        "grados",
+        "aprendiz",
+        "compañero",
+        "maestro"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/7DnbRAbMHGr2zKhZTfXBVJ?si=HT9YV8EIQyO_KWgzYeYbQg",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-004",
+      "tipo": "episodio",
+      "numero": 4,
+      "titulo": "El Secreto Masónico",
+      "categoria": "Introducción",
+      "fecha_publicacion": "2026-04-01",
+      "duracion": "37:53",
+      "descripcion": "Qué significa realmente “secreto” en la Masonería, más allá de mitos y sospechas.",
+      "temas": [
+        "masonería",
+        "definición",
+        "mitos",
+        "identidad",
+        "secreto",
+        "reserva",
+        "discreción"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/5icNbioy7Knyt7ysrwJcZB?si=qA0d02_nTHu4DVZH26X-NA",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-005",
+      "tipo": "episodio",
+      "numero": 5,
+      "titulo": "La Cámara de Reflexiones",
+      "categoria": "Simbolismo",
+      "fecha_publicacion": "2026-04-08",
+      "duracion": "36:46",
+      "descripcion": "Un episodio sobre ese momento en que el ruido se apaga y ya no queda más que enfrentarte con vos mismo.",
+      "temas": [
+        "cámara de reflexiones",
+        "iniciación",
+        "introspección",
+        "silencio"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/2iyrxpc4y4ZI2ed27ErfEA?si=ICPgvZ_zSdmw20EG3vhwJg",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-006",
+      "tipo": "episodio",
+      "numero": 6,
+      "titulo": "La Iniciación Masónica",
+      "categoria": "Simbolismo",
+      "fecha_publicacion": "2026-04-15",
+      "duracion": "37:17",
+      "descripcion": "Una reflexión sobre la iniciación masónica, su sentido profundo y el compromiso interior que se pone en marcha.",
+      "temas": [
+        "iniciación",
+        "transformación",
+        "compromiso"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/5AZoYCqt7g8QTklfHq0jcb?si=mLQ4qnJ0SgiEtVB8ZZEXPw",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-007",
+      "tipo": "episodio",
+      "numero": 7,
+      "titulo": "La Piedra Bruta y la Piedra Cúbica",
+      "categoria": "Simbolismo",
+      "fecha_publicacion": "2026-04-22",
+      "duracion": "37:41",
+      "descripcion": "Un viaje de trabajo interior, esfuerzo constante y transformación personal, donde cada paso exige disciplina, conciencia y voluntad para ir labrando lo que uno es.",
+      "temas": [
+        "piedra bruta",
+        "piedra cúbica",
+        "trabajo interior"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/1IlHZQPuWipallNuWK1SCb?si=lwV6O5IjSpG-eU_GILI8cw",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-008",
+      "tipo": "episodio",
+      "numero": 8,
+      "titulo": "Las Tres Grandes Luces",
+      "categoria": "Simbolismo",
+      "fecha_publicacion": "2026-04-28",
+      "duracion": "37:01",
+      "descripcion": "Porque hacer lo correcto no siempre es fácil, y cómo las Tres Grandes Luces lo ponen a prueba en el día a día.",
+      "temas": [
+        "escuadra",
+        "compás",
+        "libro de la ley",
+        "tres grandes luces"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/5QAGeb0L1mz2WHbQG3Qx9D?si=fO9ztuTST7aBIs0ZRsUVcw",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-009",
+      "tipo": "episodio",
+      "numero": 9,
+      "titulo": "Los Pilares del Templo",
+      "categoria": "Simbolismo",
+      "fecha_publicacion": "2026-05-06",
+      "duracion": "43:21",
+      "descripcion": "No basta saber qué es lo correcto. También hace falta Fuerza para sostenerlo cuando cuesta, Belleza para no destruir lo que se construye, y Sabiduría para recordar hacia dónde vale la pena levantarlo.",
+      "temas": [
+        "sabiduría",
+        "fuerza",
+        "belleza",
+        "pilares"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/65hoxTwTD3PHAIegUetAp1?si=mhtRyBHiSaaXtPLHwO3XxA",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-010",
+      "tipo": "episodio",
+      "numero": 10,
+      "titulo": "El Aprendiz Masón",
+      "categoria": "Formación",
+      "fecha_publicacion": "2026-05-13",
+      "duracion": "42:36",
+      "descripcion": "El Aprendiz Masón no es solo el inicio de un camino, sino la decisión de seguir aprendiendo incluso cuando creemos que ya entendimos.",
+      "temas": [
+        "aprendiz",
+        "silencio",
+        "formación"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/4OQou9PDn9GrR4qD90r5xX?si=bobvsPP8T1CnEOKK9VddDw",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-011",
+      "tipo": "episodio",
+      "numero": 11,
+      "titulo": "El Compañero",
+      "categoria": "Formación",
+      "fecha_publicacion": "2026-05-20",
+      "duracion": "34:45",
+      "descripcion": "El Compañero es la etapa en la que saber ya no alcanza, lo comprendido empieza a medirse en la palabra, la conducta y la forma de responder ante la vida.",
+      "temas": [
+        "compañero",
+        "conocimiento",
+        "formación"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/5US91wmYvkBgcHZ7uwxhlk?si=mAIQTm2oRuao_2MIfY6wDw",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-012",
+      "tipo": "episodio",
+      "numero": 12,
+      "titulo": "El Maestro Masón",
+      "categoria": "Formación",
+      "fecha_publicacion": "2026-05-27",
+      "duracion": "26:41",
+      "descripcion": "El Maestro Masón no es el final del camino. Es el momento en que el símbolo deja de ser discurso y empieza a exigir coherencia, responsabilidad y una forma distinta de vivir lo que ya se comprendió.",
+      "temas": [
+        "maestro masón",
+        "maestría",
+        "grado"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/21qwn42h8aqfwHCK1Rg2wr?si=9Q4y23XeSNqduCICzl1RUg",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-013",
+      "tipo": "episodio",
+      "numero": 13,
+      "titulo": "El Mandil",
+      "categoria": "Simbolismo",
+      "fecha_publicacion": "2026-06-03",
+      "duracion": "34:49",
+      "descripcion": "El mandil es mucho más que una prenda simbólica. Es un recordatorio de trabajo, responsabilidad y coherencia entre lo que decimos valorar y la forma en que actuamos. Una reflexión sobre el ego, la humildad y aquello que todavía sigue pendiente de construir.",
+      "temas": [
+        "mandil",
+        "trabajo",
+        "símbolo"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/1iL8PMCrQxx9dUixGpjpVi?si=OHAXrhLeSFWgMTeNLyE5kg",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-014",
+      "tipo": "episodio",
+      "numero": 14,
+      "titulo": "El Juramento Masónico",
+      "categoria": "Ética",
+      "fecha_publicacion": "2026-06-10",
+      "duracion": "40:51",
+      "descripcion": "Una reflexión sobre el sentido ético y simbólico del juramento masónico, el peso de la palabra dada y la exigencia ética que comienza después de pronunciarla.",
+      "temas": [
+        "juramento",
+        "palabra",
+        "honor",
+        "compromiso"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/15RT8NrdPqNt2JuIwKvTkk?si=Ng5K61T_RR-Zh5yZNoBkUg",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-015",
+      "tipo": "episodio",
+      "numero": 15,
+      "titulo": "El Silencio",
+      "categoria": "Filosófico",
+      "fecha_publicacion": "2026-06-17",
+      "duracion": "40:51",
+      "descripcion": "Escuchar de verdad exige algo más difícil que permanecer callado, exige suspender por un momento la necesidad de responder.",
+      "temas": [
+        "filosófico"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/35QjAQv8V7ztPkXwpPZAgg?si=MgK1XI9IRli1o9PDc0MPbQ",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-016",
+      "tipo": "episodio",
+      "numero": 16,
+      "titulo": "La Escuadra y el Compás",
+      "categoria": "Simbolismo",
+      "fecha_publicacion": "2026-06-24",
+      "duracion": "36:39",
+      "descripcion": "Hay símbolos que todos reconocen. El problema comienza cuando dejan de preguntarnos algo.",
+      "temas": [
+        "simbolismo"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/5aTvhjX8X8gSO8g1UaMUo5?si=E1UVb9yYRPmx7ilgGYzQfA",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    },
+    {
+      "id": "ep-017",
+      "tipo": "episodio",
+      "numero": 17,
+      "titulo": "Las columnas J y B",
+      "categoria": "Simbolismo",
+      "fecha_publicacion": "2026-07-08",
+      "duracion": "41:60",
+      "descripcion": "Las columnas J y B invitan a mirar el umbral, la responsabilidad y los fundamentos sobre los que construimos nuestra vida.",
+      "temas": [
+        "simbolismo"
+      ],
+      "url_spotify": "https://open.spotify.com/episode/6xuvPa15IKJrTqEld1QpwD?si=1oWYQ5iJSEqmbCkQEpYpWA",
+      "url_youtube": "",
+      "estado": "publicado",
+      "fuente": "assets/data/episodios.json"
+    }
+  ]
+}

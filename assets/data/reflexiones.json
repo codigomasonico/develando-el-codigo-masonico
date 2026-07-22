@@ -62,68 +62,90 @@
     "episodioRelacionado": "El Silencio",
     "spotify": "https://open.spotify.com/episode/35QjAQv8V7ztPkXwpPZAgg?si=MgK1XI9IRli1o9PDc0MPbQ"
   },
-	{
-		"id": "ref-016-cuando-el-simbolo-deja-de-interpelar",
-		"episodioId": "ep-016",
-		"episodioNumero": 16,
-		"titulo": "Cuando el símbolo deja de interpelar",
-		"slug": "reflexion-2616",
-		"url": "archivo-reflexiones/reflexion-2616.html",
-		"fecha": "2026-06-24",
-		"categoria": "Reflexión",
-		"descripcion": "Una reflexión sobre cómo los símbolos pueden perder fuerza cuando dejan de cuestionar la conducta de quienes los reconocen.",
-		"palabrasClave": [
-			"escuadra y compas",
-			"simbolismo",
-			"masoneria",
-			"coherencia",
-			"reflexion",
-			"conducta"
-		],
+  {
+    "id": "ref-016-cuando-el-simbolo-deja-de-interpelar",
+    "episodioId": "ep-016",
+    "episodioNumero": 16,
+    "titulo": "Cuando el símbolo deja de interpelar",
+    "slug": "reflexion-2616",
+    "url": "/archivo-reflexiones/reflexion-2616.html",
+    "fecha": "2026-06-24",
+    "categoria": "Reflexión",
+    "descripcion": "Una reflexión sobre cómo los símbolos pueden perder fuerza cuando dejan de cuestionar la conducta de quienes los reconocen.",
+    "palabrasClave": [
+      "escuadra y compas",
+      "simbolismo",
+      "masoneria",
+      "coherencia",
+      "reflexion",
+      "conducta"
+    ],
     "episodioRelacionado": "La Escuadra y el Compás",
     "spotify": "https://open.spotify.com/episode/5aTvhjX8X8gSO8g1UaMUo5?si=E1UVb9yYRPmx7ilgGYzQfA"
-	},
-{
-  "id": "ref-017-el-umbral-no-transforma-por-si-solo",
-  "episodioId": "ep-017",
-  "episodioNumero": 17,
-  "titulo": "El umbral no transforma por sí solo",
-  "slug": "reflexion-2617",
-  "url": "/archivo-reflexiones/reflexion-2617.html",
-  "fecha": "2026-07-08",
-  "categoria": "Simbolismo",
-  "descripcion": "Una reflexión sobre las columnas J y B como umbral simbólico y la responsabilidad de cruzarlo con conciencia, firmeza y criterio.",
-  "palabrasClave": [
-    "columnas J y B",
-    "masoneria",
-    "simbolo",
-    "umbral",
-    "reflexion",
-    "formacion masonica",
-    "Templo de Salomon"
-  ],
-  "episodioRelacionado": "Las Columnas J y B",
-  "spotify": "https://open.spotify.com/episode/6xuvPa15IKJrTqEld1QpwD?si=1oWYQ5iJSEqmbCkQEpYpWA"
-},
-{
-  "id": "ref-018-la-piedra-que-sabe-defenderse",
-  "episodioId": "ep-018",
-  "episodioNumero": 18,
-  "titulo": "La piedra que sabe defenderse",
-  "slug": "reflexion-2618",
-  "url": "/archivo-reflexiones/reflexion-2618.html",
-  "fecha": "2026-07-15",
-  "categoria": "Filosofía",
-  "descripcion": "Una reflexión sobre el Arte Real, la resistencia del carácter y la distancia entre comprender un símbolo y permitir que transforme la conducta.",
-  "palabrasClave": [
-    "Arte Real",
-    "masoneria",
-    "simbolo",
-    "conducta",
-    "carácter",
-    "reflexion"
-  ],
-  "episodioRelacionado": "El Arte Real",
-  "spotify": "https://open.spotify.com/episode/21hF0MPU2xuNStdA3Zo9Kv?si=AyM_TqPMTxqMBDqMBM7Wrw"
-}
+  },
+  {
+    "id": "ref-017-el-umbral-no-transforma-por-si-solo",
+    "episodioId": "ep-017",
+    "episodioNumero": 17,
+    "titulo": "El umbral no transforma por sí solo",
+    "slug": "reflexion-2617",
+    "url": "/archivo-reflexiones/reflexion-2617.html",
+    "fecha": "2026-07-08",
+    "categoria": "Simbolismo",
+    "descripcion": "Una reflexión sobre las columnas J y B como umbral simbólico y la responsabilidad de cruzarlo con conciencia, firmeza y criterio.",
+    "palabrasClave": [
+      "columnas J y B",
+      "masoneria",
+      "simbolo",
+      "umbral",
+      "reflexion",
+      "formacion masonica",
+      "Templo de Salomon"
+    ],
+    "episodioRelacionado": "Las Columnas J y B",
+    "spotify": "https://open.spotify.com/episode/6xuvPa15IKJrTqEld1QpwD?si=1oWYQ5iJSEqmbCkQEpYpWA"
+  },
+  {
+    "id": "ref-018-la-piedra-que-sabe-defenderse",
+    "episodioId": "ep-018",
+    "episodioNumero": 18,
+    "titulo": "La piedra que sabe defenderse",
+    "slug": "reflexion-2618",
+    "url": "/archivo-reflexiones/reflexion-2618.html",
+    "fecha": "2026-07-15",
+    "categoria": "Filosofía",
+    "descripcion": "Una reflexión sobre el Arte Real, la resistencia del carácter y la distancia entre comprender un símbolo y permitir que transforme la conducta.",
+    "palabrasClave": [
+      "Arte Real",
+      "masoneria",
+      "simbolo",
+      "conducta",
+      "carácter",
+      "reflexion"
+    ],
+    "episodioRelacionado": "El Arte Real",
+    "spotify": "https://open.spotify.com/episode/21hF0MPU2xuNStdA3Zo9Kv?si=AyM_TqPMTxqMBDqMBM7Wrw"
+  },
+  {
+    "id": "ref-019-la-luz-que-ya-no-permite-excusas",
+    "episodioId": "ep-019",
+    "episodioNumero": 19,
+    "titulo": "La luz que ya no permite excusas",
+    "slug": "reflexion-2619",
+    "url": "/archivo-reflexiones/reflexion-2619.html",
+    "fecha": "2026-07-22",
+    "categoria": "Simbolismo",
+    "descripcion": "La luz masónica no se mide por lo aprendido, sino por las contradicciones que revela y la responsabilidad que nace al dejar de ignorarlas.",
+    "palabrasClave": [
+      "masoneria",
+      "luz masonica",
+      "simbolo",
+      "responsabilidad",
+      "contradicciones",
+      "discernimiento",
+      "reflexion"
+    ],
+    "episodioRelacionado": "El Significado de la Luz",
+    "spotify": "https://open.spotify.com/episode/67iO660Bohxhfav5QOiPVI?si=YfA5HpM1Sb2YECngDGtEbg"
+  }
 ]

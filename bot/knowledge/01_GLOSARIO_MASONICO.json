@@ -1,0 +1,730 @@
+{
+  "schema_version": "2.0.0",
+  "content_version": "2026-07-20",
+  "description": "Glosario maestro editorial del Cartes. Define terminología preferida y límites de uso.",
+  "governance": {
+    "automatic_public_learning": false,
+    "editorial_approval_required": true,
+    "preferred_language": "es-419"
+  },
+  "entries": [
+    {
+      "id": "GM-0001",
+      "term": "Masonería",
+      "aliases": [
+        "francmasonería"
+      ],
+      "definition": "Tradición iniciática, filosófica y asociativa organizada en logias, con diversidad de ritos, obediencias y jurisdicciones. No posee una autoridad universal única.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No definirla como religión, partido político o doctrina monolítica."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0002",
+      "term": "Simbología masónica",
+      "aliases": [
+        "símbolos masónicos",
+        "simbolismo masónico"
+      ],
+      "definition": "Conjunto de símbolos empleados e interpretados en contextos masónicos. Sus lecturas pueden variar según el rito, la obediencia, la jurisdicción y la época.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Preferir “simbología masónica” cuando se aluda al conjunto y estudio de símbolos."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0003",
+      "term": "Símbolo",
+      "aliases": [
+        "símbolo masónico"
+      ],
+      "definition": "Elemento material, verbal o conceptual que remite a significados abiertos a reflexión e interpretación.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No presentar una sola interpretación como universal."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0004",
+      "term": "Rito",
+      "aliases": [
+        "ritos masónicos"
+      ],
+      "definition": "Sistema organizado de grados, enseñanzas, usos y ceremonias.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No confundir con ritual ni ceremonia."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0005",
+      "term": "Ritual",
+      "aliases": [
+        "ritual masónico"
+      ],
+      "definition": "Texto, forma o secuencia regulada mediante la cual se desarrolla una ceremonia dentro de un rito o jurisdicción.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No usar como sinónimo automático de rito."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0006",
+      "term": "Ceremonia",
+      "aliases": [
+        "ceremonia masónica"
+      ],
+      "definition": "Acto concreto desarrollado conforme a determinadas formas rituales.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Distinguir el acto de su texto ritual y del sistema general del rito."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0007",
+      "term": "Logia",
+      "aliases": [
+        "taller masónico"
+      ],
+      "definition": "Unidad básica de reunión y trabajo masónico, integrada conforme a las normas de una obediencia o jurisdicción.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Minúscula en uso genérico, mayúscula en nombre propio."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0008",
+      "term": "Obediencia",
+      "aliases": [
+        "gran logia",
+        "gran oriente"
+      ],
+      "definition": "Organización que agrupa logias y ejerce autoridad administrativa y masónica dentro de su marco normativo.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No asumir que todas usan la misma estructura."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0009",
+      "term": "Jurisdicción",
+      "aliases": [
+        "territorio masónico"
+      ],
+      "definition": "Ámbito territorial o institucional en el que una obediencia o cuerpo ejerce autoridad.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Puede no coincidir exactamente con fronteras políticas."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0010",
+      "term": "Regularidad",
+      "aliases": [
+        "regular"
+      ],
+      "definition": "Concepto definido por determinados principios, prácticas y criterios dentro de sistemas concretos de reconocimiento.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No es sinónimo automático de legitimidad histórica ni de reconocimiento universal."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0011",
+      "term": "Reconocimiento",
+      "aliases": [
+        "reconocimiento mutuo"
+      ],
+      "definition": "Relación formal por la cual dos obediencias se aceptan mutuamente conforme a sus propias normas.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No confundir con regularidad o legitimidad."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0012",
+      "term": "Legitimidad",
+      "aliases": [
+        "legítimo"
+      ],
+      "definition": "Valoración sobre la validez histórica, jurídica, institucional o moral de una organización o autoridad.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No equiparar automáticamente a regularidad o reconocimiento."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0013",
+      "term": "Grado",
+      "aliases": [
+        "grado masónico"
+      ],
+      "definition": "Etapa formal dentro de un sistema masónico que articula enseñanzas, responsabilidades y experiencias simbólicas.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No confundir con cargo o rango social."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0014",
+      "term": "Cargo",
+      "aliases": [
+        "dignidad",
+        "oficial de logia"
+      ],
+      "definition": "Función temporal de responsabilidad dentro de una logia, obediencia o cuerpo.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Un cargo no equivale a un grado."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0015",
+      "term": "Aprendiz Masón",
+      "aliases": [
+        "aprendiz"
+      ],
+      "definition": "Primer grado de la Masonería simbólica en numerosos sistemas, asociado al inicio del trabajo formativo.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Evitar atribuir prácticas idénticas a todas las jurisdicciones."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0016",
+      "term": "Compañero Masón",
+      "aliases": [
+        "compañero"
+      ],
+      "definition": "Segundo grado de la Masonería simbólica en numerosos sistemas, vinculado al desarrollo del conocimiento y del trabajo.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No presentar una definición ritual detallada."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0017",
+      "term": "Maestro Masón",
+      "aliases": [
+        "maestro"
+      ],
+      "definition": "Tercer grado de la Masonería simbólica en numerosos sistemas.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No confundir con Venerable Maestro, que es un cargo."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0018",
+      "term": "Venerable Maestro",
+      "aliases": [
+        "venerable"
+      ],
+      "definition": "Oficial que preside una logia durante un periodo determinado conforme a sus normas.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Es un cargo, no un grado adicional."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0019",
+      "term": "Masonería simbólica",
+      "aliases": [
+        "masonería azul",
+        "logia azul"
+      ],
+      "definition": "Denominación frecuente para los tres grados de Aprendiz, Compañero y Maestro Masón.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "La terminología varía entre jurisdicciones."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0020",
+      "term": "Iniciación",
+      "aliases": [
+        "iniciación masónica"
+      ],
+      "definition": "Proceso ceremonial y simbólico de incorporación y comienzo de una experiencia formativa.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Explicar su sentido general sin describir procedimientos reservados."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0021",
+      "term": "Secreto masónico",
+      "aliases": [
+        "secreto",
+        "reserva masónica"
+      ],
+      "definition": "Conjunto de contenidos, modos de reconocimiento o experiencias que determinadas tradiciones mantienen reservados.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Distinguir secreto, discreción, privacidad y reserva."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0022",
+      "term": "Discreción",
+      "aliases": [
+        "discreta"
+      ],
+      "definition": "Cualidad de manejar con prudencia información, pertenencia o experiencias sin convertir necesariamente toda la organización en secreta.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0023",
+      "term": "Escuadra",
+      "aliases": [
+        "escuadra masónica"
+      ],
+      "definition": "Instrumento simbólico asociado habitualmente con rectitud, medida y coherencia ética.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Presentar como interpretación difundida, no única."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0024",
+      "term": "Compás",
+      "aliases": [
+        "compás masónico"
+      ],
+      "definition": "Instrumento simbólico asociado frecuentemente con medida, límites y dominio de sí.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Las lecturas varían según contexto."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0025",
+      "term": "Libro de la Ley",
+      "aliases": [
+        "volumen de la ley sagrada",
+        "VLS"
+      ],
+      "definition": "Libro o texto colocado en determinados contextos rituales como referencia moral o espiritual, cuya definición depende de la jurisdicción.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No asumir un único libro para todas las obediencias."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0026",
+      "term": "Tres Grandes Luces",
+      "aliases": [
+        "grandes luces"
+      ],
+      "definition": "Conjunto simbólico formado en muchas tradiciones por el Libro de la Ley, la escuadra y el compás.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "La formulación y uso dependen de la jurisdicción."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0027",
+      "term": "Piedra bruta",
+      "aliases": [
+        "piedra tosca"
+      ],
+      "definition": "Símbolo ampliamente relacionado con el estado inicial de la persona y el trabajo de perfeccionamiento.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No presentar como definición exclusiva."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0028",
+      "term": "Piedra cúbica",
+      "aliases": [
+        "piedra pulida"
+      ],
+      "definition": "Símbolo asociado con el resultado provisional del trabajo consciente sobre uno mismo.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Evitar presentar la perfección como estado absoluto."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0029",
+      "term": "Mandil",
+      "aliases": [
+        "delantal masónico"
+      ],
+      "definition": "Prenda simbólica relacionada históricamente con el trabajo y adoptada en la Masonería especulativa.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No inventar colores o decoraciones universales."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0030",
+      "term": "Cámara de Reflexiones",
+      "aliases": [
+        "cámara de reflexión"
+      ],
+      "definition": "Espacio simbólico utilizado en determinados ritos y jurisdicciones para la introspección previa a ciertos trabajos iniciáticos.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No afirmar que existe en toda la Masonería."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0031",
+      "term": "Templo",
+      "aliases": [
+        "templo masónico"
+      ],
+      "definition": "Espacio destinado a reuniones y ceremonias masónicas, también utilizado simbólicamente como imagen de construcción interior o colectiva.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No confundir necesariamente con edificio religioso."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0032",
+      "term": "Pilares del Templo",
+      "aliases": [
+        "sabiduría fuerza belleza"
+      ],
+      "definition": "Conjunto simbólico asociado en diversas tradiciones con Sabiduría, Fuerza y Belleza.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Las atribuciones concretas pueden variar."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0033",
+      "term": "Oriente",
+      "aliases": [
+        "oriente masónico"
+      ],
+      "definition": "Término simbólico y espacial empleado en logia, y también parte del nombre de algunas obediencias.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Depende del contexto."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0034",
+      "term": "Occidente",
+      "aliases": [
+        "occidente masónico"
+      ],
+      "definition": "Término espacial y simbólico utilizado en determinadas disposiciones de logia.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No atribuir una interpretación única."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0035",
+      "term": "Cadena de unión",
+      "aliases": [
+        "cadena fraternal"
+      ],
+      "definition": "Expresión o práctica simbólica de fraternidad y vínculo colectivo en determinadas tradiciones.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Evitar describir secuencias rituales reservadas."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0036",
+      "term": "Fraternidad",
+      "aliases": [
+        "hermandad"
+      ],
+      "definition": "Ideal de vínculo, respeto y responsabilidad mutua entre miembros.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No suponer que elimina conflictos reales."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0037",
+      "term": "Tolerancia",
+      "aliases": [
+        "tolerancia masónica"
+      ],
+      "definition": "Disposición a convivir con diferencias dentro de límites éticos y normativos.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No confundir tolerancia con ausencia de criterio."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0038",
+      "term": "Libertad de conciencia",
+      "aliases": [
+        "libertad de pensamiento"
+      ],
+      "definition": "Principio asociado en diversas corrientes masónicas con la autonomía moral e intelectual.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Su alcance institucional varía."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0039",
+      "term": "Gran Arquitecto del Universo",
+      "aliases": [
+        "GADU"
+      ],
+      "definition": "Expresión simbólica utilizada en numerosas tradiciones para aludir a un principio trascendente o creador.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Su interpretación varía y no debe imponerse una definición teológica única."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0040",
+      "term": "Landmarks",
+      "aliases": [
+        "antiguos límites"
+      ],
+      "definition": "Principios considerados fundamentales por ciertas corrientes masónicas, sin una lista universalmente aceptada.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No afirmar que existe un catálogo único."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0041",
+      "term": "Constituciones de Anderson",
+      "aliases": [
+        "anderson 1723"
+      ],
+      "definition": "Texto publicado en Londres en 1723, influyente en la organización y narrativa de la Masonería especulativa moderna.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No tratarlo como constitución universal vigente."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0042",
+      "term": "Masonería operativa",
+      "aliases": [
+        "masones operativos"
+      ],
+      "definition": "Expresión empleada para referirse a organizaciones y trabajadores vinculados históricamente al oficio de la construcción.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "La transición a la Masonería especulativa es objeto de debate histórico."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0043",
+      "term": "Masonería especulativa",
+      "aliases": [
+        "masones especulativos"
+      ],
+      "definition": "Forma moderna de Masonería centrada en enseñanzas morales, filosóficas y simbólicas más que en el oficio constructivo.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Evitar relatos lineales demasiado simples sobre su origen."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0044",
+      "term": "Francmasón",
+      "aliases": [
+        "masón"
+      ],
+      "definition": "Miembro iniciado de una organización masónica conforme a sus reglas.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Evitar usarlo como calificativo moral automático."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0045",
+      "term": "Profano",
+      "aliases": [
+        "no masón"
+      ],
+      "definition": "Término tradicional para quien no ha sido iniciado en la Masonería.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "Evitar uso despectivo; preferir “persona no perteneciente a la Masonería” ante público general."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0046",
+      "term": "Tenida",
+      "aliases": [
+        "reunión masónica"
+      ],
+      "definition": "Reunión formal de una logia conforme a sus normas y usos.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No describir procedimientos reservados."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0047",
+      "term": "Plancha",
+      "aliases": [
+        "trabajo escrito"
+      ],
+      "definition": "En numerosos contextos hispanohablantes, trabajo escrito o exposición presentada en logia.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "El uso del término varía regionalmente."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0048",
+      "term": "Balustre",
+      "aliases": [
+        "documento masónico"
+      ],
+      "definition": "Término utilizado en algunas jurisdicciones para determinados documentos, actas o comunicaciones.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No asumir significado idéntico en todos los países."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0049",
+      "term": "Columna",
+      "aliases": [
+        "columna masónica"
+      ],
+      "definition": "Elemento arquitectónico y simbólico cuya función e interpretación depende del contexto ritual y espacial.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No asignar nombres o posiciones universales."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0050",
+      "term": "Juramento masónico",
+      "aliases": [
+        "promesa masónica"
+      ],
+      "definition": "Compromiso solemne asumido dentro de un marco masónico determinado.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No reproducir textos completos ni fórmulas reservadas."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    },
+    {
+      "id": "GM-0051",
+      "term": "Cadena iniciática",
+      "aliases": [
+        "transmisión iniciática"
+      ],
+      "definition": "Concepto utilizado por algunas corrientes para expresar continuidad de una tradición o filiación.",
+      "do_not_confuse_with": [],
+      "editorial_notes": [
+        "No presentarlo como hecho histórico verificable sin fuentes."
+      ],
+      "status": "aprobado_base",
+      "source_level": "editorial"
+    }
+  ]
+}

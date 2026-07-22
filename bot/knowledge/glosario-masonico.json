@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "entries": [
+    {
+      "term": "Simbología masónica",
+      "aliases": [
+        "símbolos masónicos",
+        "simbolismo masónico"
+      ],
+      "definition": "Conjunto de símbolos utilizados y estudiados en contextos masónicos. Sus interpretaciones pueden variar según el rito, la obediencia, la jurisdicción y la época."
+    },
+    {
+      "term": "Rito",
+      "aliases": [
+        "ritos masónicos"
+      ],
+      "definition": "Sistema organizado de grados, enseñanzas, usos y ceremonias. No debe confundirse con una ceremonia concreta ni con el ritual escrito."
+    },
+    {
+      "term": "Ritual",
+      "aliases": [
+        "ritual masónico"
+      ],
+      "definition": "Texto, forma o conjunto ordenado de elementos mediante los cuales se desarrolla una ceremonia dentro de un rito o jurisdicción determinada."
+    },
+    {
+      "term": "Obediencia",
+      "aliases": [
+        "gran logia",
+        "gran oriente"
+      ],
+      "definition": "Organización soberana que agrupa logias y ejerce autoridad administrativa y masónica dentro de su propio marco jurisdiccional."
+    },
+    {
+      "term": "Jurisdicción",
+      "aliases": [
+        "territorio masónico"
+      ],
+      "definition": "Ámbito territorial o institucional en el que una obediencia o cuerpo ejerce autoridad conforme a sus normas."
+    },
+    {
+      "term": "Regularidad",
+      "aliases": [
+        "regular"
+      ],
+      "definition": "Concepto definido por determinados principios, prácticas y criterios de cada sistema de reconocimiento. No es sinónimo automático de legitimidad histórica ni de reconocimiento universal."
+    },
+    {
+      "term": "Reconocimiento",
+      "aliases": [
+        "reconocimiento mutuo"
+      ],
+      "definition": "Relación formal por la cual dos obediencias se aceptan mutuamente y, según sus normas, permiten relaciones y visitas entre sus miembros."
+    }
+  ]
+}

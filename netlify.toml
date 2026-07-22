@@ -1,0 +1,3 @@
+[functions]
+  directory = "bot/functions"
+  node_bundler = "esbuild"

@@ -232,5 +232,18 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/21hF0MPU2xuNStdA3Zo9Kv?si=AyM_TqPMTxqMBDqMBM7Wrw",
 		"youtube": ""
-	}	
+	},
+	{
+		"id": "ep-019",
+		"numero": 19,
+		"titulo": "El Significado de la Luz",
+		"categoria": "Simbolismo",
+		"fecha": "2026-07-15",
+		"duracion": "39:04",
+		"descripcion": "Recibir la luz deja de ser una fórmula simbólica cuando nos obliga a reconocer lo que ya no podemos seguir ignorando y a cambiar nuestra manera de mirar.",
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/67iO660Bohxhfav5QOiPVI?si=YfA5HpM1Sb2YECngDGtEbg",
+		"youtube": ""
+	}		
 ]

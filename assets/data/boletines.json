@@ -138,5 +138,25 @@
     "archivo": "archivo-boletines/boletin_2613.pdf",
     "imagen": "",
     "orden": 13
+  },
+  {
+    "numero": 14,
+    "especial": false,
+    "titulo": "Lo que la tradición guarda",
+    "fecha": "2026-07-12",
+    "descripcion": "La tradición permanece viva cuando sus palabras, gestos y símbolos siguen dialogando con el presente. Preservarlos no basta, también es necesario comprender qué sentido conservan y qué merece transmitirse.",
+    "archivo": "archivo-boletines/boletin_2614.pdf",
+    "imagen": "",
+    "orden": 14
+  },
+  {
+    "numero": 15,
+    "especial": false,
+    "titulo": "La voz que construimos",
+    "fecha": "2026-07-19",
+    "descripcion": "La voz común se construye cuando cada persona puede expresarse sin imponerse y escuchar sin preparar una respuesta. Su fuerza nace de reunir perspectivas distintas sin borrar sus diferencias..",
+    "archivo": "archivo-boletines/boletin_2615.pdf",
+    "imagen": "",
+    "orden": 15
   }
 ]
