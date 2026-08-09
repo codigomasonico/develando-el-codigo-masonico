@@ -1,0 +1,16 @@
+NORMALIZACIÓN DE REFLEXIONES 2613 A 2619
+
+Cambios aplicados:
+- Estructura HTML unificada.
+- Indentación uniforme de cuatro espacios.
+- DOCTYPE, metadatos, favicon y atributos normalizados.
+- Canonical absoluto corregido a /archivo-reflexiones/.
+- Eliminación de JavaScript inline duplicado en 2617 y 2618.
+- Carga común de reflexion-spotify.js en las siete páginas.
+- Botones Spotify normalizados mediante data-episodio-numero.
+- Scripts header.js, footer.js y guia-masonico.js con defer.
+- Contenido editorial preservado sin reescritura.
+
+Cambios en assets/data/reflexiones.json:
+- Corregida la URL del episodio 16 para incluir la barra inicial.
+- Incorporado el enlace de Spotify del episodio 19.

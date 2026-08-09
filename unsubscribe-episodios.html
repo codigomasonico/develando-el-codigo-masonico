@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Darse de baja de avisos de episodios | Develando el Código Masónico</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta
+    name="description"
+    content="Solicita la baja de los avisos de nuevos episodios de Develando el Código Masónico."
+  />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+</head>
+
+<body>
+	<div data-header></div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="card unsubscribe-card">
+          <h1>Formulario de baja</h1>
+          <p class="muted">
+            Introduce el correo con el que estás suscrito a los avisos de episodios y reflexiones.
+          </p>
+
+						<form
+							name="unsubscribe-episodios"
+							method="POST"
+							data-netlify="true"
+							netlify-honeypot="bot-field"
+							id="unsubscribeEpisodesForm"
+						>
+            <input type="hidden" name="form-name" value="unsubscribe-episodios" />
+
+            <div hidden aria-hidden="true">
+              <label>No llenar: <input name="bot-field" /></label>
+            </div>
+
+            <label>
+              Email
+              <input
+                name="email"
+                type="email"
+                placeholder="tu@email.com"
+                required
+              />
+            </label>
+
+            <label>
+              Motivo (opcional)
+              <select name="motivo">
+                <option value=""></option>
+                <option value="demasiados-avisos">Recibo demasiados avisos</option>
+                <option value="prefiero-verlo-en-la-web">Prefiero revisar los episodios en la web</option>
+                <option value="pausa">Solo quiero hacer una pausa</option>
+                <option value="otro">Otro motivo</option>
+              </select>
+            </label>
+
+            <label>
+              Comentario adicional (opcional)
+              <textarea
+                name="comentario"
+                rows="5"
+                placeholder="Si deseas, puedes dejarnos un comentario"
+              ></textarea>
+            </label>
+
+            <div class="cta">
+              <button class="btn btn-primary" type="submit">Solicitar baja</button>
+              <a class="btn btn--ghost" href="episodios.html">Ver episodios</a>
+            </div>
+
+						<p class="unsubscribe-note">
+							Tu solicitud será recibida y procesada a la brevedad.
+						</p>
+          </form>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+	<div data-footer></div>
+	
+	<div id="unsubscribeEpisodesSuccessModal" class="responde-modal" aria-hidden="true">
+		<div class="responde-modal__overlay" data-close-unsubscribe-episodes-modal></div>
+
+		<div class="responde-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="unsubscribeEpisodesSuccessTitle">
+			<button class="responde-modal__close" type="button" aria-label="Cerrar mensaje" data-close-unsubscribe-episodes-modal>
+				×
+			</button>
+
+			<div class="responde-modal__tag">Avisos de episodios</div>
+
+			<h2 id="unsubscribeEpisodesSuccessTitle">Solicitud de baja enviada</h2>
+
+			<div class="responde-modal__body">
+				<p>
+					Hemos recibido tu solicitud de baja de los avisos de episodios. Gracias por haber acompañado este proyecto.
+				</p>
+			</div>
+
+			<div class="responde-modal__actions">
+				<button class="btn btn-primary" type="button" data-close-unsubscribe-episodes-modal>
+					Cerrar
+				</button>
+			</div>
+		</div>
+	</div>	
+	
+	<script src="assets/js/header.js" defer></script>
+	<script src="assets/js/footer.js" defer></script>
+	<script src="assets/js/app.js" defer></script>
+	
+</body>
+</html>
