@@ -2632,3 +2632,45 @@ body.modal-open {
     width: 100%;
   }
 }
+
+/* =========================
+   CARTES - BANNER LANZAMIENTO
+   ========================= */
+
+.cartes-launch {
+  padding: 28px 0;
+  background: var(--bg-main);
+}
+
+.cartes-launch__link {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+}
+
+.cartes-launch__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .cartes-launch {
+    padding: 20px 0;
+  }
+}
+
+/* Ajuste espacio HERO -> Banner Cartes */
+
+.hero-section {
+  padding-bottom: 0;
+}
+
+.hero-section .hero__inner {
+  padding-bottom: 20px;
+}
+
+.cartes-launch {
+  padding-top: 0;
+}
