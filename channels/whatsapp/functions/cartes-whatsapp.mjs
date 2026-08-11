@@ -119,10 +119,11 @@ export default async (request) => {
   }
 
   if (request.method === "POST") {
-    const rawBody = await request.text();
+    const rawBytes = Buffer.from(await request.arrayBuffer());
+    const rawBody = rawBytes.toString("utf8");
     const signature = request.headers.get("x-hub-signature-256") || "";
 
-    if (!validarFirmaMeta(rawBody, signature)) {
+    if (!validarFirmaMeta(rawBytes, signature)) {
       console.warn("Webhook rechazado: firma de Meta inválida.");
 
       return Response.json(
@@ -411,8 +412,8 @@ async function descargarDocumentoWhatsApp(mediaId) {
   return Buffer.from(await archivoResponse.arrayBuffer());
 }
 
-function validarFirmaMeta(rawBody, signature) {
-  const appSecret = process.env.META_APP_SECRET;
+function validarFirmaMeta(rawBytes, signature) {
+  const appSecret = String(process.env.META_APP_SECRET || "").trim();
 
   if (!appSecret || !signature.startsWith("sha256=")) {
     return false;
@@ -426,7 +427,7 @@ function validarFirmaMeta(rawBody, signature) {
 
   const firmaEsperada = crypto
     .createHmac("sha256", appSecret)
-    .update(rawBody, "utf8")
+    .update(rawBytes)
     .digest("hex");
 
   const bufferRecibido = Buffer.from(firmaRecibida, "hex");
