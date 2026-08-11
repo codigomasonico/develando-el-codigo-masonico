@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "entries": [
+    {
+      "question": "¿La Masonería es una religión?",
+      "keywords": [
+        "religión",
+        "dios",
+        "creencia"
+      ],
+      "answer": "En términos generales, la Masonería no se define como una religión: no posee una teología única, sacramentos propios ni una doctrina de salvación. Sin embargo, los requisitos y formulaciones espirituales varían entre obediencias y corrientes."
+    },
+    {
+      "question": "¿La Masonería es una sociedad secreta?",
+      "keywords": [
+        "secreta",
+        "secreto",
+        "discreta"
+      ],
+      "answer": "Resulta más preciso describir muchas expresiones masónicas como asociaciones discretas que conservan ciertos elementos reservados. Su existencia, sedes, autoridades y actividades públicas no suelen ser secretas, aunque determinadas prácticas internas sí se mantienen reservadas."
+    },
+    {
+      "question": "¿Qué significa la escuadra?",
+      "keywords": [
+        "escuadra",
+        "rectitud",
+        "símbolo"
+      ],
+      "answer": "En la simbología masónica, la escuadra suele relacionarse con rectitud, medida y coherencia ética. Es una interpretación ampliamente difundida, no una definición única e idéntica en todas las tradiciones."
+    }
+  ]
+}

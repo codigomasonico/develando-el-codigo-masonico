@@ -1,0 +1,28 @@
+{
+  "name": "cartes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cartes: un solo cerebro, varias interfaces (Web + WhatsApp)",
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:core && npm run test:whatsapp",
+    "test:core": "node --test tests/web/*.test.mjs",
+    "test:web-v4": "node tests/web/bot/run-v4-tests.mjs",
+    "test:whatsapp": "node --test tests/whatsapp/*.test.mjs",
+    "simular:whatsapp": "node channels/whatsapp/tools/simulador-cartes.mjs",
+    "test:e2e:whatsapp": "playwright test -c channels/whatsapp/playwright.config.mjs",
+    "test:unit": "npm run test:core && npm run test:whatsapp",
+    "test:critical": "node --test tests/web/account-core003.test.mjs tests/web/account-core004.test.mjs tests/web/account-core005.test.mjs tests/web/account-core006.test.mjs tests/whatsapp/acceso.test.mjs tests/whatsapp/uso.test.mjs tests/whatsapp/cancelacion-renovacion.test.mjs tests/whatsapp/mercadopago.test.mjs tests/whatsapp/revision.test.mjs tests/whatsapp/revisiones-flujo.test.mjs tests/whatsapp/identidad.test.mjs",
+    "test:e2e:web": "playwright test -c tests/e2e/playwright.web.config.mjs",
+    "test:e2e": "npm run test:e2e:web && npm run test:e2e:whatsapp",
+    "test:predeploy": "node scripts/predeploy-quality-gate.mjs",
+    "serve:web:test": "node scripts/serve-static.mjs channels/web/public 4174"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.7.9"
+  },
+  "devDependencies": {
+    "netlify-cli": "^26.2.0",
+    "@playwright/test": "^1.55.0"
+  }
+}

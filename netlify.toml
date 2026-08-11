@@ -1,2 +1,19 @@
 [build]
-  publish = "."
+  publish = "channels/web/public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Canonical Cartes WhatsApp entry inside the unified site.
+[[redirects]]
+  from = "/cartes-whatsapp"
+  to = "/.netlify/functions/cartes-acceso"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/cartes-whatsapp/"
+  to = "/.netlify/functions/cartes-acceso"
+  status = 302
+  force = true

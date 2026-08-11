@@ -1,2 +1,10 @@
-# Local Netlify folder
-.netlify
+node_modules/
+.netlify/
+.env
+.env.*
+!.env.example
+coverage/
+test-results/
+playwright-report/
+*.log
+.DS_Store
