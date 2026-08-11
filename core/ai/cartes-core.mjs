@@ -145,8 +145,8 @@ export default async (request) => {
     );
   }
 
-  const apiKey = getEnv("OPENAI_API_KEY");
-  const model = getEnv("OPENAI_MODEL") || CONFIG.defaultModel;
+  const apiKey = process.env.OPENAI_API_KEY || "";
+  const model = process.env.OPENAI_MODEL || CONFIG.defaultModel;
 
   if (!apiKey) {
     return json(
@@ -545,13 +545,6 @@ function extractOutputText(data) {
   }
 
   return parts.join("\n").trim();
-}
-
-function getEnv(name) {
-  const netlifyValue = globalThis.Netlify?.env?.get?.(name);
-  if (netlifyValue) return netlifyValue;
-
-  return process.env[name] || "";
 }
 
 function corsHeaders() {
