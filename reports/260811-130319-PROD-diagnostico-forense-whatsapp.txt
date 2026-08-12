@@ -1,0 +1,18 @@
+﻿CARTES - DIAGNÓSTICO FORENSE INTEGRAL DE WHATSAPP EN PRODUCCIÓN
+Inicio: 2026-08-11 13:03:19 -06:00
+Teléfono de prueba: ********4235
+Pregunta IA: ¿Cuándo surgió la masonería?
+Política: no deploy, no cambios de variables, no cambios de pagos, no cancelaciones.
+Únicas acciones con estado: reserva sintética inmediatamente liberada y un mensaje técnico directo por Meta, solo si las etapas previas permiten ejecutarlas.
+
+==============================================================================
+1. SITIO NETLIFY Y CONTEXTO
+==============================================================================
+netlify status exit code: 1
+
+==============================================================================
+DIAGNÓSTICO DETENIDO
+==============================================================================
+TYPE: System.Management.Automation.RuntimeException
+MESSAGE: Netlify CLI no pudo leer el sitio vinculado.
+No se hizo deploy ni se modificaron variables, pagos o suscripciones.

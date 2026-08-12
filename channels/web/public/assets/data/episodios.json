@@ -271,5 +271,19 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/2ZlDyLYUTIhKHsIoRIoCm5?si=tK69UxnNRsa3jjZZbLbSAQ",
 		"youtube": ""
+	},
+	{
+		"id": "ep-022",
+		"numero": 22,
+		"titulo": "La Biblia y la Libertad de Conciencia",
+		"categoria": "Simbolismo",
+		"fecha": "2026-08-12",
+		"duracion": "45:44",
+		"descripcion": "La libertad de conciencia no se demuestra evitando las diferencias, sino aprendiendo a convivir con símbolos, creencias e interpretaciones que no representan de la misma manera a todos.",
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/4zPBexE8aQ64czfsezcHmV?si=TfZ-8DQPTFy6TiX2W0Tt6A",
+		"youtube": ""
 	}
+	
 ]

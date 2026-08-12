@@ -190,6 +190,27 @@
 		],
 		"episodioRelacionado": "El Templo Interior",
 		"spotify": "https://open.spotify.com/episode/2ZlDyLYUTIhKHsIoRIoCm5?si=tK69UxnNRsa3jjZZbLbSAQ"
-	}
+	},
+	{
+  "id": "ref-022-cuando-un-simbolo-no-representa-a-todos",
+  "episodioId": "ep-022",
+  "episodioNumero": 22,
+  "titulo": "Cuando un símbolo no representa a todos",
+  "slug": "reflexion-2622",
+  "url": "/archivo-reflexiones/reflexion-2622.html",
+  "fecha": "2026-08-10",
+  "categoria": "Filosofía",
+  "descripcion": "Una reflexión sobre tradición, simbolismo y libertad de conciencia cuando un mismo libro no representa de igual manera a quienes lo observan.",
+  "palabrasClave": [
+    "libertad de conciencia",
+    "Biblia y Masonería",
+    "tradición masónica",
+    "simbolo",
+    "masoneria",
+    "reflexion"
+  ],
+  "episodioRelacionado": "La Biblia y la Libertad de Conciencia",
+  "spotify": "https://open.spotify.com/episode/4zPBexE8aQ64czfsezcHmV?si=TfZ-8DQPTFy6TiX2W0Tt6A"
+}
 	
 ]

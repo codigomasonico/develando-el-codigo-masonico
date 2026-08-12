@@ -1,0 +1,77 @@
+============================================================
+CARTES PRODUCCION - TRAZA TOTAL WHATSAPP
+Fecha: 2026-08-11 12:45:50
+============================================================
+
+1. FUENTE DESPLEGADA
+------------------------------------------------------------
+BRANCH=main
+HEAD=c4a8cf28bb6cd7cb3deab7462ad8f67b3f193624
+REMOTE=c4a8cf28bb6cd7cb3deab7462ad8f67b3f193624
+STATUS:
+?? reports/
+
+2. DNS PRODUCCION
+------------------------------------------------------------
+DNS_A=13.52.188.95
+DNS_A=52.52.192.191
+DNS_RESULTADO=OK
+
+3. ENDPOINT CARTES-WHATSAPP SIN PARAMETROS
+------------------------------------------------------------
+HTTP=403
+X_NF_REQUEST_ID=01KZS2ADZFJ8GZS175BC3256VH
+BODY=Verificación rechazada
+ESPERADO_HTTP=403
+ESPERADO_BODY=Verificacion rechazada
+
+4. VERIFICACION REAL DEL WEBHOOK
+------------------------------------------------------------
+HTTP=403
+X_NF_REQUEST_ID=01KZS2B55F8R3DFXHNEGEGZ4MY
+CHALLENGE_ENVIADO=CARTES_DIAG_1786473976
+CHALLENGE_RECIBIDO=Verificación rechazada
+
+5. POST DIRECTO A CARTES-WHATSAPP
+------------------------------------------------------------
+Este POST no tiene firma Meta intencionalmente.
+Debe llegar a la Function y ser rechazado antes de procesarse.
+HTTP=401
+X_NF_REQUEST_ID=01KZS2B6A2KRWMAMR652W8KXNR
+BODY={"recibido":false,"error":"Firma inválida"}
+ESPERADO_HTTP=401
+NETLIFY_POST_INGRESS=PASS
+
+6. CEREBRO CARTES DIRECTO
+------------------------------------------------------------
+HTTP=200
+X_NF_REQUEST_ID=01KZS2B78QJP13DDANRT99A5PN
+ANSWER_PRESENT=True
+ROUTE=ia
+TOPIC=historia
+ANSWER_PREVIEW=Los desafíos son varios y operan a distintos niveles: social, institucional, simbólico y práctico. Conviene distinguir lo que está documentado (por ejemplo, el envejecimiento de plantillas y la disminución de afiliaciones en muchas jurisdicciones) de
+GUIA_MASONICO=PASS
+
+7. CONFIGURACION REAL META / WABA
+------------------------------------------------------------
+SUBSCRIBED_APPS_HTTP=200
+SUBSCRIBED_APP_ID=
+SUBSCRIBED_APP_NAME=
+WABA_OVERRIDE_CALLBACK=<NO_INFORMADO>
+---
+PRODUCTION_APP_SUBSCRIBED=False
+
+8. NUMEROS DEL WABA Y OVERRIDES
+------------------------------------------------------------
+PHONE_NUMBERS_HTTP=200
+PHONE_ID=1205856839283337
+PHONE_NUMBER=+52 1 33 2233 8888
+PHONE_NAME=Develando el Código Masónico
+PHONE_STATUS=CONNECTED
+PHONE_DETAIL_HTTP=400
+PHONE_OVERRIDE_CALLBACK=<NINGUNO>
+---
+
+============================================================
+FIN DE TRAZA
+============================================================
