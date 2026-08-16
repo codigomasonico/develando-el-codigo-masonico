@@ -1,4 +1,6 @@
 import crypto from "node:crypto";
+import { fusionarUsoRevisionesMensual } from "./lib-cartes-reviews.mjs";
+import { fusionarPaquetesRevision } from "./lib-cartes-review-packs.mjs";
 
 export const PLAN_CARTES_GRATUITO = "gratuito";
 export const PLAN_CARTES_PLUS = "plus";
@@ -340,6 +342,25 @@ export async function completarVinculacionConWhatsApp({ code, whatsappUserId, fe
   if (Date.parse(String(vinculo.expires_at || "")) <= fecha.getTime()) throw new Error("El código de vinculación expiró.");
 
   const origen = validarUserId(vinculo.source_user_id);
+
+  // CARTES_SAFE_LINK_V059
+  // Antes de modificar identidades, uso, conversación o suscripciones,
+  // impedir que dos cuentas con Plus vigente y suscripciones distintas
+  // sean fusionadas automáticamente.
+  const conflictoSuscripciones = await detectarConflictoSuscripcionesVinculacion({
+    sourceUserId: origen,
+    targetUserId: destino,
+    fecha,
+    store
+  });
+
+  if (conflictoSuscripciones) {
+    return {
+      linked: false,
+      conflict: "active_subscriptions"
+    };
+  }
+
   await fusionarUsuarioEn({ sourceUserId: origen, targetUserId: destino, fecha, store });
   const ahora = fecha.toISOString();
   const completado = { ...vinculo, status: "linked", user_id: destino, linked_at: ahora, updated_at: ahora };
@@ -349,6 +370,70 @@ export async function completarVinculacionConWhatsApp({ code, whatsappUserId, fe
     version: 1, code: codigo, status: "linked", user_id: destino, linked_at: ahora, updated_at: ahora
   });
   return { linked: true, user_id: destino, web_identity: vinculo.web_identity };
+}
+
+async function detectarConflictoSuscripcionesVinculacion({
+  sourceUserId,
+  targetUserId,
+  fecha,
+  store
+}) {
+  const source = validarUserId(sourceUserId);
+  const target = validarUserId(targetUserId);
+
+  if (source === target) return false;
+
+  const sourceSub = await store.get(
+    `${PREFIJO_SUSCRIPCION}:${source}`,
+    { type: "json", consistency: "strong" }
+  );
+
+  const targetSub = await store.get(
+    `${PREFIJO_SUSCRIPCION}:${target}`,
+    { type: "json", consistency: "strong" }
+  );
+
+  if (!sourceSub || !targetSub) return false;
+
+  const sourcePlus =
+    determinarPlanDesdeSuscripcion(sourceSub, fecha) === PLAN_CARTES_PLUS;
+
+  const targetPlus =
+    determinarPlanDesdeSuscripcion(targetSub, fecha) === PLAN_CARTES_PLUS;
+
+  if (!sourcePlus || !targetPlus) return false;
+
+  const sourceKey = claveSuscripcionRecurrente(sourceSub);
+  const targetKey = claveSuscripcionRecurrente(targetSub);
+
+  // Si excepcionalmente ambos registros representan exactamente
+  // la misma suscripción del mismo proveedor, no hay doble suscripción.
+  if (sourceKey && targetKey && sourceKey === targetKey) {
+    return false;
+  }
+
+  return true;
+}
+
+function claveSuscripcionRecurrente(subscription) {
+  if (!subscription || typeof subscription !== "object") return "";
+
+  let provider = String(subscription.provider || "").trim().toLowerCase();
+
+  if (!provider) {
+    if (subscription.subscription_id) provider = "paypal";
+    else if (subscription.preapproval_id) provider = "mercadopago";
+  }
+
+  const id = String(
+    subscription.subscription_id ||
+    subscription.preapproval_id ||
+    ""
+  ).trim();
+
+  return provider && id
+    ? `${provider}:${id}`
+    : "";
 }
 
 async function fusionarUsuarioEn({ sourceUserId, targetUserId, fecha, store }) {
@@ -403,6 +488,23 @@ async function fusionarUsuarioEn({ sourceUserId, targetUserId, fecha, store }) {
     if (c?.request_id && !map.has(c.request_id)) map.set(c.request_id, c);
   }
   if (map.size) await store.setJSON(claveUso(periodo, target), { version: 2, user_id: target, periodo, consultas: [...map.values()], updated_at: ahora });
+
+  // DOCUMENT_REVIEWS_V068
+  // El consumo de revisiones también pertenece a la cuenta central.
+  await fusionarUsoRevisionesMensual({
+    sourceUserId: source,
+    targetUserId: target,
+    fecha,
+    store
+  });
+
+  // CARTES_REVIEW_PACKS_V091
+  await fusionarPaquetesRevision({
+    sourceUserId: source,
+    targetUserId: target,
+    fecha,
+    store
+  });
 
   const sourceConversation = normalizarConversacion(await store.get(`${PREFIJO_CONVERSACION}:${source}`, { type: "json", consistency: "strong" }), source);
   const targetConversation = normalizarConversacion(await store.get(`${PREFIJO_CONVERSACION}:${target}`, { type: "json", consistency: "strong" }), target);

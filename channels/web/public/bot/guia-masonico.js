@@ -8,6 +8,10 @@
     endpoint: "/.netlify/functions/guia-masonico",
     linkEndpoint: "/.netlify/functions/cartes-link",
     conversationEndpoint: "/.netlify/functions/cartes-conversation",
+    subscriptionEndpoint: "/.netlify/functions/cartes-subscription",
+    subscriptionStatusEndpoint: "/.netlify/functions/cartes-subscription-status",
+    documentReviewEndpoint: "/.netlify/functions/cartes-document-review",
+    reviewPackEndpoint: "/.netlify/functions/cartes-review-pack",
     whatsappNumber: "523322338888",
     maxChars: 900,
     maxHistory: 8,
@@ -22,9 +26,14 @@
     "¿Por qué los masones utilizan mandil?"
   ];
 
-  const history = loadHistory();
+  const history = sanitizeLegacyMenuNoise(loadHistory());
   const webIdentity = loadOrCreateWebIdentity();
   let busy = false;
+  let webSubscriptionFlow = "";
+  let currentWebPlan = "gratuito";
+  let recoveryNoticeShown = false;
+  let reviewStatusLoading = false;
+  let currentReviewPackExpiration = "";
 
   loadStyles();
   const ui = createInterface();
@@ -33,6 +42,14 @@
   // El estado de cuenta se solicita al cargar Cartes, no solamente cuando
   // el usuario abre el panel. Esto evita que el encabezado quede en "…".
   void initializeServerState();
+
+  // CARTES_REVIEW_PACKS_WEB_V091
+  window.addEventListener("focus", () => {
+    if (currentWebPlan === "plus") {
+      void refreshMenuPlanWeb();
+      void refreshReviewStatus();
+    }
+  });
 
   async function initializeServerState() {
     await Promise.allSettled([
@@ -69,11 +86,11 @@
     shell.setAttribute("aria-label", "Cartes, asistente de Develando el Código Masónico");
     shell.innerHTML = `
       <header class="gm-header">
-        <img class="gm-header__logo" src="/assets/img/cartes-isotipo.gif" alt="Cartes">
-        <div>
-          <h2 class="gm-header__title">Cartes</h2>
-          <div class="gm-header__status">Asistente de Develando el Código Masónico</div>
-          <div class="gm-header__usage" aria-live="polite">Consultas disponibles: cargando…</div>
+        <div class="gm-header__identity">
+          <img class="gm-header__logo" src="/assets/img/cartes-isotipo.gif" alt="Cartes">
+          <div class="gm-header__identity-text">
+            <h2 class="gm-header__title">Cartes</h2>
+          </div>
         </div>
         <div class="gm-header__actions">
           <button class="gm-link" type="button" aria-label="Vincular Cartes con WhatsApp" title="Vincular con WhatsApp">Vincular</button>
@@ -83,10 +100,21 @@
           </button>
           <button class="gm-close" type="button" aria-label="Cerrar Cartes">×</button>
         </div>
+        <div class="gm-header__subtitle gm-header__status">Asistente de Develando el Código Masónico</div>
+        <div class="gm-header__metrics">
+          <div class="gm-header__usage" aria-live="polite">Consultas disponibles: cargando…</div>
+          <div class="gm-header__reviews" aria-live="polite" hidden>Revisiones de documentos disponibles: cargando…</div>
+        </div>
       </header>
       <div class="gm-messages" aria-live="polite" aria-label="Conversación"></div>
       <div class="gm-suggestions" aria-label="Preguntas sugeridas"></div>
       <div>
+        <input
+          class="gm-document-input"
+          type="file"
+          accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
+          hidden
+        >
         <form class="gm-form">
           <textarea class="gm-input" rows="1" maxlength="${CONFIG.maxChars}" placeholder="Escribe tu pregunta sobre masonería…" aria-label="Pregunta"></textarea>
           <button class="gm-send" type="submit" aria-label="Enviar pregunta">➤</button>
@@ -106,6 +134,8 @@
     const messages = shell.querySelector(".gm-messages");
     const suggestionBox = shell.querySelector(".gm-suggestions");
     const usage = shell.querySelector(".gm-header__usage");
+    const reviewsUsage = shell.querySelector(".gm-header__reviews");
+    const documentInput = shell.querySelector(".gm-document-input");
 
     suggestions.forEach((question) => {
       const button = document.createElement("button");
@@ -120,6 +150,14 @@
     close.addEventListener("click", () => setOpen(false));
     clear.addEventListener("click", clearConversation);
     link.addEventListener("click", startWhatsAppLink);
+
+    documentInput.addEventListener("change", () => {
+      const file = documentInput.files?.[0] || null;
+
+      if (file) {
+        void processDocumentReviewWeb(file);
+      }
+    });
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && shell.dataset.open === "true") setOpen(false);
@@ -142,7 +180,18 @@
       input.style.height = `${Math.min(input.scrollHeight, 112)}px`;
     });
 
-    return { launcher, shell, input, send, messages, suggestionBox, link, usage };
+    return {
+      launcher,
+      shell,
+      input,
+      send,
+      messages,
+      suggestionBox,
+      link,
+      usage,
+      reviewsUsage,
+      documentInput
+    };
   }
 
   function setOpen(open) {
@@ -154,10 +203,44 @@
     }
   }
 
+  function sanitizeLegacyMenuNoise(messages) {
+    if (!Array.isArray(messages)) return [];
+
+    const rejection =
+      "No puedo ayudarte con esa consulta. Esta guía está dedicada a temas de Masonería, historia, simbología, filosofía, ética y los contenidos de Develando el Código Masónico.";
+
+    const cleaned = [];
+
+    for (let index = 0; index < messages.length; index += 1) {
+      const current = messages[index];
+      const next = messages[index + 1];
+
+      const currentContent = String(current?.content || "").trim();
+      const nextContent = String(next?.content || "").trim();
+
+      const isLegacyUselessInput =
+        current?.role === "user" &&
+        currentContent &&
+        !/[\p{L}\p{N}]/u.test(currentContent);
+
+      const isLegacyRejection =
+        next?.role === "assistant" &&
+        nextContent === rejection;
+
+      if (isLegacyUselessInput && isLegacyRejection) {
+        index += 1;
+        continue;
+      }
+
+      cleaned.push(current);
+    }
+
+    return cleaned;
+  }
   function showWelcomeMessage() {
     addMessage(
       "assistant",
-      "Hola, soy Cartes. Puedo ayudarte a explorar la historia, la simbología, la filosofía y los valores de la Masonería con rigor, prudencia y pensamiento crítico. ¿Qué te gustaría comprender?",
+      "Hola, soy Cartes, el asistente de Develando el Código Masónico. Puedo ayudarte con consultas sobre historia, simbolismo, filosofía y pensamiento masónico. También puedo revisar tus trabajos si tienes Cartes Plus.",
       false
     );
   }
@@ -218,11 +301,24 @@
       // Si este endpoint ya entrega el uso, aprovecharlo inmediatamente.
       updateUsage(data.usage);
 
-      if (!Array.isArray(data.messages) || data.messages.length === 0) return;
+      if (!Array.isArray(data.messages)) return;
 
-      history.splice(0, history.length, ...data.messages.slice(-(CONFIG.maxHistory + 2)));
+      const sanitizedMessages = sanitizeLegacyMenuNoise(data.messages);
+
+      history.splice(
+        0,
+        history.length,
+        ...sanitizedMessages.slice(-(CONFIG.maxHistory + 2))
+      );
+
       localStorage.setItem(CONFIG.storageKey, JSON.stringify(history));
       ui.messages.replaceChildren();
+
+      if (history.length === 0) {
+        showWelcomeMessage();
+        return;
+      }
+
       history.forEach((item) => addMessage(item.role, item.content, false));
     } catch {
       // El historial local sirve como respaldo si la memoria central no responde.
@@ -298,7 +394,7 @@
 
       addMessage(
         "assistant",
-        `Generé tu código ${data.code}. Intentaré abrir el chat de Cartes en WhatsApp. Si tu navegador o WhatsApp Desktop no abre el chat directamente, usa “Abrir chat con Cartes” o “Copiar código”. El código vence en 10 minutos.`,
+        `Envía desde el WhatsApp que deseas vincular: ${data.instruction}. Al enviarlo, tu cuenta Web y ese WhatsApp compartirán plan, consultas, suscripción y conversación. El código vence en 10 minutos. Intentaré abrir el chat de Cartes; si no se abre, usa “Abrir chat con Cartes” o “Copiar código”.`,
         false
       );
 
@@ -343,6 +439,16 @@
             ui.link.textContent = "Vincular";
             ui.link.disabled = false;
             delete ui.link.dataset.linked;
+
+            if (currentWebPlan === "plus" && !recoveryNoticeShown) {
+              recoveryNoticeShown = true;
+
+              addMessage(
+                "assistant",
+                "Protege tu cuenta Cartes Plus: vincúlala con WhatsApp. Así podrás recuperar tu suscripción, consultas y conversación si cambias de navegador, borras los datos del sitio o pierdes esta sesión.",
+                false
+              );
+            }
           }
 
           if (usageUpdated) return true;
@@ -388,10 +494,13 @@
 
   function normalizarComandoWeb(texto) {
     return String(texto || "")
+      .normalize("NFKC")
+      .replace(/[\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]/g, "")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
-      .replace(/[¿?¡!.,;:]/g, " ")
+      .replace(/[*_~`]/g, " ")
+      .replace(/[¿?¡!.,;:()[\]{}"'“”‘’]/g, " ")
       .replace(/\s+/g, " ")
       .trim();
   }
@@ -413,11 +522,10 @@
     const typing = addTyping();
 
     try {
-      const response = await fetch(CONFIG.linkEndpoint, {
+      const response = await fetch(CONFIG.subscriptionStatusEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: "status",
           web_identity: webIdentity
         }),
         cache: "no-store"
@@ -426,38 +534,164 @@
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.error || "No fue posible consultar tu suscripción.");
+        throw new Error(
+          data.error || "No fue posible consultar tu suscripción."
+        );
       }
 
       updateUsage(data.usage);
+      updateReviewUsage(data.reviews);
 
       const usage = data.usage || {};
-      const plan = String(usage.plan || "gratuito").toLowerCase();
+      const reviews = data.reviews || {};
+      const subscription = data.subscription || null;
+
+      const plan = String(
+        data.plan || usage.plan || "gratuito"
+      ).toLowerCase();
+
       const limite = Number(usage.limite || 0);
       const disponibles = Number(usage.disponibles || 0);
-      const usadas = Math.max(0, limite - disponibles);
+
+      const usadas = Number.isFinite(Number(usage.usadas))
+        ? Number(usage.usadas)
+        : Math.max(0, limite - disponibles);
+
+      const provider =
+        subscription?.provider === "paypal"
+          ? "PayPal"
+          : subscription?.provider === "mercadopago"
+            ? "Mercado Pago"
+            : "Sin suscripción recurrente";
+
+      const expirationRaw =
+        subscription?.access_until ||
+        subscription?.next_payment_date ||
+        "";
+
+      currentReviewPackExpiration = expirationRaw;
+
+      const expiration =
+        formatCartesDateWeb(expirationRaw) ||
+        "No aplica";
+
+      const renewal =
+        subscription?.renovacion_cancelada
+          ? "Cancelada"
+          : (
+              formatCartesDateWeb(subscription?.next_payment_date) ||
+              "No aplica"
+            );
+
+      const packagesBought =
+        Number(reviews.paquetes_comprados || 0);
+
+      const packagesMax =
+        Number(reviews.paquetes_maximo || 2);
+
+      const reviewLines =
+        plan === "plus"
+          ? `\nRevisiones disponibles: ${Number(reviews.disponibles || 0)}\nPaquetes adicionales: ${packagesBought} de ${packagesMax}`
+          : "";
 
       const texto =
-        plan === "plus"
-          ? `Plan actual: Cartes Plus\nEstado Cartes Plus: Activo\nConsultas utilizadas en este periodo: ${usadas} de ${limite}\nConsultas disponibles: ${disponibles}`
-          : `Plan actual: Cartes gratuito\nEstado Cartes Plus: Inactivo\nConsultas utilizadas en este periodo: ${usadas} de ${limite}\nConsultas disponibles: ${disponibles}`;
+        `Plan: ${plan === "plus" ? "Cartes Plus" : "Cartes gratuito"}\n` +
+        `Medio de pago: ${provider}\n` +
+        `Consultas usadas: ${usadas} de ${limite}\n` +
+        `Consultas disponibles: ${disponibles}` +
+        `${reviewLines}\n` +
+        `Fecha de vencimiento: ${expiration}\n` +
+        `Renovación: ${renewal}`;
 
       addMessage("assistant", texto, true);
-    } catch (error) {
+
+      const recurring =
+        subscription?.provider === "paypal" ||
+        subscription?.provider === "mercadopago";
+
+      if (plan === "plus") {
+        const actions = [];
+
+        if (packagesBought < packagesMax) {
+          actions.push({
+            label: "Comprar 3 revisiones - $99",
+            value: "comprar revisiones"
+          });
+        }
+
+        if (
+          recurring &&
+          !subscription?.renovacion_cancelada
+        ) {
+          actions.push({
+            label: "Cancelar renovación",
+            value: "cancelar renovacion"
+          });
+        }
+
+        actions.push({
+          label: "Volver al menú",
+          value: "menu",
+          secondary: true
+        });
+
+        webSubscriptionFlow = "subscription_actions";
+        renderSubscriptionActionsWeb(actions);
+        return;
+      }
+
+      webSubscriptionFlow = "";
+      renderMenuButtonsWeb();
+    }
+    catch (error) {
       addMessage(
         "assistant",
-        error instanceof Error ? error.message : "No fue posible consultar tu suscripción.",
+        error instanceof Error
+          ? error.message
+          : "No fue posible consultar tu suscripción.",
         false,
         true
       );
-    } finally {
+    }
+    finally {
       typing.remove();
       setBusy(false);
     }
   }
 
+  function formatCartesDateWeb(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+
+    const months = [
+      "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+      "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+    ];
+
+    const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+    if (iso) {
+      const year = iso[1];
+      const month = Number(iso[2]);
+      const day = iso[3];
+
+      if (month >= 1 && month <= 12) {
+        return `${day}-${months[month - 1]}-${year}`;
+      }
+    }
+
+    const parsed = new Date(raw);
+    if (Number.isNaN(parsed.getTime())) return raw;
+
+    const day = String(parsed.getDate()).padStart(2, "0");
+    const month = months[parsed.getMonth()];
+    const year = parsed.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
   function restoreDefaultSuggestionsWeb() {
     ui.suggestionBox.replaceChildren();
+    ui.suggestionBox.classList.remove("gm-suggestions--menu", "gm-suggestions--main-menu");
 
     suggestions.forEach((question) => {
       const button = document.createElement("button");
@@ -469,11 +703,66 @@
     });
   }
 
+  async function refreshMenuPlanWeb() {
+    try {
+      const response = await fetch(CONFIG.subscriptionStatusEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          web_identity: webIdentity
+        }),
+        cache: "no-store"
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) return false;
+
+      currentWebPlan = String(
+        data.plan ||
+        data.usage?.plan ||
+        "gratuito"
+      ).toLowerCase();
+
+      updateUsage(data.usage);
+      updateReviewUsage(data.reviews);
+
+      const subscription = data.subscription || null;
+
+      currentReviewPackExpiration =
+        subscription?.access_until ||
+        subscription?.next_payment_date ||
+        "";
+
+      return true;
+    }
+    catch {
+      return false;
+    }
+  }
+
+  function clearDocumentReviewMenuWeb() {
+    ui.suggestionBox.replaceChildren();
+
+    ui.suggestionBox.classList.remove(
+      "gm-suggestions--menu",
+      "gm-suggestions--main-menu"
+    );
+  }
+
   function renderMenuButtonsWeb() {
+    ui.suggestionBox.classList.add("gm-suggestions--menu", "gm-suggestions--main-menu");
+
     const options = [
       ["1", "Conversar con Cartes"],
-      ["2", "Conocer Cartes Plus"],
-      ["3", "Suscribirme"],
+      ...(currentWebPlan === "plus"
+        ? [
+            ["7", "Revisar documento"]
+          ]
+        : [
+            ["2", "Conoce Cartes Plus"],
+            ["3", "Suscribirme"]
+          ]),
       ["4", "Mi suscripción"],
       ["5", "Ayuda y soporte"],
       ["6", "Privacidad y términos"]
@@ -481,29 +770,39 @@
 
     ui.suggestionBox.replaceChildren();
 
+    const heading = document.createElement("div");
+    heading.className = "gm-menu-heading";
+
+    const title = document.createElement("div");
+    title.className = "gm-menu-heading__title";
+    title.textContent = "Menú de Cartes";
+
+    const subtitle = document.createElement("div");
+    subtitle.className = "gm-menu-heading__subtitle";
+    subtitle.textContent = "Selecciona una opción:";
+
+    heading.append(title, subtitle);
+    ui.suggestionBox.appendChild(heading);
+
     options.forEach(([id, label]) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "gm-suggestion";
-      button.textContent = `${id}. ${label}`;
+      button.textContent = label;
       button.addEventListener("click", () => ejecutarOpcionMenuWeb(id));
       ui.suggestionBox.appendChild(button);
     });
   }
 
-  function mostrarMenuWeb() {
+  async function mostrarMenuWeb() {
+    webSubscriptionFlow = "";
     ui.input.value = "";
     ui.input.style.height = "auto";
 
-    addMessage(
-      "assistant",
-      "Cartes | Menú\n\nElige una opción:",
-      false
-    );
+    await refreshMenuPlanWeb();
 
     renderMenuButtonsWeb();
   }
-
   function esComandoMenuWeb(texto) {
     return new Set([
       "menu",
@@ -528,6 +827,7 @@
 
       "2": "plus_info",
       "conocer cartes plus": "plus_info",
+      "conoce cartes plus": "plus_info",
       "cartes plus": "plus_info",
 
       "3": "suscribirme",
@@ -544,6 +844,11 @@
 
       "6": "legal",
       "privacidad y terminos": "legal",
+
+      "7": "revisar_documento",
+      "revisar documento": "revisar_documento",
+      "revisar un documento": "revisar_documento",
+      "revision de documento": "revisar_documento",
       "privacidad": "legal",
       "terminos": "legal"
     };
@@ -557,7 +862,7 @@
     if (id === "conversar") {
       addMessage(
         "assistant",
-        "Escribe tu consulta masónica o elige una de las preguntas sugeridas.",
+        "Escribe tu pregunta sobre historia, simbolismo o filosofía masónica y con gusto te ayudaré.",
         false
       );
       restoreDefaultSuggestionsWeb();
@@ -565,10 +870,29 @@
       return;
     }
 
+    if (id === "revisar_documento") {
+      await refreshMenuPlanWeb();
+
+      if (currentWebPlan !== "plus") {
+        addMessage(
+          "assistant",
+          "La revisión de documentos está disponible únicamente para Cartes Plus.",
+          false
+        );
+
+        renderMenuButtonsWeb();
+        return;
+      }
+
+      ui.documentInput.value = "";
+      ui.documentInput.click();
+      return;
+    }
+
     if (id === "plus_info") {
       addMessage(
         "assistant",
-        "Cartes Plus cuesta $149 MXN al mes, amplía tu límite a 50 consultas mensuales y mantiene plan, uso y beneficios compartidos entre Web y WhatsApp.",
+        "Cartes Plus amplía tu conocimiento con más consultas, revisión y retroalimentación de documentos.\n\nPor $149 MXN al mes tendrás hasta 50 consultas y 5 revisiones mensuales de documentos Word de hasta 5 páginas cada uno.\n\nEn cada revisión recibirás observaciones sobre estructura, claridad y contenido para mejorar tu trabajo antes de presentarlo en Logia.\n\nLa suscripción quedará vinculada a tu número de WhatsApp. Desde este mismo chat podrás consultar su estado o cancelarla.\n\nLa versión gratuita está pensada para consultas puntuales. Cartes Plus es para quienes desean estudiar con mayor profundidad y recibir apoyo en la preparación de sus trabajos.\n\nPara comenzar, selecciona “Suscribirme”.",
         false
       );
       renderMenuButtonsWeb();
@@ -576,36 +900,31 @@
     }
 
     if (id === "suscribirme") {
-      if (ui.link.dataset.linked === "true") {
-        const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent("Suscribirme")}`;
+      await refreshMenuPlanWeb();
+
+      if (currentWebPlan === "plus") {
         addMessage(
           "assistant",
-          "Abriré WhatsApp para continuar con la suscripción a Cartes Plus en tu misma cuenta vinculada.",
+          "Tu cuenta ya tiene Cartes Plus vigente. Consulta “Mi suscripción” para revisar su estado y vigencia.",
           false
         );
-        window.open(url, "_blank", "noopener,noreferrer");
-      } else {
-        addMessage(
-          "assistant",
-          "Para que Cartes Plus quede asociado a esta misma cuenta, primero vincula Web con WhatsApp.",
-          false
-        );
-        await startWhatsAppLink();
+        renderMenuButtonsWeb();
+        return;
       }
-      renderMenuButtonsWeb();
+
+      await comenzarSuscripcionWeb();
       return;
     }
 
     if (id === "mi_suscripcion") {
       await mostrarEstadoSuscripcionWeb("Mi suscripción");
-      renderMenuButtonsWeb();
       return;
     }
 
     if (id === "ayuda") {
       addMessage(
         "assistant",
-        "Puedes escribir una consulta masónica directamente, revisar tu suscripción, conocer Cartes Plus o vincular esta Web con WhatsApp. Las entradas sin contenido útil no consumen consultas.",
+        "Para recibir ayuda con Cartes, tu suscripción o un pago, escríbenos a soporte@develandoelcodigomasonico.com y cuéntanos brevemente qué ocurrió.",
         false
       );
       renderMenuButtonsWeb();
@@ -618,11 +937,750 @@
 
       addMessage(
         "assistant",
-        `Privacidad: ${privacyUrl}\nTérminos: ${termsUrl}`,
+        `Al utilizar Cartes aceptas sus Términos de uso y el Aviso de privacidad de Develando el Código Masónico. Tus mensajes y los documentos que envíes serán tratados únicamente para prestar el servicio y mejorar tu experiencia. Puedes consultar la información completa en nuestros términos y aviso de privacidad. Para cualquier duda, escríbenos a soporte@develandoelcodigomasonico.com.\n\nAviso de privacidad:\n${privacyUrl}\n\nTérminos:\n${termsUrl}`,
         false
       );
       renderMenuButtonsWeb();
     }
+  }
+
+  // WEB_SUBSCRIPTION_FLOW_V018
+  // WEB_SUBSCRIPTION_UX_V019
+  function renderSubscriptionActionsWeb(actions) {
+    ui.suggestionBox.classList.add("gm-suggestions--menu");
+    ui.suggestionBox.classList.remove("gm-suggestions--main-menu");
+    ui.suggestionBox.replaceChildren();
+
+    actions.forEach(({ label, value, secondary = false }) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `gm-suggestion${secondary ? " gm-suggestion--secondary" : ""}`;
+      button.textContent = label;
+      button.addEventListener("click", () => submitQuestion(value));
+      ui.suggestionBox.appendChild(button);
+    });
+  }
+
+  function addLegalMessageWeb() {
+    const message = document.createElement("div");
+    message.className = "gm-message gm-message--assistant gm-message--legal";
+
+    const intro = document.createElement("p");
+    intro.textContent =
+      "Antes de continuar, confirma que leíste y aceptas los Términos de uso y el Aviso de privacidad de Cartes.";
+
+    const links = document.createElement("div");
+    links.className = "gm-legal-links";
+
+    const terms = document.createElement("a");
+    terms.className = "gm-legal-link";
+    terms.href = `${window.location.origin}/cartes-whatsapp/terminos.html`;
+    terms.target = "_blank";
+    terms.rel = "noopener noreferrer";
+    terms.textContent = "Ver Términos de uso";
+
+    const privacy = document.createElement("a");
+    privacy.className = "gm-legal-link";
+    privacy.href = `${window.location.origin}/cartes-whatsapp/privacy.html`;
+    privacy.target = "_blank";
+    privacy.rel = "noopener noreferrer";
+    privacy.textContent = "Ver Aviso de privacidad";
+
+    links.append(terms, privacy);
+    message.append(intro, links);
+    ui.messages.appendChild(message);
+    ui.messages.scrollTop = ui.messages.scrollHeight;
+  }
+
+  // WEB_SUBSCRIPTION_BACK_MENU_V019
+  function renderLegalActionsWeb() {
+    renderSubscriptionActionsWeb([
+      { label: "Aceptar", value: "acepto" },
+      { label: "No aceptar", value: "no acepto", secondary: true },
+      { label: "Volver al menú", value: "menu", secondary: true }
+    ]);
+  }
+
+  function renderOpcionesPagoWeb() {
+    renderSubscriptionActionsWeb([
+      { label: "Mercado Pago", value: "mercado pago" },
+      { label: "PayPal", value: "paypal" },
+      { label: "Volver al menú", value: "menu", secondary: true }
+    ]);
+  }
+
+  function renderOpcionesPagoPaqueteWeb() {
+    renderSubscriptionActionsWeb([
+      { label: "Mercado Pago", value: "paquete mercado pago" },
+      { label: "PayPal", value: "paquete paypal" },
+      { label: "Volver al menú", value: "menu", secondary: true }
+    ]);
+  }
+
+  function mostrarAccionPagoWeb(provider, url) {
+    ui.suggestionBox.replaceChildren();
+    ui.suggestionBox.classList.remove(
+      "gm-suggestions--menu",
+      "gm-suggestions--main-menu"
+    );
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "gm-suggestions";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "gm-suggestion";
+    button.textContent = `Abrir ${provider}`;
+    button.addEventListener("click", () => {
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+
+    const back = document.createElement("button");
+    back.type = "button";
+    back.className = "gm-suggestion gm-suggestion--secondary";
+    back.textContent = "Volver al menú";
+    back.addEventListener("click", () => {
+      void mostrarMenuWeb();
+    });
+
+    wrapper.append(button, back);
+    ui.messages.appendChild(wrapper);
+    ui.messages.scrollTop = ui.messages.scrollHeight;
+  }
+
+  async function comenzarSuscripcionWeb() {
+    webSubscriptionFlow = "accept_terms";
+    ui.input.value = "";
+    ui.input.style.height = "auto";
+
+    addLegalMessageWeb();
+    renderLegalActionsWeb();
+    ui.input.focus();
+  }
+
+  async function procesarFlujoSuscripcionWeb(rawQuestion) {
+    if (!webSubscriptionFlow) return false;
+
+    const normalized = normalizarComandoWeb(rawQuestion);
+
+    if (webSubscriptionFlow === "accept_terms") {
+      if (["no aceptar", "no acepto", "rechazar"].includes(normalized)) {
+        webSubscriptionFlow = "";
+        ui.input.value = "";
+        ui.input.style.height = "auto";
+        addMessage(
+          "assistant",
+          "No se generará ningún enlace de pago ni se activará Cartes Plus. Puedes seguir utilizando Cartes y volver a Suscribirme cuando quieras.",
+          false
+        );
+        renderMenuButtonsWeb();
+        return true;
+      }
+
+      if (!["acepto", "aceptar", "si"].includes(normalized)) {
+        addMessage(
+          "assistant",
+          "Selecciona Aceptar para continuar o No aceptar para volver sin activar Cartes Plus.",
+          false
+        );
+        renderLegalActionsWeb();
+        return true;
+      }
+
+      webSubscriptionFlow = "payment_provider";
+      ui.input.value = "";
+      ui.input.style.height = "auto";
+      addMessage(
+        "assistant",
+        "Gracias. Tu aceptación quedó registrada. Ahora selecciona el medio de pago que te resulte más conveniente.",
+        false
+      );
+      renderOpcionesPagoWeb();
+      return true;
+    }
+
+    if (webSubscriptionFlow === "subscription_actions") {
+      if (
+        [
+          "comprar revisiones",
+          "comprar 3 revisiones",
+          "paquete de revisiones"
+        ].includes(normalized)
+      ) {
+        webSubscriptionFlow = "review_pack_provider";
+
+        const expiration =
+          formatCartesDateWeb(currentReviewPackExpiration) ||
+          "el vencimiento de tu periodo Plus vigente";
+
+        addMessage(
+          "assistant",
+          `El paquete incluye 3 revisiones adicionales por $99 MXN en un solo pago. No es recurrente y las revisiones vencerán el ${expiration}.\n\nSelecciona el medio de pago.`,
+          false
+        );
+
+        renderOpcionesPagoPaqueteWeb();
+        return true;
+      }
+
+      if (
+        [
+          "cancelar",
+          "cancelar renovacion",
+          "cancelar suscripcion",
+          "darme de baja"
+        ].includes(normalized)
+      ) {
+        webSubscriptionFlow = "confirm_cancel";
+
+        addMessage(
+          "assistant",
+          "¿Confirmas que deseas cancelar la renovación de Cartes Plus? Conservarás tus beneficios hasta finalizar el periodo ya pagado.",
+          false
+        );
+
+        renderSubscriptionActionsWeb([
+          { label: "Sí, cancelar", value: "si" },
+          { label: "No cancelar", value: "no", secondary: true }
+        ]);
+
+        return true;
+      }
+
+      addMessage(
+        "assistant",
+        "Selecciona Cancelar renovación o Volver al menú.",
+        false
+      );
+
+      renderSubscriptionActionsWeb([
+        { label: "Cancelar renovación", value: "cancelar renovacion" },
+        { label: "Volver al menú", value: "menu", secondary: true }
+      ]);
+
+      return true;
+    }
+
+    if (webSubscriptionFlow === "confirm_cancel") {
+      if (["no", "no cancelar", "volver"].includes(normalized)) {
+        webSubscriptionFlow = "";
+
+        addMessage(
+          "assistant",
+          "Entendido. No se realizó ningún cambio y la renovación de Cartes Plus continúa activa.",
+          false
+        );
+
+        await mostrarMenuWeb();
+        return true;
+      }
+
+      if (!["si", "sí"].includes(normalized)) {
+        addMessage(
+          "assistant",
+          "Selecciona Sí, cancelar o No cancelar.",
+          false
+        );
+
+        renderSubscriptionActionsWeb([
+          { label: "Sí, cancelar", value: "si" },
+          { label: "No cancelar", value: "no", secondary: true }
+        ]);
+
+        return true;
+      }
+
+      setBusy(true);
+      const typing = addTyping();
+
+      try {
+        const response = await fetch(CONFIG.subscriptionEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "cancel",
+            web_identity: webIdentity
+          }),
+          cache: "no-store"
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(
+            data.error || "No fue posible cancelar la renovación."
+          );
+        }
+
+        webSubscriptionFlow = "";
+
+        addMessage(
+          "assistant",
+          data.already_cancelled
+            ? "La renovación de Cartes Plus ya estaba cancelada. Conservas tus beneficios hasta finalizar el periodo vigente."
+            : "La renovación de Cartes Plus fue cancelada. Conservas tus beneficios hasta finalizar el periodo ya pagado.",
+          false
+        );
+
+        await refreshMenuPlanWeb();
+        await mostrarEstadoSuscripcionWeb("Mi suscripción");
+
+        return true;
+      } catch (error) {
+        addMessage(
+          "assistant",
+          error instanceof Error
+            ? error.message
+            : "No fue posible cancelar la renovación.",
+          false
+        );
+
+        webSubscriptionFlow = "confirm_cancel";
+
+        renderSubscriptionActionsWeb([
+          { label: "Sí, cancelar", value: "si" },
+          { label: "No cancelar", value: "no", secondary: true }
+        ]);
+
+        return true;
+      } finally {
+        typing.remove();
+        setBusy(false);
+      }
+    }
+
+    if (webSubscriptionFlow === "payment_provider") {
+      const provider =
+        ["1", "mercado pago", "mercadopago"].includes(normalized)
+          ? "mercadopago"
+          : ["2", "paypal", "pay pal"].includes(normalized)
+            ? "paypal"
+            : "";
+
+      if (!provider) {
+        addMessage(
+          "assistant",
+          "Selecciona Mercado Pago o PayPal para continuar.",
+          false
+        );
+        renderOpcionesPagoWeb();
+        return true;
+      }
+
+      const providerLabel = provider === "paypal" ? "PayPal" : "Mercado Pago";
+      setBusy(true);
+      ui.input.value = "";
+      ui.input.style.height = "auto";
+      const typing = addTyping();
+
+      try {
+        const response = await fetch(CONFIG.subscriptionEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "checkout",
+            provider,
+            accepted_terms: true,
+            web_identity: webIdentity
+          }),
+          cache: "no-store"
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data?.url) {
+          throw new Error(data.error || `No fue posible iniciar ${providerLabel}.`);
+        }
+
+        webSubscriptionFlow = "";
+        addMessage(
+          "assistant",
+          `${providerLabel} está listo. Abre el enlace para completar la suscripción. Cartes Plus se activará en esta misma cuenta cuando el proveedor confirme el pago.`,
+          false
+        );
+        mostrarAccionPagoWeb(providerLabel, data.url);
+        return true;
+      } catch (error) {
+        addMessage(
+          "assistant",
+          error instanceof Error ? error.message : "No fue posible iniciar el pago.",
+          false,
+          true
+        );
+        renderOpcionesPagoWeb();
+        return true;
+      } finally {
+        typing.remove();
+        setBusy(false);
+      }
+    }
+
+    if (webSubscriptionFlow === "review_pack_provider") {
+      if (
+        ["menu", "volver al menu", "inicio", "opciones"].includes(normalized)
+      ) {
+        webSubscriptionFlow = "";
+        await mostrarMenuWeb();
+        return true;
+      }
+
+      const provider =
+        ["paquete mercado pago", "mercado pago", "mercadopago", "1"].includes(normalized)
+          ? "mercadopago"
+          : ["paquete paypal", "paypal", "pay pal", "2"].includes(normalized)
+            ? "paypal"
+            : "";
+
+      if (!provider) {
+        addMessage(
+          "assistant",
+          "Selecciona Mercado Pago o PayPal para comprar el paquete.",
+          false
+        );
+
+        renderOpcionesPagoPaqueteWeb();
+        return true;
+      }
+
+      const providerLabel =
+        provider === "paypal"
+          ? "PayPal"
+          : "Mercado Pago";
+
+      setBusy(true);
+      const typing = addTyping();
+
+      try {
+        const response = await fetch(
+          CONFIG.reviewPackEndpoint,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              action: "checkout",
+              provider,
+              web_identity: webIdentity
+            }),
+            cache: "no-store"
+          }
+        );
+
+        const data =
+          await response.json().catch(() => ({}));
+
+        if (!response.ok || !data?.url) {
+          throw new Error(
+            data.error ||
+            `No fue posible iniciar ${providerLabel}.`
+          );
+        }
+
+        webSubscriptionFlow = "";
+
+        addMessage(
+          "assistant",
+          `${providerLabel} está listo. El pago es único por $99 MXN e incluye 3 revisiones adicionales. Al confirmarse, el saldo se actualizará en la misma cuenta de Web y WhatsApp.`,
+          false
+        );
+
+        mostrarAccionPagoWeb(providerLabel, data.url);
+        return true;
+      }
+      catch (error) {
+        addMessage(
+          "assistant",
+          error instanceof Error
+            ? error.message
+            : "No fue posible iniciar la compra.",
+          false,
+          true
+        );
+
+        renderOpcionesPagoPaqueteWeb();
+        return true;
+      }
+      finally {
+        typing.remove();
+        setBusy(false);
+      }
+    }
+
+    webSubscriptionFlow = "";
+    return false;
+  }
+
+  // CARTES_DOCUMENT_WEB_V069
+  function updateDocumentControlsByPlan() {
+    if (!ui?.reviewsUsage) return;
+
+    const isPlus =
+      currentWebPlan === "plus";
+
+    ui.reviewsUsage.hidden = !isPlus;
+
+    if (!isPlus) {
+      delete ui.reviewsUsage.dataset.state;
+      ui.reviewsUsage.textContent =
+        "Revisiones de documentos disponibles: cargando…";
+    }
+  }
+
+  function updateReviewUsage(reviews) {
+    if (
+      !ui?.reviewsUsage ||
+      !reviews ||
+      typeof reviews !== "object"
+    ) {
+      return false;
+    }
+
+    const limite = Number(reviews.limite);
+    const disponibles = Number(reviews.disponibles);
+
+    if (
+      !Number.isFinite(limite) ||
+      !Number.isFinite(disponibles)
+    ) {
+      return false;
+    }
+
+    const total =
+      Math.max(0, Math.trunc(limite));
+
+    const restantes =
+      Math.max(0, Math.trunc(disponibles));
+
+    ui.reviewsUsage.textContent =
+      `Revisiones de documentos disponibles: ${restantes}`;
+
+    ui.reviewsUsage.title =
+      `${restantes} ${
+        restantes === 1
+          ? "revisión disponible"
+          : "revisiones disponibles"
+      }`;
+
+    ui.reviewsUsage.dataset.state = "ready";
+    ui.reviewsUsage.dataset.remaining =
+      String(restantes);
+    ui.reviewsUsage.dataset.limit =
+      String(total);
+
+    return true;
+  }
+
+  async function refreshReviewStatus() {
+    if (
+      currentWebPlan !== "plus" ||
+      reviewStatusLoading
+    ) {
+      return false;
+    }
+
+    reviewStatusLoading = true;
+
+    try {
+      const response = await fetch(
+        CONFIG.documentReviewEndpoint,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            action: "status",
+            web_identity: webIdentity
+          }),
+          cache: "no-store"
+        }
+      );
+
+      const data =
+        await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        return false;
+      }
+
+      return updateReviewUsage(data.reviews);
+    }
+    catch {
+      return false;
+    }
+    finally {
+      reviewStatusLoading = false;
+    }
+  }
+
+  async function processDocumentReviewWeb(file) {
+    if (
+      busy ||
+      currentWebPlan !== "plus"
+    ) {
+      return;
+    }
+
+    const name =
+      String(file?.name || "").trim();
+
+    if (!/\.(docx|doc)$/i.test(name)) {
+      addMessage(
+        "assistant",
+        "Este tipo de archivo no es compatible. Cartes admite únicamente documentos Word en formato .doc o .docx para revisión.\n\nEl archivo no fue revisado y no se consumió ninguna revisión.",
+        false,
+        true
+      );
+
+      ui.documentInput.value = "";
+      return;
+    }
+
+    const maxBytes =
+      4 * 1024 * 1024;
+
+    if (
+      Number(file?.size || 0) > maxBytes
+    ) {
+      addMessage(
+        "assistant",
+        "El documento supera el tamaño técnico máximo de 4 MB.",
+        false,
+        true
+      );
+
+      ui.documentInput.value = "";
+      return;
+    }
+
+    const accepted =
+      window.confirm(
+        `Cartes procesará temporalmente "${name}" para validar que tenga un máximo de 5 páginas y, si cumple, realizar la revisión. El archivo no se guardará después del procesamiento.\n\n¿Autorizas el procesamiento de este documento?`
+      );
+
+    if (!accepted) {
+      ui.documentInput.value = "";
+      return;
+    }
+
+    // CARTES_DOCUMENT_FLOW_WEB_V087
+    // La revisión ya fue autorizada:
+    // el menú anterior deja de estar disponible
+    // mientras Cartes procesa el documento.
+    clearDocumentReviewMenuWeb();
+
+    setBusy(true);
+
+    addMessage(
+      "user",
+      `Documento para revisión: ${name}`,
+      false
+    );
+
+    const typing = addTyping();
+
+    try {
+      const form = new FormData();
+
+      form.append(
+        "web_identity",
+        webIdentity
+      );
+
+      form.append(
+        "request_id",
+        createReviewRequestId()
+      );
+
+      form.append(
+        "accepted_processing",
+        "true"
+      );
+
+      form.append(
+        "document",
+        file,
+        name
+      );
+
+      const response = await fetch(
+        CONFIG.documentReviewEndpoint,
+        {
+          method: "POST",
+          body: form,
+          cache: "no-store"
+        }
+      );
+
+      const data =
+        await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "No fue posible revisar el documento."
+        );
+      }
+
+      const review =
+        String(data?.review || "").trim();
+
+      if (!review) {
+        throw new Error(
+          "Cartes devolvió una revisión vacía."
+        );
+      }
+
+      addMessage(
+        "assistant",
+        review,
+        false
+      );
+
+      updateReviewUsage(data.reviews);
+
+      if (
+        data?.reviews &&
+        Number.isFinite(
+          Number(data.reviews.disponibles)
+        )
+      ) {
+        addMessage(
+          "assistant",
+          `Revisiones de documentos disponibles: ${data.reviews.disponibles}`,
+          false
+        );
+      }
+    }
+    catch (error) {
+      addMessage(
+        "assistant",
+        error instanceof Error
+          ? error.message
+          : "No fue posible revisar el documento.",
+        false,
+        true
+      );
+
+      void refreshReviewStatus();
+    }
+    finally {
+      typing.remove();
+      ui.documentInput.value = "";
+      setBusy(false);
+
+      // CARTES_DOCUMENT_FLOW_WEB_V089
+      // El menú permanece oculto después de la revisión.
+      // El usuario puede solicitarlo nuevamente cuando lo necesite.
+    }
+  }
+
+  function createReviewRequestId() {
+    const randomPart =
+      window.crypto?.randomUUID?.().replace(/-/g, "") ||
+      `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+
+    return `webreview_${randomPart}`;
   }
 
   function isNonQueryInput(value) {
@@ -662,8 +1720,13 @@
     const menuOption = resolverOpcionMenuWeb(question);
 
     if (esComandoMenuWeb(question) || isNonQueryInput(question)) {
-      mostrarMenuWeb();
+      await mostrarMenuWeb();
       return;
+    }
+
+    if (webSubscriptionFlow) {
+      const handledSubscriptionFlow = await procesarFlujoSuscripcionWeb(question);
+      if (handledSubscriptionFlow) return;
     }
 
     if (menuOption) {
@@ -687,6 +1750,8 @@
       );
       return;
     }
+
+    restoreDefaultSuggestionsWeb();
 
     const payloadHistory = history
       .slice(-CONFIG.maxHistory)
@@ -749,6 +1814,19 @@
   function updateUsage(usage) {
     if (!ui?.usage || !usage || typeof usage !== "object") return false;
 
+    if (usage.plan) {
+      currentWebPlan = String(usage.plan).toLowerCase();
+    }
+
+    updateDocumentControlsByPlan();
+
+    if (
+      currentWebPlan === "plus" &&
+      ui?.reviewsUsage?.dataset?.state !== "ready"
+    ) {
+      void refreshReviewStatus();
+    }
+
     const limite = Number(usage.limite);
     const disponibles = Number(usage.disponibles);
 
@@ -809,6 +1887,7 @@
     busy = value;
     ui.input.disabled = value;
     ui.send.disabled = value;
+
     ui.suggestionBox.querySelectorAll("button").forEach((button) => {
       button.disabled = value;
     });
@@ -857,4 +1936,6 @@
     }
   }
 })();
+
+
 

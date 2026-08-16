@@ -1,0 +1,1 @@
+export { default } from "../../api/cartes-document-review.mjs";

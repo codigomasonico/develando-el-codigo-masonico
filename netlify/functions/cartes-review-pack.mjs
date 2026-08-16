@@ -1,0 +1,1 @@
+export { default } from "../../channels/whatsapp/functions/cartes-review-pack.mjs";

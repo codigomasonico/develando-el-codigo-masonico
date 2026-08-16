@@ -5,10 +5,10 @@
   "description": "Cartes: un solo cerebro, varias interfaces (Web + WhatsApp)",
   "type": "module",
   "scripts": {
-    "test": "npm run test:core && npm run test:whatsapp",
+    "test": "npm run test:local-web2",
     "test:core": "node --test tests/web/*.test.mjs",
     "test:web-v4": "node tests/web/bot/run-v4-tests.mjs",
-    "test:whatsapp": "node --test tests/whatsapp/*.test.mjs",
+    "test:whatsapp": "npm run test:whatsapp-v2",
     "simular:whatsapp": "node channels/whatsapp/tools/simulador-cartes.mjs",
     "test:e2e:whatsapp": "playwright test -c channels/whatsapp/playwright.config.mjs",
     "test:unit": "npm run test:core && npm run test:whatsapp",
@@ -16,13 +16,18 @@
     "test:e2e:web": "playwright test -c tests/e2e/playwright.web.config.mjs",
     "test:e2e": "npm run test:e2e:web && npm run test:e2e:whatsapp",
     "test:predeploy": "node scripts/predeploy-quality-gate.mjs",
-    "serve:web:test": "node scripts/serve-static.mjs channels/web/public 4174"
+    "serve:web:test": "node scripts/serve-static.mjs channels/web/public 4174",
+    "test:whatsapp-v2": "node --test tests/whatsapp-v2/*.test.mjs",
+    "test:local-web2": "node --test tests/web/*.test.mjs && node tests/web/bot/run-local-tests.mjs && node --test tests/whatsapp-v2/*.test.mjs"
   },
   "dependencies": {
-    "@netlify/blobs": "^10.7.9"
+    "@netlify/blobs": "^10.7.9",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.12.1",
+    "word-extractor": "^1.0.4"
   },
   "devDependencies": {
-    "netlify-cli": "^26.2.0",
-    "@playwright/test": "^1.55.0"
+    "@playwright/test": "^1.55.0",
+    "netlify-cli": "^26.2.0"
   }
 }
