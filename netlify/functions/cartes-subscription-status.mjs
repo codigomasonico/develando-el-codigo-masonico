@@ -40,8 +40,15 @@ export default async (request) => {
     const storedPlan = await obtenerPlanUsuario({ userId });
     const subscription = await obtenerSuscripcionUsuario({ userId });
 
+    // CARTES_PAYPAL_PENDING_STATUS_V112
+    const visibleSubscription =
+      subscription &&
+      String(subscription.status || "").toLowerCase() !== "pending"
+        ? subscription
+        : null;
+
     const plan = String(
-      subscription?.plan_actual ||
+      visibleSubscription?.plan_actual ||
       storedPlan ||
       "gratuito"
     ).toLowerCase();
@@ -58,14 +65,14 @@ export default async (request) => {
       });
 
     const publicSubscription =
-      subscription
+      visibleSubscription
         ? {
-            provider: String(subscription.provider || ""),
-            status: String(subscription.status || ""),
+            provider: String(visibleSubscription.provider || ""),
+            status: String(visibleSubscription.status || ""),
             renovacion_cancelada:
-              Boolean(subscription.renovacion_cancelada),
-            access_until: subscription.access_until || null,
-            next_payment_date: subscription.next_payment_date || null
+              Boolean(visibleSubscription.renovacion_cancelada),
+            access_until: visibleSubscription.access_until || null,
+            next_payment_date: visibleSubscription.next_payment_date || null
           }
         : null;
 

@@ -1188,8 +1188,15 @@ async function ofrecerCartesPlusPorDocumento(
 }
 
 async function showSubscription({ phone, phoneNumberId, userId }, d) {
-  const subscription =
+  const storedSubscription =
     await d.obtenerSuscripcionUsuario({ userId });
+
+  // CARTES_PAYPAL_PENDING_UI_V112
+  const subscription =
+    storedSubscription &&
+    String(storedSubscription.status || "").toLowerCase() !== "pending"
+      ? storedSubscription
+      : null;
 
   const plan = String(
     subscription?.plan_actual ||

@@ -25,19 +25,40 @@
     (() => {
       const params = new URLSearchParams(window.location.search);
 
-      if (params.get("flow") !== "review_pack") return;
-
       const title = document.getElementById("title");
       const status = document.getElementById("status");
       const detail = document.getElementById("detail");
-
-      title.textContent = "Revisiones adicionales";
 
       const provider =
         String(params.get("provider") || "").toLowerCase();
 
       const result =
         String(params.get("result") || "").toLowerCase();
+
+      // CARTES_PAYPAL_RETURN_UI_V112
+      if (params.get("flow") !== "review_pack") {
+        if (provider === "paypal" && result === "cancel") {
+          title.textContent = "Suscripción no completada";
+          status.textContent =
+            "Cancelaste el proceso en PayPal.";
+          detail.textContent =
+            "Cartes Plus no fue activado y tu plan no cambió.";
+          return;
+        }
+
+        if (provider === "paypal" && result === "success") {
+          title.textContent = "Confirmando Cartes Plus";
+          status.textContent =
+            "PayPal recibió tu aprobación.";
+          detail.textContent =
+            "Cartes Plus se activará automáticamente cuando PayPal confirme la suscripción. Consulta Mi suscripción en unos momentos.";
+          return;
+        }
+
+        return;
+      }
+
+      title.textContent = "Revisiones adicionales";
 
       if (["cancel", "failure"].includes(result)) {
         status.textContent = "La compra no fue completada.";

@@ -188,6 +188,15 @@
     "archivo": "archivo-boletines/boletin_2618.pdf",
     "imagen": "",
     "orden": 18
+	},
+  {
+    "numero": 19,
+    "especial": false,
+    "titulo": "La luz detrás del velo",
+    "fecha": "2026-08-16",
+    "descripcion": "La luz cambia de sentido cuando deja de buscarse afuera y comienza a revelar aquello que nuestros propios velos todavía no nos permiten reconocer.",
+    "archivo": "archivo-boletines/boletin_2619.pdf",
+    "imagen": "",
+    "orden": 19
 	}
-	
 ]

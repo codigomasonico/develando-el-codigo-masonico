@@ -641,7 +641,7 @@
       }
 
       webSubscriptionFlow = "";
-      renderMenuButtonsWeb();
+      restoreDefaultSuggestionsWeb();
     }
     catch (error) {
       addMessage(
@@ -880,10 +880,11 @@
           false
         );
 
-        renderMenuButtonsWeb();
+        restoreDefaultSuggestionsWeb();
         return;
       }
 
+      restoreDefaultSuggestionsWeb();
       ui.documentInput.value = "";
       ui.documentInput.click();
       return;
@@ -895,7 +896,7 @@
         "Cartes Plus amplía tu conocimiento con más consultas, revisión y retroalimentación de documentos.\n\nPor $149 MXN al mes tendrás hasta 50 consultas y 5 revisiones mensuales de documentos Word de hasta 5 páginas cada uno.\n\nEn cada revisión recibirás observaciones sobre estructura, claridad y contenido para mejorar tu trabajo antes de presentarlo en Logia.\n\nLa suscripción quedará vinculada a tu número de WhatsApp. Desde este mismo chat podrás consultar su estado o cancelarla.\n\nLa versión gratuita está pensada para consultas puntuales. Cartes Plus es para quienes desean estudiar con mayor profundidad y recibir apoyo en la preparación de sus trabajos.\n\nPara comenzar, selecciona “Suscribirme”.",
         false
       );
-      renderMenuButtonsWeb();
+      restoreDefaultSuggestionsWeb();
       return;
     }
 
@@ -908,7 +909,7 @@
           "Tu cuenta ya tiene Cartes Plus vigente. Consulta “Mi suscripción” para revisar su estado y vigencia.",
           false
         );
-        renderMenuButtonsWeb();
+        restoreDefaultSuggestionsWeb();
         return;
       }
 
@@ -927,7 +928,7 @@
         "Para recibir ayuda con Cartes, tu suscripción o un pago, escríbenos a soporte@develandoelcodigomasonico.com y cuéntanos brevemente qué ocurrió.",
         false
       );
-      renderMenuButtonsWeb();
+      restoreDefaultSuggestionsWeb();
       return;
     }
 
@@ -940,7 +941,7 @@
         `Al utilizar Cartes aceptas sus Términos de uso y el Aviso de privacidad de Develando el Código Masónico. Tus mensajes y los documentos que envíes serán tratados únicamente para prestar el servicio y mejorar tu experiencia. Puedes consultar la información completa en nuestros términos y aviso de privacidad. Para cualquier duda, escríbenos a soporte@develandoelcodigomasonico.com.\n\nAviso de privacidad:\n${privacyUrl}\n\nTérminos:\n${termsUrl}`,
         false
       );
-      renderMenuButtonsWeb();
+      restoreDefaultSuggestionsWeb();
     }
   }
 

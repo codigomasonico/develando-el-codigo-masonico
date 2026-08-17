@@ -37,13 +37,28 @@ export async function createPayPalCheckout({ userId, phone, fetchImpl = fetch })
   const planId = env("PAYPAL_PLAN_ID");
   if (!planId) throw new Error("Falta PAYPAL_PLAN_ID.");
   if (!/^usr_[a-f0-9]{32}$/.test(String(userId || ""))) throw new Error("user_id Cartes inválido.");
-  const returnUrl = env("CARTES_PLUS_BACK_URL") || "https://develandoelcodigomasonico.com/cartes-whatsapp/suscripcion.html";
+  const backUrl =
+    env("CARTES_PLUS_BACK_URL") ||
+    "https://develandoelcodigomasonico.com/cartes-whatsapp/suscripcion.html";
+
+  // CARTES_PAYPAL_RETURN_V112
+  const returnTarget = new URL(backUrl);
+  returnTarget.searchParams.set("provider", "paypal");
+  returnTarget.searchParams.set("result", "success");
+
+  const cancelTarget = new URL(backUrl);
+  cancelTarget.searchParams.set("provider", "paypal");
+  cancelTarget.searchParams.set("result", "cancel");
+
+  const returnUrl = returnTarget.toString();
+  const cancelUrl = cancelTarget.toString();
+
   const data = await paypal("/v1/billing/subscriptions", {
     method: "POST",
     body: {
       plan_id: planId,
       custom_id: userId,
-      application_context: { brand_name: "Cartes", user_action: "SUBSCRIBE_NOW", return_url: returnUrl, cancel_url: returnUrl }
+      application_context: { brand_name: "Cartes", user_action: "SUBSCRIBE_NOW", return_url: returnUrl, cancel_url: cancelUrl }
     },
     fetchImpl
   });

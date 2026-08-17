@@ -54,6 +54,28 @@ export function createPayPalWebhookHandler(overrides = {}) {
 
     const existing = await d.obtenerSuscripcionUsuario({ userId });
     const subscription = d.normalizePayPalSubscription(remote, existing);
+
+    // CARTES_PAYPAL_PENDING_V112
+    // CREATED/UPDATED pendientes todavía no representan
+    // una suscripción Cartes Plus aprobada.
+    if (
+      [
+        "BILLING.SUBSCRIPTION.CREATED",
+        "BILLING.SUBSCRIPTION.UPDATED"
+      ].includes(eventType) &&
+      String(subscription?.status || "").toLowerCase() === "pending"
+    ) {
+      return Response.json({
+        recibido: true,
+        ignorado: true,
+        event_type: eventType,
+        subscription_id: subscriptionId,
+        user_id: userId,
+        status: "pending",
+        motivo: "Suscripción PayPal pendiente de aprobación."
+      });
+    }
+
     const env = d.env || process.env;
     const synced = await d.sincronizarSuscripcionUsuario({
       userId,
