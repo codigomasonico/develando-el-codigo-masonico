@@ -192,25 +192,46 @@
 		"spotify": "https://open.spotify.com/episode/2ZlDyLYUTIhKHsIoRIoCm5?si=tK69UxnNRsa3jjZZbLbSAQ"
 	},
 	{
-  "id": "ref-022-cuando-un-simbolo-no-representa-a-todos",
-  "episodioId": "ep-022",
-  "episodioNumero": 22,
-  "titulo": "Cuando un símbolo no representa a todos",
-  "slug": "reflexion-2622",
-  "url": "/archivo-reflexiones/reflexion-2622.html",
-  "fecha": "2026-08-10",
-  "categoria": "Filosofía",
-  "descripcion": "Una reflexión sobre tradición, simbolismo y libertad de conciencia cuando un mismo libro no representa de igual manera a quienes lo observan.",
-  "palabrasClave": [
-    "libertad de conciencia",
-    "Biblia y Masonería",
-    "tradición masónica",
-    "simbolo",
-    "masoneria",
-    "reflexion"
-  ],
-  "episodioRelacionado": "La Biblia y la Libertad de Conciencia",
-  "spotify": "https://open.spotify.com/episode/4zPBexE8aQ64czfsezcHmV?si=TfZ-8DQPTFy6TiX2W0Tt6A"
-}
+		"id": "ref-022-cuando-un-simbolo-no-representa-a-todos",
+		"episodioId": "ep-022",
+		"episodioNumero": 22,
+		"titulo": "Cuando un símbolo no representa a todos",
+		"slug": "reflexion-2622",
+		"url": "/archivo-reflexiones/reflexion-2622.html",
+		"fecha": "2026-08-10",
+		"categoria": "Filosofía",
+		"descripcion": "Una reflexión sobre tradición, simbolismo y libertad de conciencia cuando un mismo libro no representa de igual manera a quienes lo observan.",
+		"palabrasClave": [
+			"libertad de conciencia",
+			"Biblia y Masonería",
+			"tradición masónica",
+			"simbolo",
+			"masoneria",
+			"reflexion"
+		],
+		"episodioRelacionado": "La Biblia y la Libertad de Conciencia",
+		"spotify": "https://open.spotify.com/episode/4zPBexE8aQ64czfsezcHmV?si=TfZ-8DQPTFy6TiX2W0Tt6A"
+	},
+	{
+		"id": "ref-023-cuando-el-tercero-cambia-la-relacion",
+		"episodioId": "ep-023",
+		"episodioNumero": 23,
+		"titulo": "Cuando el tercero cambia la relación",
+		"slug": "reflexion-2623",
+		"url": "/archivo-reflexiones/reflexion-2623.html",
+		"fecha": "2026-08-15",
+		"categoria": "Simbolismo",
+		"descripcion": "El tres puede cambiar una oposición al introducir relación. Una reflexión masónica sobre lo que ocurre cuando dejamos de contar y empezamos a vincular.",
+		"palabrasClave": [
+			"masoneria",
+			"numero tres",
+			"simbolismo masonico",
+			"relacion",
+			"simbolo",
+			"reflexion"
+		],
+		"episodioRelacionado": "El Simbolismo del Número Tres",
+		"spotify": "https://open.spotify.com/episode/4sGwieenKOoM8oCKRUoEic?si=LXXXJfdYSKq4depXKfUB9w"
+	}	
 	
 ]

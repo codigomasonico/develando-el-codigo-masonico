@@ -284,6 +284,18 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/4zPBexE8aQ64czfsezcHmV?si=TfZ-8DQPTFy6TiX2W0Tt6A",
 		"youtube": ""
-	}
-	
+	},
+	{
+		"id": "ep-023",
+		"numero": 23,
+		"titulo": "El Simbolismo del Número Tres",
+		"categoria": "Simbolismo",
+		"fecha": "2026-08-19",
+		"duracion": "41:49",
+		"descripcion": "El tres, más que una cifra, es una estructura simbólica que transforma la manera en que comprendemos la relación entre distintos elementos.
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/4sGwieenKOoM8oCKRUoEic?si=LXXXJfdYSKq4depXKfUB9w",
+		"youtube": ""
+	}	
 ]
