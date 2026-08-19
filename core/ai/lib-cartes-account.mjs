@@ -42,6 +42,25 @@ export async function resolverOCrearUsuarioPorIdentidad({ tipo, valor, fecha = n
   const identidad = normalizarIdentidadCartes(tipo, valor);
   const clave = `${PREFIJO_IDENTIDAD}:identity:${identidad.tipo}:${identidad.valor}`;
   const existente = await store.get(clave, { type: "json", consistency: "strong" });
+
+  // CARTES_SAFE_RELINK_V115
+  // Una identidad explícitamente desvinculada no puede convertirse
+  // silenciosamente en una cuenta gratuita nueva.
+  if (
+    existente &&
+    !existente?.user_id &&
+    String(existente?.status || "").toLowerCase() === "unlinked"
+  ) {
+    const error =
+      new Error("Esta identidad de Cartes está desvinculada.");
+
+    error.code = "identity_unlinked";
+    error.identity_type = identidad.tipo;
+    error.identity_value = identidad.valor;
+
+    throw error;
+  }
+
   if (existente?.user_id) {
     await asegurarUsuario({ userId: existente.user_id, identidad, fecha, store });
     return resultadoIdentidad(existente.user_id, identidad, false);
@@ -72,25 +91,904 @@ export async function vincularIdentidadUsuario({ userId, tipo, valor, fecha = ne
   const id = validarUserId(userId);
   const identidad = normalizarIdentidadCartes(tipo, valor);
   const clave = `${PREFIJO_IDENTIDAD}:identity:${identidad.tipo}:${identidad.valor}`;
-  const existente = await store.get(clave, { type: "json", consistency: "strong" });
+  const entrada = await store.getWithMetadata(clave, { type: "json", consistency: "strong" });
+  const existente = entrada?.data || null;
+
   if (existente?.user_id && existente.user_id !== id) {
     throw new Error("La identidad ya está vinculada a otro usuario de Cartes.");
   }
+
+  const ahora = fecha.toISOString();
+
   if (!existente) {
-    const ahora = fecha.toISOString();
     const creado = await store.setJSON(clave, {
-      version: 1, user_id: id, identity_type: identidad.tipo,
-      identity_value: identidad.valor, created_at: ahora, updated_at: ahora
+      version: 1,
+      user_id: id,
+      identity_type: identidad.tipo,
+      identity_value: identidad.valor,
+      created_at: ahora,
+      updated_at: ahora
     }, { onlyIfNew: true });
+
     if (!creado?.modified) {
       const ganador = await store.get(clave, { type: "json", consistency: "strong" });
-      if (ganador?.user_id !== id) throw new Error("La identidad fue vinculada concurrentemente a otro usuario.");
+      if (ganador?.user_id !== id) {
+        throw new Error("La identidad fue vinculada concurrentemente a otro usuario.");
+      }
     }
   }
+  else if (!existente.user_id) {
+    // CARTES_IDENTITY_MANAGEMENT_V115
+    // Una identidad revocada no crea cuentas automáticamente, pero puede
+    // reclamarse de forma explícita después de verificar el canal.
+    const reclamada = await store.setJSON(clave, {
+      version: 1,
+      user_id: id,
+      identity_type: identidad.tipo,
+      identity_value: identidad.valor,
+      created_at: existente.created_at || ahora,
+      relinked_at: ahora,
+      updated_at: ahora
+    }, { onlyIfMatch: entrada.etag });
+
+    if (!reclamada?.modified) {
+      throw new Error("La identidad cambió mientras se intentaba volver a vincular.");
+    }
+  }
+
   await asegurarUsuario({ userId: id, identidad, fecha, store });
   return resultadoIdentidad(id, identidad, false);
 }
 
+// CARTES_IDENTITY_MANAGEMENT_V115
+export async function resolverUsuarioExistentePorIdentidad({
+  tipo,
+  valor,
+  store = null
+}) {
+  store ||= await getCartesAccountStore();
+
+  const identidad =
+    normalizarIdentidadCartes(tipo, valor);
+
+  const clave =
+    `${PREFIJO_IDENTIDAD}:identity:${identidad.tipo}:${identidad.valor}`;
+
+  const existente =
+    await store.get(clave, {
+      type: "json",
+      consistency: "strong"
+    });
+
+  if (!existente?.user_id) return null;
+
+  return resultadoIdentidad(
+    existente.user_id,
+    identidad,
+    false
+  );
+}
+
+export async function desvincularIdentidadUsuario({
+  userId,
+  tipo,
+  valor,
+  fecha = new Date(),
+  store = null,
+  requireAlternative = true,
+  actualizarEstadoVinculoWeb = true
+}) {
+  store ||= await getCartesAccountStore();
+
+  const id = validarUserId(userId);
+  const identidad =
+    normalizarIdentidadCartes(tipo, valor);
+
+  const claveIdentidad =
+    `${PREFIJO_IDENTIDAD}:identity:${identidad.tipo}:${identidad.valor}`;
+
+  const entrada =
+    await store.getWithMetadata(claveIdentidad, {
+      type: "json",
+      consistency: "strong"
+    });
+
+  const existente = entrada?.data || null;
+
+  if (!existente?.user_id) {
+    return {
+      user_id: id,
+      identity_type: identidad.tipo,
+      identity_value: identidad.valor,
+      unlinked: false,
+      already_unlinked: true
+    };
+  }
+
+  if (existente.user_id !== id) {
+    throw new Error(
+      "La identidad pertenece a otra cuenta de Cartes."
+    );
+  }
+
+  const claveUsuario =
+    `${PREFIJO_IDENTIDAD}:user:${id}`;
+
+  const usuario =
+    await store.get(claveUsuario, {
+      type: "json",
+      consistency: "strong"
+    });
+
+  const identidades =
+    usuario?.identities &&
+    typeof usuario.identities === "object"
+      ? usuario.identities
+      : {};
+
+  const restantes = {};
+
+  for (const [identityType, values] of Object.entries(identidades)) {
+    const lista =
+      Array.isArray(values)
+        ? values.map((item) => String(item))
+        : [];
+
+    const filtrada =
+      identityType === identidad.tipo
+        ? lista.filter((item) => item !== identidad.valor)
+        : lista;
+
+    if (filtrada.length > 0) {
+      restantes[identityType] = [...new Set(filtrada)];
+    }
+  }
+
+  const cantidadRestante =
+    Object.values(restantes)
+      .reduce(
+        (total, values) =>
+          total + (Array.isArray(values) ? values.length : 0),
+        0
+      );
+
+  if (requireAlternative && cantidadRestante === 0) {
+    throw new Error(
+      "No puedes desvincular la única identidad de acceso de esta cuenta."
+    );
+  }
+
+  const ahora = fecha.toISOString();
+
+  // El registro no se elimina. Queda como tombstone sin user_id para:
+  // 1) cortar inmediatamente el acceso a la cuenta anterior;
+  // 2) impedir que resolverOCrearUsuarioPorIdentidad regale otra cuenta
+  //    gratuita automáticamente al mismo número;
+  // 3) permitir una revinculación explícita y verificada posteriormente.
+  const revocado =
+    await store.setJSON(
+      claveIdentidad,
+      {
+        version: 1,
+        user_id: null,
+        identity_type: identidad.tipo,
+        identity_value: identidad.valor,
+        status: "unlinked",
+        previous_user_id: id,
+        created_at: existente.created_at || ahora,
+        unlinked_at: ahora,
+        updated_at: ahora
+      },
+      { onlyIfMatch: entrada.etag }
+    );
+
+  if (!revocado?.modified) {
+    throw new Error(
+      "La identidad cambió mientras se intentaba desvincular."
+    );
+  }
+
+  // El acceso ya quedó revocado. Ahora limpiamos la metadata del usuario
+  // con control optimista para no pisar cambios concurrentes.
+  for (let intento = 0; intento < MAX_REINTENTOS; intento += 1) {
+    const userEntry =
+      await store.getWithMetadata(claveUsuario, {
+        type: "json",
+        consistency: "strong"
+      });
+
+    if (!userEntry?.data) break;
+
+    const actual = userEntry.data;
+    const actuales =
+      actual?.identities &&
+      typeof actual.identities === "object"
+        ? actual.identities
+        : {};
+
+    const siguientes = {};
+
+    for (const [identityType, values] of Object.entries(actuales)) {
+      const lista =
+        Array.isArray(values)
+          ? values.map((item) => String(item))
+          : [];
+
+      const filtrada =
+        identityType === identidad.tipo
+          ? lista.filter((item) => item !== identidad.valor)
+          : lista;
+
+      if (filtrada.length > 0) {
+        siguientes[identityType] = [...new Set(filtrada)];
+      }
+    }
+
+    const guardado =
+      await store.setJSON(
+        claveUsuario,
+        {
+          ...actual,
+          identities: siguientes,
+          updated_at: ahora
+        },
+        { onlyIfMatch: userEntry.etag }
+      );
+
+    if (guardado?.modified) break;
+
+    if (intento === MAX_REINTENTOS - 1) {
+      throw new Error(
+        "El acceso fue revocado, pero no se pudo actualizar la metadata de la cuenta por concurrencia."
+      );
+    }
+  }
+
+  // CARTES_UNLINK_CHANNEL_V115
+  // Si se retira WhatsApp, todos los vínculos Web que permanecen
+  // en la cuenta dejan de anunciarse como "linked". Esto no toca
+  // plan, suscripción, consumo, revisiones ni conversación.
+  if (
+    identidad.tipo === "whatsapp" &&
+    actualizarEstadoVinculoWeb
+  ) {
+    const webIdentities =
+      Array.isArray(restantes.web)
+        ? restantes.web
+        : [];
+
+    for (const webIdentity of webIdentities) {
+      await store.setJSON(
+        `${PREFIJO_VINCULO}:web:${webIdentity}`,
+        {
+          version: 1,
+          status: "unlinked",
+          linked: false,
+          user_id: id,
+          unlinked_at: ahora,
+          updated_at: ahora
+        }
+      );
+    }
+  }
+
+  return {
+    user_id: id,
+    identity_type: identidad.tipo,
+    identity_value: identidad.valor,
+    unlinked: true,
+    already_unlinked: false
+  };
+}
+
+export async function obtenerIdentidadesUsuario({
+  userId,
+  store = null
+}) {
+  store ||= await getCartesAccountStore();
+
+  const id = validarUserId(userId);
+
+  const usuario =
+    await store.get(
+      `${PREFIJO_IDENTIDAD}:user:${id}`,
+      {
+        type: "json",
+        consistency: "strong"
+      }
+    );
+
+  const raw =
+    usuario?.identities &&
+    typeof usuario.identities === "object"
+      ? usuario.identities
+      : {};
+
+  const identities = {};
+
+  for (const [tipo, values] of Object.entries(raw)) {
+    const clean =
+      Array.isArray(values)
+        ? [...new Set(
+            values
+              .map((item) => String(item || "").trim())
+              .filter(Boolean)
+          )]
+        : [];
+
+    if (clean.length > 0) {
+      identities[tipo] = clean;
+    }
+  }
+
+  return {
+    user_id: id,
+    identities
+  };
+}
+
+export async function desvincularWhatsAppUsuario({
+  userId,
+  fecha = new Date(),
+  store = null
+}) {
+  store ||= await getCartesAccountStore();
+
+  const id = validarUserId(userId);
+
+  const account =
+    await obtenerIdentidadesUsuario({
+      userId: id,
+      store
+    });
+
+  const phones =
+    Array.isArray(account.identities.whatsapp)
+      ? account.identities.whatsapp
+      : [];
+
+  if (phones.length === 0) {
+    return {
+      user_id: id,
+      unlinked: false,
+      already_unlinked: true
+    };
+  }
+
+  if (phones.length !== 1) {
+    throw new Error(
+      "La cuenta tiene más de una identidad WhatsApp activa y requiere revisión antes de desvincular."
+    );
+  }
+
+  return desvincularIdentidadUsuario({
+    userId: id,
+    tipo: "whatsapp",
+    valor: phones[0],
+    fecha,
+    store,
+    requireAlternative: true
+  });
+}
+
+export async function cambiarNumeroWhatsAppUsuario({
+  userId,
+  numeroAnterior,
+  numeroNuevo,
+  fecha = new Date(),
+  store = null
+}) {
+  store ||= await getCartesAccountStore();
+
+  const id = validarUserId(userId);
+  const anterior =
+    normalizarIdentidadCartes("whatsapp", numeroAnterior);
+  const nuevo =
+    normalizarIdentidadCartes("whatsapp", numeroNuevo);
+
+  if (anterior.valor === nuevo.valor) {
+    return {
+      user_id: id,
+      changed: false,
+      already_current: true,
+      old_phone: anterior.valor,
+      new_phone: nuevo.valor
+    };
+  }
+
+  const oldKey =
+    `${PREFIJO_IDENTIDAD}:identity:whatsapp:${anterior.valor}`;
+
+  const oldRecord =
+    await store.get(oldKey, {
+      type: "json",
+      consistency: "strong"
+    });
+
+  if (oldRecord?.user_id !== id) {
+    throw new Error(
+      "El número anterior no pertenece a esta cuenta de Cartes."
+    );
+  }
+
+  const newKey =
+    `${PREFIJO_IDENTIDAD}:identity:whatsapp:${nuevo.valor}`;
+
+  const newRecord =
+    await store.get(newKey, {
+      type: "json",
+      consistency: "strong"
+    });
+
+  if (
+    newRecord?.user_id &&
+    newRecord.user_id !== id
+  ) {
+    return {
+      user_id: id,
+      changed: false,
+      conflict: "identity_in_use",
+      old_phone: anterior.valor,
+      new_phone: nuevo.valor
+    };
+  }
+
+  // CARTES_ANTIABUSE_IDENTITY_V115
+  // Un número tombstoned de otra cuenta requiere resolución explícita.
+  // Si el tombstone pertenece a este mismo user_id, se permite recuperarlo.
+  if (
+    newRecord &&
+    !newRecord?.user_id &&
+    String(newRecord?.status || "").toLowerCase() === "unlinked"
+  ) {
+    const previousUserId =
+      String(newRecord?.previous_user_id || "").trim();
+
+    if (
+      !previousUserId ||
+      previousUserId !== id
+    ) {
+      return {
+        user_id: id,
+        changed: false,
+        conflict: "identity_previous_account",
+        old_phone: anterior.valor,
+        new_phone: nuevo.valor
+      };
+    }
+  }
+
+  let linkedNew = false;
+
+  try {
+    await vincularIdentidadUsuario({
+      userId: id,
+      tipo: "whatsapp",
+      valor: nuevo.valor,
+      fecha,
+      store
+    });
+
+    linkedNew = true;
+
+    await desvincularIdentidadUsuario({
+      userId: id,
+      tipo: "whatsapp",
+      valor: anterior.valor,
+      fecha,
+      store,
+      requireAlternative: false,
+      actualizarEstadoVinculoWeb: false
+    });
+  }
+  catch (error) {
+    // Si falla después de añadir el nuevo número, intentamos volver al
+    // estado anterior. Nunca movemos plan, suscripción, uso ni conversación.
+    if (linkedNew) {
+      await desvincularIdentidadUsuario({
+        userId: id,
+        tipo: "whatsapp",
+        valor: nuevo.valor,
+        fecha,
+        store,
+        requireAlternative: false,
+        actualizarEstadoVinculoWeb: false
+      }).catch(() => {});
+    }
+
+    throw error;
+  }
+
+  return {
+    user_id: id,
+    changed: true,
+    old_phone: anterior.valor,
+    new_phone: nuevo.valor
+  };
+}
+// CARTES_CHANGE_NUMBER_CODE_V115
+export async function iniciarCambioNumeroWhatsApp({
+  userId,
+  fecha = new Date(),
+  store = null
+}) {
+  store ||= await getCartesAccountStore();
+
+  const id = validarUserId(userId);
+
+  const account =
+    await obtenerIdentidadesUsuario({
+      userId: id,
+      store
+    });
+
+  const phones =
+    Array.isArray(account.identities.whatsapp)
+      ? account.identities.whatsapp
+      : [];
+
+  if (phones.length !== 1) {
+    throw new Error(
+      phones.length === 0
+        ? "La cuenta no tiene un número de WhatsApp activo para cambiar."
+        : "La cuenta tiene más de un número de WhatsApp activo y requiere revisión."
+    );
+  }
+
+  const oldPhone = phones[0];
+  const userKey =
+    `${PREFIJO_VINCULO}:change-whatsapp:user:${id}`;
+
+  const previous =
+    await store.get(
+      userKey,
+      {
+        type: "json",
+        consistency: "strong"
+      }
+    );
+
+  if (
+    previous?.status === "pending" &&
+    Date.parse(String(previous.expires_at || "")) >
+      fecha.getTime() &&
+    /^\d{6}$/.test(String(previous.code || "")) &&
+    previous.old_phone === oldPhone
+  ) {
+    return {
+      status: "pending",
+      changed: false,
+      code: previous.code,
+      expires_at: previous.expires_at,
+      instruction: `CAMBIAR ${previous.code}`
+    };
+  }
+
+  const now = fecha.toISOString();
+  const expiresAt =
+    new Date(
+      fecha.getTime() + VINCULO_TTL_MS
+    ).toISOString();
+
+  for (
+    let attempt = 0;
+    attempt < MAX_REINTENTOS * 2;
+    attempt += 1
+  ) {
+    const code =
+      String(
+        crypto.randomInt(
+          0,
+          1_000_000
+        )
+      ).padStart(6, "0");
+
+    const codeKey =
+      `${PREFIJO_VINCULO}:change-whatsapp:code:${code}`;
+
+    const created =
+      await store.setJSON(
+        codeKey,
+        {
+          version: 1,
+          purpose: "change_whatsapp_number",
+          code,
+          source_user_id: id,
+          old_phone: oldPhone,
+          status: "pending",
+          created_at: now,
+          expires_at: expiresAt,
+          updated_at: now
+        },
+        {
+          onlyIfNew: true
+        }
+      );
+
+    if (!created?.modified) {
+      continue;
+    }
+
+    await store.setJSON(
+      userKey,
+      {
+        version: 1,
+        purpose: "change_whatsapp_number",
+        code,
+        source_user_id: id,
+        old_phone: oldPhone,
+        status: "pending",
+        created_at: now,
+        expires_at: expiresAt,
+        updated_at: now
+      }
+    );
+
+    return {
+      status: "pending",
+      changed: false,
+      code,
+      expires_at: expiresAt,
+      instruction: `CAMBIAR ${code}`
+    };
+  }
+
+  throw new Error(
+    "No se pudo generar un código para cambiar el número de WhatsApp."
+  );
+}
+
+export async function completarCambioNumeroWhatsApp({
+  code,
+  whatsappPhone,
+  fecha = new Date(),
+  store = null
+}) {
+  store ||= await getCartesAccountStore();
+
+  const codigo =
+    String(code || "")
+      .replace(/\D/g, "");
+
+  if (!/^\d{6}$/.test(codigo)) {
+    throw new Error(
+      "El código para cambiar el número debe tener 6 dígitos."
+    );
+  }
+
+  const newIdentity =
+    normalizarIdentidadCartes(
+      "whatsapp",
+      whatsappPhone
+    );
+
+  const codeKey =
+    `${PREFIJO_VINCULO}:change-whatsapp:code:${codigo}`;
+
+  const entry =
+    await store.getWithMetadata(
+      codeKey,
+      {
+        type: "json",
+        consistency: "strong"
+      }
+    );
+
+  const request = entry?.data;
+
+  if (
+    !request ||
+    request.purpose !== "change_whatsapp_number"
+  ) {
+    throw new Error(
+      "El código para cambiar el número no existe."
+    );
+  }
+
+  const sourceUserId =
+    validarUserId(
+      request.source_user_id
+    );
+
+  const oldIdentity =
+    normalizarIdentidadCartes(
+      "whatsapp",
+      request.old_phone
+    );
+
+  if (request.status === "completed") {
+    if (
+      request.new_phone ===
+      newIdentity.valor
+    ) {
+      return {
+        user_id: sourceUserId,
+        changed: true,
+        already_changed: true,
+        old_phone: oldIdentity.valor,
+        new_phone: newIdentity.valor
+      };
+    }
+
+    throw new Error(
+      "El código para cambiar el número ya fue utilizado."
+    );
+  }
+
+  if (
+    Date.parse(
+      String(request.expires_at || "")
+    ) <= fecha.getTime()
+  ) {
+    throw new Error(
+      "El código para cambiar el número expiró."
+    );
+  }
+
+  if (
+    oldIdentity.valor ===
+    newIdentity.valor
+  ) {
+    throw new Error(
+      "El número nuevo debe ser diferente al número actual."
+    );
+  }
+
+  const oldKey =
+    `${PREFIJO_IDENTIDAD}:identity:whatsapp:${oldIdentity.valor}`;
+
+  const newKey =
+    `${PREFIJO_IDENTIDAD}:identity:whatsapp:${newIdentity.valor}`;
+
+  const [oldRecord, newRecord] =
+    await Promise.all([
+      store.get(
+        oldKey,
+        {
+          type: "json",
+          consistency: "strong"
+        }
+      ),
+      store.get(
+        newKey,
+        {
+          type: "json",
+          consistency: "strong"
+        }
+      )
+    ]);
+
+  // Recuperación idempotente si el cambio terminó pero el registro
+  // del código no alcanzó a marcarse como completed.
+  if (
+    newRecord?.user_id === sourceUserId &&
+    !oldRecord?.user_id &&
+    oldRecord?.status === "unlinked" &&
+    oldRecord?.previous_user_id === sourceUserId
+  ) {
+    const now = fecha.toISOString();
+
+    const completed = {
+      ...request,
+      status: "completed",
+      new_phone: newIdentity.valor,
+      completed_at: now,
+      updated_at: now
+    };
+
+    if (entry?.etag) {
+      await store.setJSON(
+        codeKey,
+        completed,
+        {
+          onlyIfMatch: entry.etag
+        }
+      );
+    }
+    else {
+      await store.setJSON(
+        codeKey,
+        completed
+      );
+    }
+
+    await store.setJSON(
+      `${PREFIJO_VINCULO}:change-whatsapp:user:${sourceUserId}`,
+      completed
+    );
+
+    return {
+      user_id: sourceUserId,
+      changed: true,
+      recovered: true,
+      old_phone: oldIdentity.valor,
+      new_phone: newIdentity.valor
+    };
+  }
+
+  if (
+    oldRecord?.user_id !==
+    sourceUserId
+  ) {
+    throw new Error(
+      "El número actual de la cuenta cambió desde que se generó el código. Genera un código nuevo."
+    );
+  }
+
+  if (
+    newRecord?.user_id &&
+    newRecord.user_id !== sourceUserId
+  ) {
+    return {
+      user_id: sourceUserId,
+      changed: false,
+      conflict: "identity_in_use",
+      old_phone: oldIdentity.valor,
+      new_phone: newIdentity.valor
+    };
+  }
+
+  const changed =
+    await cambiarNumeroWhatsAppUsuario({
+      userId: sourceUserId,
+      numeroAnterior: oldIdentity.valor,
+      numeroNuevo: newIdentity.valor,
+      fecha,
+      store
+    });
+
+  if (
+    !changed?.changed &&
+    changed?.conflict
+  ) {
+    return changed;
+  }
+
+  const now = fecha.toISOString();
+
+  const completed = {
+    ...request,
+    status: "completed",
+    new_phone: newIdentity.valor,
+    completed_at: now,
+    updated_at: now
+  };
+
+  if (entry?.etag) {
+    const saved =
+      await store.setJSON(
+        codeKey,
+        completed,
+        {
+          onlyIfMatch: entry.etag
+        }
+      );
+
+    if (!saved?.modified) {
+      throw new Error(
+        "El número se cambió, pero el código cambió concurrentemente. Reintenta el mismo código desde el número nuevo."
+      );
+    }
+  }
+  else {
+    await store.setJSON(
+      codeKey,
+      completed
+    );
+  }
+
+  await store.setJSON(
+    `${PREFIJO_VINCULO}:change-whatsapp:user:${sourceUserId}`,
+    completed
+  );
+
+  return {
+    user_id: sourceUserId,
+    changed: true,
+    old_phone: oldIdentity.valor,
+    new_phone: newIdentity.valor
+  };
+}
 export function obtenerPeriodoMensual(fecha = new Date()) {
   const partes = new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, year: "numeric", month: "2-digit" }).formatToParts(fecha);
   const year = partes.find((p) => p.type === "year")?.value;
@@ -322,37 +1220,226 @@ export async function obtenerEstadoVinculacionWeb({ webIdentity, fecha = new Dat
   const registro = await store.get(`${PREFIJO_VINCULO}:web:${identidad.valor}`, { type: "json", consistency: "strong" });
   if (!registro) return { status: "not_started", linked: false };
   if (registro.status === "linked") return { status: "linked", linked: true };
+  if (registro.status === "unlinked") return { status: "not_started", linked: false };
   if (Date.parse(String(registro.expires_at || "")) <= fecha.getTime()) return { status: "expired", linked: false };
   return { status: "pending", linked: false, expires_at: registro.expires_at };
 }
 
-export async function completarVinculacionConWhatsApp({ code, whatsappUserId, fecha = new Date(), store = null }) {
+export async function completarVinculacionConWhatsApp({
+  code,
+  whatsappUserId = null,
+  whatsappPhone = null,
+  fecha = new Date(),
+  store = null
+}) {
   store ||= await getCartesAccountStore();
-  const codigo = String(code || "").replace(/\D/g, "");
-  if (!/^\d{6}$/.test(codigo)) throw new Error("El código de vinculación debe tener 6 dígitos.");
-  const destino = validarUserId(whatsappUserId);
-  const claveCodigo = `${PREFIJO_VINCULO}:code:${codigo}`;
-  const entrada = await store.getWithMetadata(claveCodigo, { type: "json", consistency: "strong" });
-  const vinculo = entrada?.data;
-  if (!vinculo) throw new Error("El código de vinculación no existe o ya fue utilizado.");
-  if (vinculo.status === "linked") {
-    if (vinculo.user_id === destino) return { linked: true, user_id: destino, already_linked: true };
-    throw new Error("El código de vinculación ya fue utilizado.");
-  }
-  if (Date.parse(String(vinculo.expires_at || "")) <= fecha.getTime()) throw new Error("El código de vinculación expiró.");
 
-  const origen = validarUserId(vinculo.source_user_id);
+  const codigo =
+    String(code || "").replace(/\D/g, "");
+
+  if (!/^\d{6}$/.test(codigo)) {
+    throw new Error(
+      "El código de vinculación debe tener 6 dígitos."
+    );
+  }
+
+  const claveCodigo =
+    `${PREFIJO_VINCULO}:code:${codigo}`;
+
+  const entrada =
+    await store.getWithMetadata(
+      claveCodigo,
+      {
+        type: "json",
+        consistency: "strong"
+      }
+    );
+
+  const vinculo = entrada?.data;
+
+  if (!vinculo) {
+    throw new Error(
+      "El código de vinculación no existe o ya fue utilizado."
+    );
+  }
+
+  if (
+    Date.parse(String(vinculo.expires_at || "")) <=
+    fecha.getTime()
+  ) {
+    throw new Error(
+      "El código de vinculación expiró."
+    );
+  }
+
+  const origen =
+    validarUserId(vinculo.source_user_id);
+
+  let destino = null;
+  let identidadWhatsApp = null;
+  let identidadRevocada = false;
+  let usuarioAnteriorIdentidadRevocada = null;
+
+  if (whatsappPhone) {
+    identidadWhatsApp =
+      normalizarIdentidadCartes(
+        "whatsapp",
+        whatsappPhone
+      );
+
+    const claveWhatsApp =
+      `${PREFIJO_IDENTIDAD}:identity:whatsapp:${identidadWhatsApp.valor}`;
+
+    const registroWhatsApp =
+      await store.get(
+        claveWhatsApp,
+        {
+          type: "json",
+          consistency: "strong"
+        }
+      );
+
+    if (registroWhatsApp?.user_id) {
+      destino =
+        validarUserId(
+          registroWhatsApp.user_id
+        );
+    }
+    else if (
+      registroWhatsApp &&
+      String(
+        registroWhatsApp.status || ""
+      ).toLowerCase() === "unlinked"
+    ) {
+      identidadRevocada = true;
+      usuarioAnteriorIdentidadRevocada =
+        String(
+          registroWhatsApp.previous_user_id || ""
+        ).trim() || null;
+    }
+    else {
+      const creada =
+        await resolverOCrearUsuarioPorIdentidad({
+          tipo: "whatsapp",
+          valor: identidadWhatsApp.valor,
+          fecha,
+          store
+        });
+
+      destino = creada.user_id;
+    }
+  }
+  else {
+    destino =
+      validarUserId(whatsappUserId);
+  }
+
+  if (vinculo.status === "linked") {
+    if (
+      destino &&
+      vinculo.user_id === destino
+    ) {
+      return {
+        linked: true,
+        user_id: destino,
+        already_linked: true
+      };
+    }
+
+    throw new Error(
+      "El código de vinculación ya fue utilizado."
+    );
+  }
+
+  // CARTES_SAFE_RELINK_V115
+  // CARTES_ANTIABUSE_IDENTITY_V115
+  // Si el número fue desvinculado, el control del canal por sí solo no
+  // autoriza moverlo a otra cuenta. La revinculación automática únicamente
+  // restaura el número a su previous_user_id. Esto evita obtener cuotas
+  // gratuitas nuevas creando otra identidad Web después de desvincular.
+  if (identidadRevocada) {
+    if (
+      !usuarioAnteriorIdentidadRevocada ||
+      usuarioAnteriorIdentidadRevocada !== origen
+    ) {
+      return {
+        linked: false,
+        conflict: "identity_previous_account"
+      };
+    }
+
+    await vincularIdentidadUsuario({
+      userId: origen,
+      tipo: "whatsapp",
+      valor: identidadWhatsApp.valor,
+      fecha,
+      store
+    });
+
+    const ahora =
+      fecha.toISOString();
+
+    const completado = {
+      ...vinculo,
+      status: "linked",
+      user_id: origen,
+      linked_at: ahora,
+      relinked_identity: true,
+      updated_at: ahora
+    };
+
+    if (entrada?.etag) {
+      const guardado =
+        await store.setJSON(
+          claveCodigo,
+          completado,
+          { onlyIfMatch: entrada.etag }
+        );
+
+      if (!guardado?.modified) {
+        throw new Error(
+          "El código cambió mientras se completaba la revinculación."
+        );
+      }
+    }
+    else {
+      await store.setJSON(
+        claveCodigo,
+        completado
+      );
+    }
+
+    await store.setJSON(
+      `${PREFIJO_VINCULO}:web:${vinculo.web_identity}`,
+      {
+        version: 1,
+        code: codigo,
+        status: "linked",
+        user_id: origen,
+        linked_at: ahora,
+        updated_at: ahora
+      }
+    );
+
+    return {
+      linked: true,
+      user_id: origen,
+      web_identity: vinculo.web_identity,
+      relinked: true
+    };
+  }
 
   // CARTES_SAFE_LINK_V059
-  // Antes de modificar identidades, uso, conversación o suscripciones,
-  // impedir que dos cuentas con Plus vigente y suscripciones distintas
-  // sean fusionadas automáticamente.
-  const conflictoSuscripciones = await detectarConflictoSuscripcionesVinculacion({
-    sourceUserId: origen,
-    targetUserId: destino,
-    fecha,
-    store
-  });
+  // La vinculación normal conserva el comportamiento aprobado:
+  // si Web y WhatsApp eran cuentas independientes, ambas convergen
+  // en la cuenta WhatsApp, salvo conflicto de dos Plus vigentes.
+  const conflictoSuscripciones =
+    await detectarConflictoSuscripcionesVinculacion({
+      sourceUserId: origen,
+      targetUserId: destino,
+      fecha,
+      store
+    });
 
   if (conflictoSuscripciones) {
     return {
@@ -361,17 +1448,56 @@ export async function completarVinculacionConWhatsApp({ code, whatsappUserId, fe
     };
   }
 
-  await fusionarUsuarioEn({ sourceUserId: origen, targetUserId: destino, fecha, store });
-  const ahora = fecha.toISOString();
-  const completado = { ...vinculo, status: "linked", user_id: destino, linked_at: ahora, updated_at: ahora };
-  if (entrada?.etag) await store.setJSON(claveCodigo, completado, { onlyIfMatch: entrada.etag });
-  else await store.setJSON(claveCodigo, completado);
-  await store.setJSON(`${PREFIJO_VINCULO}:web:${vinculo.web_identity}`, {
-    version: 1, code: codigo, status: "linked", user_id: destino, linked_at: ahora, updated_at: ahora
+  await fusionarUsuarioEn({
+    sourceUserId: origen,
+    targetUserId: destino,
+    fecha,
+    store
   });
-  return { linked: true, user_id: destino, web_identity: vinculo.web_identity };
-}
 
+  const ahora =
+    fecha.toISOString();
+
+  const completado = {
+    ...vinculo,
+    status: "linked",
+    user_id: destino,
+    linked_at: ahora,
+    updated_at: ahora
+  };
+
+  if (entrada?.etag) {
+    await store.setJSON(
+      claveCodigo,
+      completado,
+      { onlyIfMatch: entrada.etag }
+    );
+  }
+  else {
+    await store.setJSON(
+      claveCodigo,
+      completado
+    );
+  }
+
+  await store.setJSON(
+    `${PREFIJO_VINCULO}:web:${vinculo.web_identity}`,
+    {
+      version: 1,
+      code: codigo,
+      status: "linked",
+      user_id: destino,
+      linked_at: ahora,
+      updated_at: ahora
+    }
+  );
+
+  return {
+    linked: true,
+    user_id: destino,
+    web_identity: vinculo.web_identity
+  };
+}
 async function detectarConflictoSuscripcionesVinculacion({
   sourceUserId,
   targetUserId,

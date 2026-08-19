@@ -1,6 +1,9 @@
 import {
+  completarCambioNumeroWhatsApp,
   completarConsultaMensual,
   completarVinculacionConWhatsApp,
+  desvincularIdentidadUsuario,
+  iniciarCambioNumeroWhatsApp,
   liberarConsultaMensual,
   obtenerEstadoUsoMensual,
   obtenerPlanUsuario,
@@ -47,8 +50,11 @@ Elige una opción o escribe directamente tu consulta sobre la masonería:
 • Privacidad y términos`;
 
 const realDeps = {
+  completarCambioNumeroWhatsApp,
   completarConsultaMensual,
   completarVinculacionConWhatsApp,
+  desvincularIdentidadUsuario,
+  iniciarCambioNumeroWhatsApp,
   liberarConsultaMensual,
   obtenerEstadoUsoMensual,
   obtenerPlanUsuario,
@@ -206,29 +212,10 @@ async function processMessage(message, d) {
 
   if (!phone || !messageId) return;
 
-  const identity = await d.resolverOCrearUsuarioPorIdentidad({ tipo: "whatsapp", valor: phone });
-  const userId = identity.user_id;
-  const normalized = normalizeCommand(text);
-  const env = d.env || process.env;
-  const terms = env.CARTES_TERMS_URL || "https://develandoelcodigomasonico.com/cartes-whatsapp/terminos.html";
-  const privacy = env.CARTES_PRIVACY_URL || "https://develandoelcodigomasonico.com/cartes-whatsapp/privacy.html";
-
-  // CARTES_DOCUMENT_WHATSAPP_V070
-  if (documentInfo) {
-    await recibirDocumentoWhatsApp({
-      phone,
-      phoneNumberId,
-      messageId,
-      userId,
-      documentInfo
-    }, d);
-
-    return;
-  }
-
-  // CARTES_WORD_DOC_V085
-  // Medios que no son documentos Word se rechazan
-  // sin consultar metadata ni descargar el binario.
+  // CARTES_MEDIA_BEFORE_IDENTITY_V115
+  // Medios incompatibles se rechazan antes de CAMBIAR, VINCULAR y antes
+  // de resolver/crear la identidad. Un documento Word válido conserva
+  // documentInfo y continúa al flujo documental después de resolver cuenta.
   const inboundMediaType =
     String(
       message?.type || ""
@@ -244,6 +231,7 @@ async function processMessage(message, d) {
     ]);
 
   if (
+    !documentInfo &&
     unsupportedMediaTypes.has(
       inboundMediaType
     )
@@ -255,21 +243,125 @@ async function processMessage(message, d) {
 
     return;
   }
+  // CARTES_CHANGE_NUMBER_CHANNEL_V115
+  // CAMBIAR se procesa desde el número nuevo antes de resolver o crear
+  // cualquier identidad WhatsApp. Así el número nuevo nunca recibe una
+  // cuenta gratuita temporal antes de completar la verificación.
+  const changeMatch =
+    text.match(/^CAMBIAR\s+(\d{6})$/i);
 
-  const linkMatch = text.match(/^VINCULAR\s+(\d{6})$/i);
+  if (changeMatch) {
+    try {
+      const changed =
+        await d.completarCambioNumeroWhatsApp({
+          code: changeMatch[1],
+          whatsappPhone: phone
+        });
+
+      if (
+        changed?.conflict ===
+        "identity_in_use"
+      ) {
+        await d.sendWhatsAppTextParts({
+          to: phone,
+          phoneNumberId,
+          text:
+            "Este número ya está vinculado a otra cuenta Cartes. Por seguridad no se realizó ningún cambio ni se fusionaron cuentas. Contacta a soporte si necesitas resolver esta situación."
+        });
+
+        return;
+      }
+
+      if (
+        changed?.conflict ===
+        "identity_previous_account"
+      ) {
+        await d.sendWhatsAppTextParts({
+          to: phone,
+          phoneNumberId,
+          text:
+            "Este número fue utilizado anteriormente por otra cuenta Cartes. Por seguridad no puedo reasignarlo automáticamente mediante cambio de número. Ninguna cuenta fue modificada. Contacta a soporte para validar la reasignación."
+        });
+
+        return;
+      }
+
+      const changedUserId =
+        String(changed?.user_id || "").trim();
+
+      if (changedUserId) {
+        await d.clearFlow(changedUserId);
+      }
+
+      await d.sendWhatsAppTextParts({
+        to: phone,
+        phoneNumberId,
+        text:
+          "Listo. Este es ahora el número de WhatsApp vinculado a tu cuenta Cartes. Conservas la misma cuenta, plan, consultas, revisiones, suscripción y conversación. El número anterior ya no puede acceder a esta cuenta."
+      });
+    }
+    catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "";
+
+      await d.sendWhatsAppTextParts({
+        to: phone,
+        phoneNumberId,
+        text:
+          message ||
+          "No fue posible completar el cambio de número. Ninguna cuenta fue modificada."
+      });
+    }
+
+    return;
+  }
+  // CARTES_SAFE_RELINK_V115
+  // VINCULAR se procesa antes de resolver/crear la identidad WhatsApp.
+  // Esto permite recuperar de forma explícita un número revocado sin
+  // fabricar una segunda cuenta gratuita.
+  const linkMatch =
+    text.match(/^VINCULAR\s+(\d{6})$/i);
+
   if (linkMatch) {
-    const linked = await d.completarVinculacionConWhatsApp({
-      code: linkMatch[1],
-      whatsappUserId: userId
-    });
-    await d.clearFlow(userId);
+    const linked =
+      await d.completarVinculacionConWhatsApp({
+        code: linkMatch[1],
+        whatsappPhone: phone
+      });
 
-    if (linked?.conflict === "active_subscriptions") {
+    const linkedUserId =
+      String(linked?.user_id || "").trim();
+
+    if (linkedUserId) {
+      await d.clearFlow(linkedUserId);
+    }
+
+    if (
+      linked?.conflict ===
+      "active_subscriptions"
+    ) {
       await d.sendWhatsAppTextParts({
         to: phone,
         phoneNumberId,
         text: "No pude vincular estas cuentas porque ambas tienen una suscripción Cartes Plus vigente. Para proteger tus pagos, Cartes no fusionará dos suscripciones vigentes diferentes. Ninguna cuenta fue modificada. Espera a que una de las suscripciones termine o contacta a soporte para decidir cuál conservar."
       });
+
+      return;
+    }
+
+    if (
+      linked?.conflict ===
+      "identity_previous_account"
+    ) {
+      await d.sendWhatsAppTextParts({
+        to: phone,
+        phoneNumberId,
+        text:
+          "Este número fue desvinculado previamente de otra cuenta Cartes. Por seguridad no puedo reasignarlo automáticamente a una cuenta distinta. Ninguna cuenta fue modificada. Si el número fue reasignado legítimamente, contacta a soporte para resolverlo."
+      });
+
       return;
     }
 
@@ -280,8 +372,187 @@ async function processMessage(message, d) {
         ? "Tu cuenta Web y WhatsApp ya estaban vinculadas."
         : "Listo. Tu cuenta Web y WhatsApp quedaron vinculadas y ahora comparten plan, uso, suscripción y conversación."
     });
+
     return;
   }
+
+  let identity;
+
+  try {
+    identity =
+      await d.resolverOCrearUsuarioPorIdentidad({
+        tipo: "whatsapp",
+        valor: phone
+      });
+  }
+  catch (error) {
+    if (
+      String(error?.code || "") ===
+      "identity_unlinked"
+    ) {
+      await d.sendWhatsAppTextParts({
+        to: phone,
+        phoneNumberId,
+        text: "Este número está desvinculado de tu cuenta Cartes. Para volver a vincularlo, abre Cartes en la Web, pulsa Vincular y envía aquí el código de 6 dígitos con el formato *VINCULAR 123456*. Tu plan, consultas y demás beneficios permanecen en tu cuenta."
+      });
+
+      return;
+    }
+
+    throw error;
+  }
+
+  const userId = identity.user_id;
+  const normalized = normalizeCommand(text);
+  const env = d.env || process.env;
+  const terms = env.CARTES_TERMS_URL || "https://develandoelcodigomasonico.com/cartes-whatsapp/terminos.html";
+  const privacy = env.CARTES_PRIVACY_URL || "https://develandoelcodigomasonico.com/cartes-whatsapp/privacy.html";
+  if (
+    [
+      "cambiar numero whatsapp",
+      "cambiar numero de whatsapp",
+      "cambiar mi numero whatsapp",
+      "cambiar numero"
+    ].includes(normalized)
+  ) {
+    await d.sendWhatsAppReplyButtons({
+      to: phone,
+      phoneNumberId,
+      body:
+        "¿Confirmas que deseas cambiar el número de WhatsApp vinculado a tu cuenta Cartes? Este número seguirá funcionando hasta que verifiques el nuevo. Tu plan, consultas, revisiones y suscripción permanecerán sin cambios.",
+      buttons: [
+        {
+          id: "change_whatsapp_confirm",
+          title: "Sí, generar código"
+        },
+        {
+          id: "menu_main",
+          title: "No cambiar"
+        }
+      ]
+    });
+
+    return;
+  }
+
+  if (
+    [
+      "confirmar cambiar numero whatsapp",
+      "si cambiar numero whatsapp"
+    ].includes(normalized)
+  ) {
+    try {
+      const change =
+        await d.iniciarCambioNumeroWhatsApp({
+          userId
+        });
+
+      await d.clearFlow(userId);
+
+      await d.sendWhatsAppTextParts({
+        to: phone,
+        phoneNumberId,
+        text:
+          `Código generado: *${change.instruction}*\n\nDesde el NUEVO número de WhatsApp, escribe a Cartes y envía exactamente ese código. Vence en 10 minutos. Este número actual seguirá vinculado hasta que el nuevo complete la verificación.`
+      });
+    }
+    catch (error) {
+      await d.sendWhatsAppTextParts({
+        to: phone,
+        phoneNumberId,
+        text:
+          error instanceof Error
+            ? error.message
+            : "No fue posible iniciar el cambio de número."
+      });
+    }
+
+    return;
+  }
+  // CARTES_UNLINK_CHANNEL_V115
+  if (
+    [
+      "desvincular whatsapp",
+      "desvincular mi whatsapp",
+      "quitar whatsapp"
+    ].includes(normalized)
+  ) {
+    await d.sendWhatsAppReplyButtons({
+      to: phone,
+      phoneNumberId,
+      body:
+        "¿Confirmas que deseas desvincular este número de tu cuenta Cartes? El número dejará de acceder a la cuenta. Tu plan, consultas, revisiones y suscripción no se cancelan ni se reinician.",
+      buttons: [
+        {
+          id: "unlink_whatsapp_confirm",
+          title: "Sí, desvincular"
+        },
+        {
+          id: "menu_main",
+          title: "No desvincular"
+        }
+      ]
+    });
+
+    return;
+  }
+
+  if (
+    [
+      "confirmar desvincular whatsapp",
+      "si desvincular whatsapp"
+    ].includes(normalized)
+  ) {
+    try {
+      await d.desvincularIdentidadUsuario({
+        userId,
+        tipo: "whatsapp",
+        valor: phone
+      });
+
+      await d.clearFlow(userId);
+
+      await d.sendWhatsAppTextParts({
+        to: phone,
+        phoneNumberId,
+        text:
+          "Listo. Este número quedó desvinculado de tu cuenta Cartes y ya no puede acceder a ella. Tu plan, consultas, revisiones y suscripción permanecen sin cambios. Para volver a vincularlo, abre Cartes en la Web, pulsa Vincular y envía aquí el nuevo código."
+      });
+    }
+    catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "";
+
+      const onlyIdentity =
+        /única identidad de acceso/i.test(message);
+
+      await d.sendWhatsAppTextParts({
+        to: phone,
+        phoneNumberId,
+        text: onlyIdentity
+          ? "No puedo desvincular este número porque actualmente es tu única forma de acceso a la cuenta. Vincula primero Cartes desde la Web y después vuelve a intentar la desvinculación."
+          : "No fue posible desvincular WhatsApp en este momento. Ningún dato de tu cuenta fue modificado."
+      });
+    }
+
+    return;
+  }
+
+  // CARTES_DOCUMENT_WHATSAPP_V070
+  if (documentInfo) {
+    await recibirDocumentoWhatsApp({
+      phone,
+      phoneNumberId,
+      messageId,
+      userId,
+      documentInfo
+    }, d);
+
+    return;
+  }
+
 
   if (!text) {
     await sendMainMenu({ phone, phoneNumberId, userId }, d);
@@ -1243,7 +1514,7 @@ async function showSubscription({ phone, phoneNumberId, userId }, d) {
 
   // CARTES_SUBSCRIPTION_BUTTONS_V099
   const subscriptionText =
-    `*Mi suscripción*\nPlan: ${plan === "plus" ? "Cartes Plus" : "Cartes gratuito"}\nMedio de pago: ${provider}\nConsultas usadas: ${usage.usadas} de ${usage.limite}\nConsultas disponibles: ${usage.disponibles}${reviewLine}${packageLine}\nFecha de vencimiento: ${dates.expiration}\nRenovación: ${dates.renewal}`;
+    `*Mi suscripción*\nPlan: ${plan === "plus" ? "Cartes Plus" : "Cartes gratuito"}\nMedio de pago: ${provider}\nConsultas usadas: ${usage.usadas} de ${usage.limite}\nConsultas disponibles: ${usage.disponibles}${reviewLine}${packageLine}\nFecha de vencimiento: ${dates.expiration}\nRenovación: ${dates.renewal}\n\nPara cambiar el número vinculado, escribe *CAMBIAR NÚMERO*.\nPara desvincular este número de tu cuenta, escribe *DESVINCULAR WHATSAPP*. Si este número es tu única forma de acceso, Cartes no permitirá la operación.`;
 
   if (
     plan !== "plus" ||
@@ -1466,6 +1737,8 @@ function resolveInteractiveCommand(message, fallbackText) {
     ["review_pack_mp", "paquete mercado pago"],
     ["review_pack_paypal", "paquete paypal"],
     ["subscription_cancel", "cancelar renovacion"],
+    ["change_whatsapp_confirm", "confirmar cambiar numero whatsapp"],
+    ["unlink_whatsapp_confirm", "confirmar desvincular whatsapp"],
     ["menu_main", "menu"]
   ]);
 

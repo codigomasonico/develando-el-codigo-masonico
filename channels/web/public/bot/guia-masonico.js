@@ -609,9 +609,13 @@
         subscription?.provider === "paypal" ||
         subscription?.provider === "mercadopago";
 
-      if (plan === "plus") {
-        const actions = [];
+      // CARTES_UNLINK_CHANNEL_V115
+      const whatsappLinked =
+        ui.link?.dataset.linked === "true";
 
+      const actions = [];
+
+      if (plan === "plus") {
         if (packagesBought < packagesMax) {
           actions.push({
             label: "Comprar 3 revisiones - $99",
@@ -628,7 +632,21 @@
             value: "cancelar renovacion"
           });
         }
+      }
 
+      if (whatsappLinked) {
+        actions.push({
+          label: "Cambiar número de WhatsApp",
+          value: "cambiar numero whatsapp"
+        });
+
+        actions.push({
+          label: "Desvincular WhatsApp",
+          value: "desvincular whatsapp"
+        });
+      }
+
+      if (actions.length > 0) {
         actions.push({
           label: "Volver al menú",
           value: "menu",
@@ -659,6 +677,151 @@
     }
   }
 
+  async function iniciarCambioNumeroWhatsAppWeb() {
+    setBusy(true);
+
+    ui.input.value = "";
+    ui.input.style.height = "auto";
+
+    const typing = addTyping();
+
+    try {
+      const response =
+        await fetch(
+          CONFIG.linkEndpoint,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              action: "start_change_whatsapp",
+              web_identity: webIdentity
+            }),
+            cache: "no-store"
+          }
+        );
+
+      const data =
+        await response.json()
+          .catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "No fue posible iniciar el cambio de número."
+        );
+      }
+
+      updateUsage(data.usage);
+
+      const instruction =
+        String(data.instruction || "").trim();
+
+      if (!/^CAMBIAR \d{6}$/.test(instruction)) {
+        throw new Error(
+          "Cartes no devolvió un código de cambio válido."
+        );
+      }
+
+      webSubscriptionFlow = "";
+
+      addMessage(
+        "assistant",
+        `Código generado: ${instruction}\n\nDesde el NUEVO número de WhatsApp, abre el chat con Cartes y envía exactamente ese código. Vence en 10 minutos. Tu número actual seguirá vinculado hasta que el nuevo complete la verificación.`,
+        false
+      );
+
+      restoreDefaultSuggestionsWeb();
+    }
+    catch (error) {
+      addMessage(
+        "assistant",
+        error instanceof Error
+          ? error.message
+          : "No fue posible iniciar el cambio de número.",
+        false,
+        true
+      );
+
+      webSubscriptionFlow = "";
+      restoreDefaultSuggestionsWeb();
+    }
+    finally {
+      typing.remove();
+      setBusy(false);
+    }
+  }
+  async function desvincularWhatsAppWeb() {
+    setBusy(true);
+
+    ui.input.value = "";
+    ui.input.style.height = "auto";
+
+    const typing = addTyping();
+
+    try {
+      const response =
+        await fetch(
+          CONFIG.linkEndpoint,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              action: "unlink_whatsapp",
+              web_identity: webIdentity
+            }),
+            cache: "no-store"
+          }
+        );
+
+      const data =
+        await response.json()
+          .catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "No fue posible desvincular WhatsApp."
+        );
+      }
+
+      updateUsage(data.usage);
+
+      ui.link.textContent = "Vincular";
+      ui.link.disabled = false;
+      delete ui.link.dataset.linked;
+
+      webSubscriptionFlow = "";
+
+      addMessage(
+        "assistant",
+        "WhatsApp quedó desvinculado de esta cuenta. El número anterior ya no puede acceder a ella. Tu plan, consultas, revisiones y suscripción permanecen sin cambios. Puedes volver a vincular WhatsApp cuando quieras desde Vincular.",
+        false
+      );
+
+      restoreDefaultSuggestionsWeb();
+    }
+    catch (error) {
+      addMessage(
+        "assistant",
+        error instanceof Error
+          ? error.message
+          : "No fue posible desvincular WhatsApp.",
+        false,
+        true
+      );
+
+      webSubscriptionFlow = "";
+      restoreDefaultSuggestionsWeb();
+    }
+    finally {
+      typing.remove();
+      setBusy(false);
+    }
+  }
   function formatCartesDateWeb(value) {
     const raw = String(value || "").trim();
     if (!raw) return "";
@@ -1100,7 +1263,119 @@
       return true;
     }
 
+    if (webSubscriptionFlow === "confirm_change_whatsapp") {
+      if (["no", "no cambiar", "cancelar"].includes(normalized)) {
+        webSubscriptionFlow = "";
+
+        addMessage(
+          "assistant",
+          "No se realizó ningún cambio. Tu número actual continúa vinculado a Cartes.",
+          false
+        );
+
+        restoreDefaultSuggestionsWeb();
+        return true;
+      }
+
+      if (!["si", "confirmar", "generar codigo"].includes(normalized)) {
+        addMessage(
+          "assistant",
+          "Confirma si deseas iniciar el cambio de número. El número actual seguirá funcionando hasta que verifiques el nuevo número.",
+          false
+        );
+
+        renderSubscriptionActionsWeb([
+          { label: "Sí, generar código", value: "si" },
+          { label: "No cambiar", value: "no", secondary: true }
+        ]);
+
+        return true;
+      }
+
+      await iniciarCambioNumeroWhatsAppWeb();
+      return true;
+    }
+    if (webSubscriptionFlow === "confirm_unlink_whatsapp") {
+      if (["no", "no desvincular", "cancelar"].includes(normalized)) {
+        webSubscriptionFlow = "";
+
+        addMessage(
+          "assistant",
+          "No se realizó ningún cambio. WhatsApp continúa vinculado a tu cuenta Cartes.",
+          false
+        );
+
+        restoreDefaultSuggestionsWeb();
+        return true;
+      }
+
+      if (!["si", "sí", "confirmar", "si desvincular"].includes(normalized)) {
+        addMessage(
+          "assistant",
+          "Confirma si deseas desvincular WhatsApp. Esta acción no cancela Cartes Plus ni modifica tu saldo o suscripción.",
+          false
+        );
+
+        renderSubscriptionActionsWeb([
+          { label: "Sí, desvincular", value: "si" },
+          { label: "No desvincular", value: "no", secondary: true }
+        ]);
+
+        return true;
+      }
+
+      await desvincularWhatsAppWeb();
+      return true;
+    }
     if (webSubscriptionFlow === "subscription_actions") {
+      if (
+        [
+          "cambiar numero whatsapp",
+          "cambiar numero de whatsapp",
+          "cambiar mi numero whatsapp"
+        ].includes(normalized)
+      ) {
+        webSubscriptionFlow =
+          "confirm_change_whatsapp";
+
+        addMessage(
+          "assistant",
+          "¿Confirmas que deseas cambiar el número de WhatsApp vinculado? Tu número actual seguirá funcionando hasta que el nuevo número sea verificado. Tu plan, consultas, revisiones, suscripción y conversación permanecerán en la misma cuenta.",
+          false
+        );
+
+        renderSubscriptionActionsWeb([
+          { label: "Sí, generar código", value: "si" },
+          { label: "No cambiar", value: "no", secondary: true }
+        ]);
+
+        return true;
+      }
+
+      if (
+        [
+          "desvincular whatsapp",
+          "desvincular mi whatsapp",
+          "quitar whatsapp"
+        ].includes(normalized)
+      ) {
+        webSubscriptionFlow =
+          "confirm_unlink_whatsapp";
+
+        addMessage(
+          "assistant",
+          "¿Confirmas que deseas desvincular WhatsApp? Ese número dejará de acceder a esta cuenta. Tu plan, consultas, revisiones y suscripción permanecerán en Cartes Web y esta acción no cancela Cartes Plus.",
+          false
+        );
+
+        renderSubscriptionActionsWeb([
+          { label: "Sí, desvincular", value: "si" },
+          { label: "No desvincular", value: "no", secondary: true }
+        ]);
+
+        return true;
+      }
+
       if (
         [
           "comprar revisiones",
