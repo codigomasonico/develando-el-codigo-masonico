@@ -4,4 +4,4 @@ export function construirUrlAccesoCartes({ numero, mensaje } = {}) {
   if (!/^\d{10,15}$/.test(phone)) throw new Error("El número público de WhatsApp de Cartes no es válido.");
   return `https://wa.me/${phone}?text=${encodeURIComponent(String(mensaje || process.env.CARTES_WELCOME_MESSAGE || DEFAULT_MESSAGE).trim())}`;
 }
-export default async () => Response.json({ url: construirUrlAccesoCartes() });
+export default async () => Response.redirect(construirUrlAccesoCartes(), 302);
