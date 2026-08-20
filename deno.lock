@@ -13,7 +13,10 @@
       "dependencies": [
         "npm:@netlify/blobs@^10.7.9",
         "npm:@playwright/test@^1.55.0",
-        "npm:netlify-cli@^26.2.0"
+        "npm:jszip@^3.10.1",
+        "npm:mammoth@^1.12.1",
+        "npm:netlify-cli@^26.2.0",
+        "npm:word-extractor@^1.0.4"
       ]
     }
   }

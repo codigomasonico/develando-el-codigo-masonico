@@ -1,4 +1,5 @@
-import { getStore } from "@netlify/blobs";
+// CARTES_QA_DEPLOY_STORE_GENERIC
+import { getStore, getDeployStore } from "@netlify/blobs";
 
 import {
   MAX_PAQUETES_REVISION_POR_PERIODO,
@@ -376,7 +377,7 @@ async function actualizarRevision({
 }
 
 async function getReviewStore() {
-  return getStore({
+  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3" ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined })) : getStore)({
     name: STORE_NAME,
     consistency: "strong"
   });

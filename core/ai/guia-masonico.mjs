@@ -4,6 +4,7 @@ import {
   liberarConsultaMensual,
   mensajesDeConversacion,
   obtenerConversacionUsuario,
+  obtenerEstadoUsoMensual,
   obtenerPlanUsuario,
   registrarIntercambioConversacion,
   reservarConsultaMensual,
@@ -75,14 +76,51 @@ export default async (request) => {
       return response;
     }
 
-    if (reserva) await completarConsultaMensual({ userId, periodo: reserva.periodo, requestId });
+    const coreData =
+      await response.clone().json().catch(() => ({}));
+
+    const coreAnswer =
+      String(coreData?.answer || "").trim();
+
+    const filtered =
+      coreData?.filtered === true;
+
+    let usageResponse = reserva;
+
+    if (reserva) {
+      if (filtered || !coreAnswer) {
+        await liberarConsultaMensual({
+          userId,
+          periodo: reserva.periodo,
+          requestId
+        });
+
+        usageResponse =
+          await obtenerEstadoUsoMensual({
+            userId,
+            plan: reserva.plan
+          });
+      } else {
+        await completarConsultaMensual({
+          userId,
+          periodo: reserva.periodo,
+          requestId
+        });
+
+        usageResponse =
+          await obtenerEstadoUsoMensual({
+            userId,
+            plan: reserva.plan
+          });
+      }
+    }
 
     if (esUserIdValido(userId)) {
       try {
-        const data = await response.clone().json();
+        const data = coreData;
         const answer = String(data?.answer || "").trim();
         const question = String(body?.question || "").trim();
-        if (question && answer) {
+        if (question && answer && data?.filtered !== true) {
           await registrarIntercambioConversacion({ userId, question, answer, channel: channel || "unknown", requestId: requestId || null });
         }
       } catch (error) {
@@ -90,7 +128,9 @@ export default async (request) => {
       }
     }
 
-    return reserva ? await agregarUsoRespuesta(response, reserva) : response;
+    return usageResponse
+      ? await agregarUsoRespuesta(response, usageResponse)
+      : response;
   } catch (error) {
     if (reserva) {
       try { await liberarConsultaMensual({ userId, periodo: reserva.periodo, requestId }); }

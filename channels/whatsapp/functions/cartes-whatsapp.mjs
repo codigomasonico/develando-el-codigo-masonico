@@ -571,6 +571,23 @@ async function processMessage(message, d) {
     return;
   }
 
+  // CARTES_PUBLIC_ENTRY_ONBOARDING_V117
+  if (isPublicEntryInput(text)) {
+    await d.clearFlow(userId);
+
+    await handlePublicEntryWhatsApp(
+      {
+        phone,
+        phoneNumberId,
+        userId,
+        isNewAccount: identity?.created === true
+      },
+      d
+    );
+
+    return;
+  }
+
   // WHATSAPP_NON_QUERY_MENU_V019
   if (isNonQueryInput(text)) {
     await d.clearFlow(userId);
@@ -953,11 +970,18 @@ async function processMessage(message, d) {
   if (reservation.duplicada) return;
 
   if (!reservation.permitida) {
-    const limit = reservation.plan === "plus" ? 50 : 5;
+    if (reservation.plan !== "plus") {
+      await ofrecerCartesPlusPorLimite(
+        { phone, phoneNumberId, usage: reservation },
+        d
+      );
+      return;
+    }
+
     await d.sendWhatsAppTextParts({
       to: phone,
       phoneNumberId,
-      text: `Ya utilizaste las ${limit} consultas incluidas en tu plan durante este periodo. Escribe *Mi suscripción* para revisar tu estado.`
+      text: "Ya utilizaste las 50 consultas incluidas en Cartes Plus durante este periodo. Escribe *Mi suscripción* para revisar tu estado."
     });
     return;
   }
@@ -980,20 +1004,30 @@ async function processMessage(message, d) {
   try {
     const response = await d.guiaMasonico(coreRequest);
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !String(data?.answer || "").trim()) {
+    const answer = String(data?.answer || "").trim();
+    const filtered = data?.filtered === true;
+    if (!response.ok || !answer) {
       throw new Error(data?.error || `Cartes Core HTTP ${response.status}`);
     }
 
-    await d.completarConsultaMensual({
-      userId,
-      periodo: reservation.periodo,
-      requestId: messageId
-    });
+    if (filtered) {
+      await d.liberarConsultaMensual({
+        userId,
+        periodo: reservation.periodo,
+        requestId: messageId
+      });
+    } else {
+      await d.completarConsultaMensual({
+        userId,
+        periodo: reservation.periodo,
+        requestId: messageId
+      });
+    }
 
     await d.sendWhatsAppTextParts({
       to: phone,
       phoneNumberId,
-      text: String(data.answer).trim()
+      text: answer
     });
 
     try {
@@ -1002,11 +1036,22 @@ async function processMessage(message, d) {
         plan
       });
 
-      await d.sendWhatsAppTextParts({
-        to: phone,
-        phoneNumberId,
-        text: `*Consultas disponibles:* ${usageAfterQuery.disponibles} de ${usageAfterQuery.limite}`
-      });
+      if (
+        plan !== "plus" &&
+        !filtered &&
+        Number(usageAfterQuery.disponibles) <= 0
+      ) {
+        await ofrecerCartesPlusPorLimite(
+          { phone, phoneNumberId, usage: usageAfterQuery },
+          d
+        );
+      } else {
+        await d.sendWhatsAppTextParts({
+          to: phone,
+          phoneNumberId,
+          text: `*Consultas disponibles:* ${usageAfterQuery.disponibles} de ${usageAfterQuery.limite}`
+        });
+      }
     } catch (usageError) {
       console.warn("WA_V2_USAGE_AFTER_QUERY_ERROR", JSON.stringify({
         message_id: messageId,
@@ -1015,11 +1060,14 @@ async function processMessage(message, d) {
       }));
     }
 
-    console.log("WA_V2_QUERY_OK", JSON.stringify({
-      message_id: messageId,
-      user_id: userId,
-      plan
-    }));
+    console.log(
+      filtered ? "WA_V2_QUERY_FILTERED" : "WA_V2_QUERY_OK",
+      JSON.stringify({
+        message_id: messageId,
+        user_id: userId,
+        plan
+      })
+    );
   } catch (error) {
     await d.liberarConsultaMensual({
       userId,
@@ -1411,6 +1459,61 @@ async function enviarGuiaRevisionDocumentoWhatsApp(
   });
 }
 
+async function ofrecerCartesPlusPorLimite(
+  { phone, phoneNumberId, usage = null },
+  d
+) {
+  const cycleEnd =
+    formatDateForUser(usage?.cycle_end);
+
+  const renewalLine =
+    cycleEnd
+      ? `\n\nTus 5 consultas gratuitas estarán disponibles nuevamente el ${cycleEnd}.`
+      : "";
+
+  const body =
+    "*Consultas disponibles:* 0 de 5\n\n" +
+    "Ya utilizaste las 5 consultas gratuitas de este periodo." +
+    renewalLine +
+    "\n\nSi quieres seguir conversando con Cartes ahora, puedes activar *Cartes Plus* por $149 MXN al mes, con hasta 50 consultas y 5 revisiones de documentos Word.";
+
+  try {
+    await d.sendWhatsAppReplyButtons({
+      to: phone,
+      phoneNumberId,
+      body,
+      buttons: [
+        {
+          id: "menu_suscribirme",
+          title: "Contratar Plus"
+        },
+        {
+          id: "menu_main",
+          title: "Volver al menú"
+        }
+      ]
+    });
+
+    return;
+  }
+  catch (error) {
+    console.warn(
+      "WA_USAGE_LIMIT_PLUS_FALLBACK_V117",
+      error instanceof Error
+        ? error.message
+        : String(error)
+    );
+  }
+
+  await d.sendWhatsAppTextParts({
+    to: phone,
+    phoneNumberId,
+    text:
+      body +
+      "\n\nEscribe *Suscribirme* para activar Cartes Plus o *Menú* para volver."
+  });
+}
+
 async function ofrecerCartesPlusPorDocumento(
   { phone, phoneNumberId },
   d
@@ -1513,8 +1616,20 @@ async function showSubscription({ phone, phoneNumberId, userId }, d) {
   }
 
   // CARTES_SUBSCRIPTION_BUTTONS_V099
+  const freeCycleEnd =
+    plan === "plus"
+      ? ""
+      : formatDateForUser(usage?.cycle_end);
+
+  const periodLine =
+    plan === "plus"
+      ? `\nFecha de vencimiento: ${dates.expiration}\nRenovación: ${dates.renewal}`
+      : freeCycleEnd
+        ? `\nRenovación de consultas gratuitas: ${freeCycleEnd}`
+        : "\nPeriodo gratuito: comienza con la primera consulta válida respondida por Cartes";
+
   const subscriptionText =
-    `*Mi suscripción*\nPlan: ${plan === "plus" ? "Cartes Plus" : "Cartes gratuito"}\nMedio de pago: ${provider}\nConsultas usadas: ${usage.usadas} de ${usage.limite}\nConsultas disponibles: ${usage.disponibles}${reviewLine}${packageLine}\nFecha de vencimiento: ${dates.expiration}\nRenovación: ${dates.renewal}\n\nPara cambiar el número vinculado, escribe *CAMBIAR NÚMERO*.\nPara desvincular este número de tu cuenta, escribe *DESVINCULAR WHATSAPP*. Si este número es tu única forma de acceso, Cartes no permitirá la operación.`;
+    `*Mi suscripción*\nPlan: ${plan === "plus" ? "Cartes Plus" : "Cartes gratuito"}\nMedio de pago: ${provider}\nConsultas usadas: ${usage.usadas} de ${usage.limite}\nConsultas disponibles: ${usage.disponibles}${reviewLine}${packageLine}${periodLine}\n\nPara cambiar el número vinculado, escribe *CAMBIAR NÚMERO*.\nPara desvincular este número de tu cuenta, escribe *DESVINCULAR WHATSAPP*. Si este número es tu única forma de acceso, Cartes no permitirá la operación.`;
 
   if (
     plan !== "plus" ||
@@ -1682,6 +1797,17 @@ function formatDateForUser(value) {
   return `${day}-${month}-${year}`;
 }
 
+function isPublicEntryInput(value) {
+  const normalized = normalizeCommand(value);
+
+  return new Set([
+    "hola quiero conocer a cartes",
+    "quiero conocer a cartes",
+    "hola cartes quiero comenzar",
+    "cartes quiero comenzar"
+  ]).has(normalized);
+}
+
 function isNonQueryInput(value) {
   const raw = String(value || "").trim();
   if (!raw) return true;
@@ -1691,6 +1817,9 @@ function isNonQueryInput(value) {
 
   // Mensajes sociales o de prueba que no constituyen una consulta.
   const normalized = normalizeCommand(raw);
+
+  if (isPublicEntryInput(raw)) return true;
+
   return new Set([
     "hola",
     "buen dia",
@@ -1748,6 +1877,97 @@ function resolveInteractiveCommand(message, fallbackText) {
   }
 
   return fallbackText;
+}
+
+async function handlePublicEntryWhatsApp({
+  phone,
+  phoneNumberId,
+  userId,
+  isNewAccount
+}, d) {
+  if (isNewAccount) {
+    await d.sendWhatsAppTextParts({
+      to: phone,
+      phoneNumberId,
+      text:
+        "Hola, soy Cartes, el asistente de Develando el Código Masónico.\n\n" +
+        "Puedo ayudarte con consultas sobre historia, simbolismo, filosofía y pensamiento masónico.\n\n" +
+        "Tu cuenta gratuita incluye 5 consultas. Tu periodo de 30 días comenzará con la primera consulta válida que Cartes responda. También puedes conocer Cartes Plus, que amplía las consultas e incluye revisión de documentos Word.\n\n" +
+        "Esta bienvenida y el uso del menú no consumen ninguna consulta."
+    });
+
+    await sendMainMenu(
+      { phone, phoneNumberId, userId },
+      d
+    );
+
+    return;
+  }
+
+  let statusText =
+    "*Bienvenido de nuevo a Cartes.*\n\n" +
+    "Tu cuenta y tu saldo se mantienen sin cambios.";
+
+  try {
+    const plan =
+      String(
+        await d.obtenerPlanUsuario({ userId }) ||
+        "gratuito"
+      ).toLowerCase();
+
+    const usage =
+      await d.obtenerEstadoUsoMensual({
+        userId,
+        plan
+      });
+
+    statusText =
+      "*Bienvenido de nuevo a Cartes.*\n\n" +
+      `Plan: ${plan === "plus" ? "Cartes Plus" : "Cartes gratuito"}\n` +
+      `Consultas disponibles: ${usage.disponibles} de ${usage.limite}`;
+
+    if (plan !== "plus") {
+      const cycleEnd =
+        formatDateForUser(usage?.cycle_end);
+
+      statusText += cycleEnd
+        ? `\nTus 5 consultas gratuitas se renuevan el ${cycleEnd}.`
+        : "\nTu periodo gratuito de 30 días comenzará con tu primera consulta válida respondida por Cartes.";
+    }
+
+    if (plan === "plus") {
+      const subscription =
+        await d.obtenerSuscripcionUsuario({
+          userId
+        });
+
+      const dates =
+        resolveSubscriptionDates(subscription);
+
+      statusText +=
+        `\nFecha de vencimiento: ${dates.expiration}` +
+        `\nRenovación: ${dates.renewal}`;
+    }
+  }
+  catch (error) {
+    console.warn(
+      "WA_PUBLIC_ENTRY_STATUS_V117",
+      error instanceof Error
+        ? error.message
+        : String(error)
+    );
+  }
+
+  await d.sendWhatsAppTextParts({
+    to: phone,
+    phoneNumberId,
+    text: statusText
+  });
+
+  await sendMainMenu(
+    { phone, phoneNumberId, userId },
+    d
+  );
 }
 
 async function sendMainMenu({ phone, phoneNumberId, userId }, d) {

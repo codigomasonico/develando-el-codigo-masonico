@@ -12,7 +12,7 @@ import {
 } from "./editorial-recovery.mjs";
 
 const OUT_OF_SCOPE_ANSWER =
-  "No puedo ayudarte con esa consulta. Esta guía está dedicada a temas de Masonería, historia, simbología, filosofía, ética y los contenidos de Develando el Código Masónico.";
+  "Esta consulta no se considera de carácter masónico, por lo que no puedo responderla.";
 
 export default async (request) => {
   if (request.method === "OPTIONS") {
@@ -80,22 +80,46 @@ export default async (request) => {
     );
   }
 
-  const classification = classifyQuestion(question);
+  let classification = classifyQuestion(question);
 
   if (!classification.inScope) {
-    return json(
-      {
-        answer: OUT_OF_SCOPE_ANSWER,
-        filtered: true,
-        meta: {
-          route: "fuera_de_tema",
-          promptVersion: CONFIG.promptVersion
-        }
-      },
-      200
-    );
-  }
+    const semanticApiKey = process.env.OPENAI_API_KEY;
+    const semanticModel =
+      process.env.OPENAI_MODEL || CONFIG.defaultModel;
 
+    if (!semanticApiKey) {
+      return json(
+        { error: "El servicio de Cartes aún no está configurado en el servidor." },
+        503
+      );
+    }
+
+    const semanticScope =
+      await classifyScopeWithOpenAI({
+        apiKey: semanticApiKey,
+        model: semanticModel,
+        question
+      });
+
+    if (!semanticScope) {
+      return json(
+        {
+          answer: OUT_OF_SCOPE_ANSWER,
+          filtered: true,
+          meta: {
+            route: "fuera_de_tema_semantico",
+            promptVersion: CONFIG.promptVersion
+          }
+        },
+        200
+      );
+    }
+
+    classification = {
+      inScope: true,
+      topic: "general"
+    };
+  }
   const knowledge = retrieveLocalKnowledge(question);
 
   // Banco canónico para preguntas editoriales centrales. Estas respuestas
@@ -346,6 +370,72 @@ export default async (request) => {
   }
 };
 
+async function classifyScopeWithOpenAI({
+  apiKey,
+  model,
+  question
+}) {
+  const instructions = `
+Clasifica únicamente si la consulta pertenece al ámbito de la Masonería.
+
+Considera masónicos:
+historia, símbolos, herramientas, grados, ritos, rituales, filosofía,
+ética, logias, cargos, tradiciones, personajes, conceptos y términos
+que tengan un significado o uso reconocido dentro de la Masonería.
+
+IMPORTANTE:
+Una palabra puede tener también un significado cotidiano.
+Si la consulta pregunta por su significado, simbolismo o uso masónico,
+o consiste solamente en un término que posee un significado masónico
+reconocido, clasifícala como MASONICO.
+
+Si el contexto indica claramente un uso ajeno a la Masonería,
+clasifícala como FUERA_DE_TEMA.
+
+Ejemplos:
+"plomada" -> MASONICO
+"¿Qué simboliza la plomada?" -> MASONICO
+"nivel" -> MASONICO
+"regla" -> MASONICO
+"mallete" -> MASONICO
+"¿Cómo usar una plomada en construcción?" -> FUERA_DE_TEMA
+"¿Cuál es la temperatura hoy?" -> FUERA_DE_TEMA
+"receta de pizza" -> FUERA_DE_TEMA
+
+No respondas la pregunta.
+Responde exclusivamente:
+MASONICO
+o
+FUERA_DE_TEMA
+`.trim();
+
+  const result =
+    await requestOpenAI({
+      apiKey,
+      model,
+      instructions,
+      history: [],
+      question
+    });
+
+  const value =
+    extractOutputText(result.data)
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, "_");
+
+  if (value.includes("MASONICO")) {
+    return true;
+  }
+
+  if (value.includes("FUERA_DE_TEMA")) {
+    return false;
+  }
+
+  throw new Error(
+    "Clasificación semántica de alcance inválida."
+  );
+}
 async function requestOpenAI({
   apiKey,
   model,
@@ -360,7 +450,15 @@ async function requestOpenAI({
   );
 
   try {
-    const response = await fetch(CONFIG.openAIUrl, {
+    const openAIBaseUrl =
+      String(process.env.OPENAI_BASE_URL || "").trim();
+
+    const openAIUrl =
+      openAIBaseUrl
+        ? `${openAIBaseUrl.replace(/\/+$/, "")}/v1/responses`
+        : CONFIG.openAIUrl;
+
+    const response = await fetch(openAIUrl, {
       method: "POST",
       signal: controller.signal,
       headers: {

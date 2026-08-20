@@ -1,0 +1,20 @@
+CARTES WEB2 - VALIDACION LOCAL
+Fecha: 2026-08-11
+
+BASE:
+- Web/Core: fuente completa de Produccion canónica.
+- WhatsApp: reconstruccion V2 completa.
+- Mercado Pago y PayPal: integrados al mismo estado central.
+
+PRUEBAS:
+1) node --test tests/web/*.test.mjs => 12/12 PASS
+2) node tests/web/bot/run-local-tests.mjs => PASS
+3) node --test tests/whatsapp-v2/*.test.mjs => 21/21 PASS
+4) Sintaxis de todos los .mjs => PASS
+5) Import de todos los wrappers netlify/functions => PASS
+
+TOTAL AUTOMATIZADO: 33 pruebas Node PASS + controles Web PASS.
+
+NOTA:
+- Meta, Mercado Pago y PayPal se prueban localmente con mocks en esta etapa.
+- Las credenciales reales se validan después contra sandbox/proveedor, sin tocar Produccion.

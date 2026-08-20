@@ -1,9 +1,10 @@
+// CARTES_QA_DEPLOY_STORE_GENERIC
 const STORE_NAME = "cartes-whatsapp-v2";
 const TTL_MS = 30 * 60 * 1000;
 
 async function store() {
-  const { getStore } = await import("@netlify/blobs");
-  return getStore({ name: STORE_NAME, consistency: "strong" });
+  const { getStore, getDeployStore } = await import("@netlify/blobs");
+  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3" ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined })) : getStore)({ name: STORE_NAME, consistency: "strong" });
 }
 
 export async function setFlow(userId, flow, data = {}) {

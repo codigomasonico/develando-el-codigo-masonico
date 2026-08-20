@@ -594,14 +594,25 @@
           ? `\nRevisiones disponibles: ${Number(reviews.disponibles || 0)}\nPaquetes adicionales: ${packagesBought} de ${packagesMax}`
           : "";
 
+      const freeCycleEnd =
+        plan === "plus"
+          ? ""
+          : formatCartesDateWeb(usage?.cycle_end);
+
+      const periodLines =
+        plan === "plus"
+          ? `\nFecha de vencimiento: ${expiration}\nRenovación: ${renewal}`
+          : freeCycleEnd
+            ? `\nRenovación de consultas gratuitas: ${freeCycleEnd}`
+            : "\nPeriodo gratuito: comienza con la primera consulta válida respondida por Cartes";
+
       const texto =
         `Plan: ${plan === "plus" ? "Cartes Plus" : "Cartes gratuito"}\n` +
         `Medio de pago: ${provider}\n` +
         `Consultas usadas: ${usadas} de ${limite}\n` +
         `Consultas disponibles: ${disponibles}` +
-        `${reviewLines}\n` +
-        `Fecha de vencimiento: ${expiration}\n` +
-        `Renovación: ${renewal}`;
+        `${reviewLines}` +
+        `${periodLines}`;
 
       addMessage("assistant", texto, true);
 
@@ -1212,6 +1223,29 @@
     ui.messages.scrollTop = ui.messages.scrollHeight;
   }
 
+  function mostrarLimiteGratuitoWeb(usage) {
+    const cycleEnd =
+      formatCartesDateWeb(usage?.cycle_end);
+
+    const renewalLine =
+      cycleEnd
+        ? `\n\nTus 5 consultas gratuitas estarán disponibles nuevamente el ${cycleEnd}.`
+        : "";
+
+    addMessage(
+      "assistant",
+      "Consultas disponibles: 0 de 5\n\n" +
+        "Ya utilizaste las 5 consultas gratuitas de este periodo." +
+        renewalLine +
+        "\n\nSi quieres seguir conversando con Cartes ahora, puedes activar Cartes Plus por $149 MXN al mes, con hasta 50 consultas y 5 revisiones de documentos Word.",
+      false
+    );
+
+    renderSubscriptionActionsWeb([
+      { label: "Contratar Plus", value: "suscribirme" },
+      { label: "Volver al menú", value: "menu", secondary: true }
+    ]);
+  }
   async function comenzarSuscripcionWeb() {
     webSubscriptionFlow = "accept_terms";
     ui.input.value = "";
@@ -2058,7 +2092,25 @@
       updateUsage(data.usage);
 
       if (!response.ok) {
-        throw new Error(data.error || "No fue posible obtener una respuesta.");
+        const usagePlan =
+          String(
+            data?.usage?.plan ||
+            currentWebPlan ||
+            "gratuito"
+          ).toLowerCase();
+
+        if (
+          data?.code === "usage_limit" &&
+          usagePlan !== "plus"
+        ) {
+          mostrarLimiteGratuitoWeb(data.usage);
+          return;
+        }
+
+        throw new Error(
+          data.error ||
+          "No fue posible obtener una respuesta."
+        );
       }
 
       const answer = typeof data.answer === "string" ? data.answer.trim() : "";
@@ -2068,6 +2120,17 @@
       }
 
       addMessage("assistant", answer, true);
+
+      if (
+        String(
+          data?.usage?.plan ||
+          currentWebPlan ||
+          "gratuito"
+        ).toLowerCase() !== "plus" &&
+        Number(data?.usage?.disponibles) <= 0
+      ) {
+        mostrarLimiteGratuitoWeb(data.usage);
+      }
     } catch (error) {
       addMessage(
         "assistant",

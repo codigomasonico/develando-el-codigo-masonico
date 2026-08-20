@@ -1,4 +1,12 @@
+// CARTES_QA_DEPLOY_STORE_GENERIC
 import crypto from "node:crypto";
+import {
+  completarConsultaCicloCartes,
+  fusionarUsoCiclosCartes,
+  liberarConsultaCicloCartes,
+  obtenerEstadoUsoCicloCartes,
+  reservarConsultaCicloCartes
+} from "./lib-cartes-usage-cycle.mjs";
 import { fusionarUsoRevisionesMensual } from "./lib-cartes-reviews.mjs";
 import { fusionarPaquetesRevision } from "./lib-cartes-review-packs.mjs";
 
@@ -24,8 +32,13 @@ const RESERVA_PENDIENTE_MS = 10 * 60 * 1000;
 const MAX_REINTENTOS = 10;
 
 export async function getCartesAccountStore() {
-  const { getStore } = await import("@netlify/blobs");
-  return getStore({ name: STORE_NAME, consistency: "strong" });
+  const { getStore, getDeployStore } = await import("@netlify/blobs");
+  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3"
+    ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined }))
+    : getStore)({
+      name: STORE_NAME,
+      consistency: "strong"
+    });
 }
 
 export function normalizarIdentidadCartes(tipo, valor) {
@@ -1052,84 +1065,150 @@ export async function obtenerPlanUsuario({ userId, store = null }) {
   return normalizarPlan(registro?.plan);
 }
 
-export async function obtenerEstadoUsoMensual({ userId, plan = null, fecha = new Date(), store = null }) {
+export async function obtenerEstadoUsoMensual({
+  userId,
+  plan = null,
+  fecha = new Date(),
+  store = null
+}) {
   store ||= await getCartesAccountStore();
+
   const id = validarUserId(userId);
-  const periodo = obtenerPeriodoMensual(fecha);
-  const p = normalizarPlan(plan || await obtenerPlanUsuario({ userId: id, store }));
-  const limite = LIMITES_MENSUALES_CARTES[p];
-  const entrada = await store.getWithMetadata(claveUso(periodo, id), { type: "json", consistency: "strong" });
-  const registro = normalizarRegistroUso(entrada?.data, { userId: id, periodo });
-  const consultas = filtrarConsultasVigentes(registro.consultas, fecha);
-  return construirEstado({ userId: id, plan: p, periodo, limite, usadas: contarConsultas(consultas) });
+
+  const p = normalizarPlan(
+    plan ||
+    await obtenerPlanUsuario({
+      userId: id,
+      store
+    })
+  );
+
+  const subscription =
+    p === PLAN_CARTES_PLUS
+      ? await obtenerSuscripcionUsuario({
+          userId: id,
+          fecha,
+          store
+        })
+      : null;
+
+  return obtenerEstadoUsoCicloCartes({
+    userId: id,
+    plan: p,
+    subscription,
+    fecha,
+    store
+  });
 }
 
-export async function reservarConsultaMensual({ userId, plan = null, requestId, channel = "unknown", fecha = new Date(), store = null }) {
+export async function reservarConsultaMensual({
+  userId,
+  plan = null,
+  requestId,
+  channel = "unknown",
+  fecha = new Date(),
+  store = null
+}) {
   store ||= await getCartesAccountStore();
+
   const id = validarUserId(userId);
-  const rid = String(requestId || "").trim();
-  if (!rid) throw new Error("No se puede reservar una consulta sin requestId válido.");
-  const periodo = obtenerPeriodoMensual(fecha);
-  const p = normalizarPlan(plan || await obtenerPlanUsuario({ userId: id, store }));
-  const limite = LIMITES_MENSUALES_CARTES[p];
-  const clave = claveUso(periodo, id);
 
-  for (let i = 0; i < MAX_REINTENTOS; i += 1) {
-    const entrada = await store.getWithMetadata(clave, { type: "json", consistency: "strong" });
-    const registro = normalizarRegistroUso(entrada?.data, { userId: id, periodo });
-    const consultas = filtrarConsultasVigentes(registro.consultas, fecha);
-    const existente = consultas.find((c) => c.request_id === rid);
-    const usadas = contarConsultas(consultas);
-    if (existente) return { ...construirEstado({ userId: id, plan: p, periodo, limite, usadas }), permitida: false, duplicada: true, request_id: rid };
-    if (usadas >= limite) return { ...construirEstado({ userId: id, plan: p, periodo, limite, usadas }), permitida: false, duplicada: false, request_id: rid };
+  const p = normalizarPlan(
+    plan ||
+    await obtenerPlanUsuario({
+      userId: id,
+      store
+    })
+  );
 
-    const ahora = fecha.toISOString();
-    const siguiente = {
-      version: 2, user_id: id, periodo,
-      consultas: [...consultas, { request_id: rid, estado: "pendiente", plan: p, channel: String(channel || "unknown"), reserved_at: ahora }],
-      updated_at: ahora
-    };
-    const guardado = await store.setJSON(clave, siguiente, entrada?.etag ? { onlyIfMatch: entrada.etag } : { onlyIfNew: true });
-    if (guardado?.modified) return { ...construirEstado({ userId: id, plan: p, periodo, limite, usadas: usadas + 1 }), permitida: true, duplicada: false, request_id: rid };
-  }
-  throw new Error("No se pudo reservar la consulta por concurrencia.");
+  const subscription =
+    p === PLAN_CARTES_PLUS
+      ? await obtenerSuscripcionUsuario({
+          userId: id,
+          fecha,
+          store
+        })
+      : null;
+
+  return reservarConsultaCicloCartes({
+    userId: id,
+    plan: p,
+    subscription,
+    requestId,
+    channel,
+    fecha,
+    store
+  });
 }
 
-export async function completarConsultaMensual(args) {
-  return actualizarConsulta({ ...args, transformar(consultas, indice, fecha) {
-    const siguiente = [...consultas];
-    siguiente[indice] = { ...siguiente[indice], estado: "completada", completed_at: fecha.toISOString() };
-    return siguiente;
-  }});
-}
-
-export async function liberarConsultaMensual(args) {
-  return actualizarConsulta({ ...args, transformar(consultas, indice) {
-    if (consultas[indice]?.estado === "completada") return consultas;
-    return consultas.filter((_c, pos) => pos !== indice);
-  }});
-}
-
-async function actualizarConsulta({ userId, periodo, requestId, fecha = new Date(), store = null, transformar }) {
+export async function completarConsultaMensual({
+  userId,
+  requestId,
+  fecha = new Date(),
+  store = null
+}) {
   store ||= await getCartesAccountStore();
+
   const id = validarUserId(userId);
-  const rid = String(requestId || "").trim();
-  if (!rid) return false;
-  const per = String(periodo || obtenerPeriodoMensual(fecha));
-  const clave = claveUso(per, id);
-  for (let i = 0; i < MAX_REINTENTOS; i += 1) {
-    const entrada = await store.getWithMetadata(clave, { type: "json", consistency: "strong" });
-    if (!entrada?.etag) return false;
-    const registro = normalizarRegistroUso(entrada.data, { userId: id, periodo: per });
-    const consultas = filtrarConsultasVigentes(registro.consultas, fecha);
-    const indice = consultas.findIndex((c) => c.request_id === rid);
-    if (indice < 0) return false;
-    const transformadas = transformar(consultas, indice, fecha);
-    if (transformadas === consultas) return false;
-    const guardado = await store.setJSON(clave, { ...registro, consultas: transformadas, updated_at: fecha.toISOString() }, { onlyIfMatch: entrada.etag });
-    if (guardado?.modified) return true;
-  }
-  throw new Error("No se pudo actualizar la consulta por concurrencia.");
+
+  const p =
+    await obtenerPlanUsuario({
+      userId: id,
+      store
+    });
+
+  const subscription =
+    p === PLAN_CARTES_PLUS
+      ? await obtenerSuscripcionUsuario({
+          userId: id,
+          fecha,
+          store
+        })
+      : null;
+
+  return completarConsultaCicloCartes({
+    userId: id,
+    plan: p,
+    subscription,
+    requestId,
+    fecha,
+    store
+  });
+}
+
+export async function liberarConsultaMensual({
+  userId,
+  requestId,
+  fecha = new Date(),
+  store = null
+}) {
+  store ||= await getCartesAccountStore();
+
+  const id = validarUserId(userId);
+
+  const p =
+    await obtenerPlanUsuario({
+      userId: id,
+      store
+    });
+
+  const subscription =
+    p === PLAN_CARTES_PLUS
+      ? await obtenerSuscripcionUsuario({
+          userId: id,
+          fecha,
+          store
+        })
+      : null;
+
+  return liberarConsultaCicloCartes({
+    userId: id,
+    plan: p,
+    subscription,
+    requestId,
+    fecha,
+    store
+  });
 }
 
 
@@ -1606,16 +1685,22 @@ async function fusionarUsuarioEn({ sourceUserId, targetUserId, fecha, store }) {
     await sincronizarSuscripcionUsuario({ userId: target, subscription: elegida, source: "identity_link", fecha, store });
   }
 
-  const periodo = obtenerPeriodoMensual(fecha);
-  const sourceUsage = await store.get(claveUso(periodo, source), { type: "json", consistency: "strong" });
-  const targetUsage = await store.get(claveUso(periodo, target), { type: "json", consistency: "strong" });
-  const map = new Map();
-  for (const c of [...(targetUsage?.consultas || []), ...(sourceUsage?.consultas || [])]) {
-    if (c?.request_id && !map.has(c.request_id)) map.set(c.request_id, c);
-  }
-  if (map.size) await store.setJSON(claveUso(periodo, target), { version: 2, user_id: target, periodo, consultas: [...map.values()], updated_at: ahora });
-
-  // DOCUMENT_REVIEWS_V068
+  await fusionarUsoCiclosCartes({
+    sourceUserId: source,
+    targetUserId: target,
+    plan: mergedPlan,
+    subscription:
+      sourceSub || targetSub
+        ? await obtenerSuscripcionUsuario({
+            userId: target,
+            fecha,
+            store
+          })
+        : null,
+    fecha,
+    store
+  });
+// DOCUMENT_REVIEWS_V068
   // El consumo de revisiones también pertenece a la cuenta central.
   await fusionarUsoRevisionesMensual({
     sourceUserId: source,

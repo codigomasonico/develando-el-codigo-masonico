@@ -11,7 +11,7 @@ function normalize(value) {
 const TOPIC_PATTERNS = Object.freeze({
   controversia: /\b(?:secreta|secreto|secta|conspiracion|conspirativa|elite|poder|religion|satan|lucifer|ocultismo|oculta|anticristiana|gobierna el mundo)\b/,
   historia: /\b(?:historia|historico|historica|origen|origenes|siglo|constituciones|anderson|operativa|especulativa|gremio|gremios|1717|edad media|egipto)\b/,
-  simbologia: /\b(?:simbolo|simbolos|simbologia|simbolismo|escuadra|compas|mandil|columna|columnas|luz|camara de reflexiones|piedra bruta|piedra cubica|templo|oriente|occidente|pilares|tres grandes luces|cadena de union|vitriol|gadu|gran arquitecto del universo)\b/,
+  simbologia: /\b(?:simbolo|simbolos|simbologia|simbolismo|escuadra|compas|mandil|plomada|columna|columnas|luz|camara de reflexiones|piedra bruta|piedra cubica|templo|oriente|occidente|pilares|tres grandes luces|cadena de union|vitriol|gadu|gran arquitecto del universo)\b/,
   estructura: /\b(?:rito|ritual|ceremonia|grado|grados|cargo|cargos|obediencia|jurisdiccion|gran logia|logia|regularidad|reconocimiento|tenida|plancha|balustre|venerable maestro|aprendiz mason|companero mason|maestro mason|landmarks)\b/,
   filosofia: /\b(?:filosofia|filosofica|etica|moral|virtud|conciencia|libertad|tolerancia|fraternidad|corrupcion|autoritaria|contradicciones|mejor persona)\b/,
   proyecto: /\b(?:develando el codigo|podcast|episodio|episodios|sitio|libro|escuchar|contenido)\b/
@@ -32,6 +32,8 @@ const OUT_OF_SCOPE = [
   /\b(?:propaganda partidista|campana politica partidista)\b/,
   /\boriente medio\b/,
   /\bgrado(?:s)? de temperatura\b/,
+  /\b(?:cuantos?|a cuantos?)\s+grados?\s+(?:hace|esta|estan|estamos)\b/,
+  /\bgrados?\s+(?:celsius|centigrados|fahrenheit)\b/,
   /\bcargo(?:s)? (?:bancario|por sobregiro|en mi tarjeta)\b/,
   /\bcuanto cuesta la luz\b/
 ];
@@ -44,7 +46,15 @@ function hasRitualTriad(text) {
 function hasSymbolicQuestionContext(text) {
   return (
     /\b(?:representa|simboliza|significa|sentido)\b/.test(text) &&
-    /\b(?:luz|oriente|occidente|columna|columnas|templo|pilares)\b/.test(text)
+    /\b(?:luz|oriente|occidente|columna|columnas|templo|pilares|plomada)\b/.test(text)
+  );
+}
+
+function hasStructuralDegreeQuestionContext(text) {
+  return (
+    /\b(?:cuantos?|cuantas?)\s+grados?\s+hay\b/.test(text) ||
+    /\b(?:cuantos?|cuantas?)\s+grados?\s+(?:existen|son|tiene|tienen)\b/.test(text) ||
+    /\b(?:cuales|que)\s+(?:son\s+)?(?:los\s+)?grados?\b/.test(text)
   );
 }
 
@@ -53,7 +63,8 @@ function hasMasonicContext(text) {
     EXPLICIT_MASONIC_CONTEXT.test(text) ||
     STRONG_MASONIC_TERMS.test(text) ||
     hasRitualTriad(text) ||
-    hasSymbolicQuestionContext(text)
+    hasSymbolicQuestionContext(text) ||
+    hasStructuralDegreeQuestionContext(text)
   );
 }
 
