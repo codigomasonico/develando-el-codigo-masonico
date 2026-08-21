@@ -867,6 +867,15 @@
     ui.suggestionBox.replaceChildren();
     ui.suggestionBox.classList.remove("gm-suggestions--menu", "gm-suggestions--main-menu");
 
+    const remaining = Number(ui?.usage?.dataset?.remaining);
+    if (
+      ui?.usage?.dataset?.state === "ready" &&
+      Number.isFinite(remaining) &&
+      remaining <= 0
+    ) {
+      return;
+    }
+
     suggestions.forEach((question) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -2184,6 +2193,13 @@
     ui.usage.dataset.state = "ready";
     ui.usage.dataset.remaining = String(restantes);
     ui.usage.dataset.limit = String(total);
+
+    if (
+      restantes <= 0 &&
+      !ui.suggestionBox.classList.contains("gm-suggestions--menu")
+    ) {
+      ui.suggestionBox.replaceChildren();
+    }
 
     return true;
   }
