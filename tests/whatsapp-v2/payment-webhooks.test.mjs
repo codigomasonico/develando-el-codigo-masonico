@@ -10,7 +10,7 @@ test("Mercado Pago webhook autorizado activa Plus en cuenta compartida y notific
   const synced = [];
   const handler = createMercadoPagoWebhookHandler({
     verifyMercadoPagoWebhook: () => true,
-    async getMercadoPagoSubscription(id) { return { id, status: "authorized", preapproval_plan_id: "plan-1", auto_recurring: { transaction_amount: 149, currency_id: "MXN" } }; },
+    async getMercadoPagoSubscription(id) { return { id, status: "authorized", preapproval_plan_id: "plan-1", auto_recurring: { transaction_amount: Number(process.env.CARTES_PLUS_PRICE_MXN), currency_id: "MXN" } }; },
     async getPaymentContext() { return { user_id: USER_ID, phone: "5218115774235", phone_number_id: "1205856839283337" }; },
     async obtenerSuscripcionUsuario() { return null; },
     normalizeMercadoPagoSubscription(remote) { return { provider: "mercadopago", status: remote.status, preapproval_id: remote.id }; },

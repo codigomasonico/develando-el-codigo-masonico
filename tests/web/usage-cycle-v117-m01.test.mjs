@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 
@@ -137,7 +138,7 @@ test(
 
     assert.equal(
       state.disponibles,
-      5
+      CARTES_FREE_QUERY_LIMIT
     );
   }
 );
@@ -194,7 +195,7 @@ test(
 
     assert.equal(
       state.disponibles,
-      5
+      CARTES_FREE_QUERY_LIMIT
     );
   }
 );
@@ -334,7 +335,7 @@ test(
 
     assert.equal(
       expired.disponibles,
-      5
+      CARTES_FREE_QUERY_LIMIT
     );
 
     assert.equal(
@@ -402,13 +403,13 @@ test(
 
     assert.equal(
       state.disponibles,
-      50
+      CARTES_PLUS_QUERY_LIMIT
     );
   }
 );
 
 test(
-  "M01 renovación Plus inicia nuevo saldo de 50",
+  "M01 renovacion Plus inicia nuevo saldo completo",
   async () => {
     const store =
       memoryStore();
@@ -507,7 +508,7 @@ test(
 
     assert.equal(
       renewed.disponibles,
-      50
+      CARTES_PLUS_QUERY_LIMIT
     );
   }
 );
@@ -572,7 +573,7 @@ test(
 
     assert.equal(
       state.limite,
-      50
+      CARTES_PLUS_QUERY_LIMIT
     );
 
     assert.equal(
@@ -582,7 +583,7 @@ test(
 
     assert.equal(
       state.disponibles,
-      49
+      CARTES_PLUS_QUERY_LIMIT - 1
     );
   }
 );
@@ -646,7 +647,7 @@ test(
 
     assert.equal(
       state.disponibles,
-      4
+      CARTES_FREE_QUERY_LIMIT - 1
     );
 
     assert.equal(

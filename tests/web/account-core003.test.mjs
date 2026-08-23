@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
@@ -48,23 +49,23 @@ test("el consumo se contabiliza por user_id y no por canal", async () => {
   await completarConsultaMensual({ userId: user.user_id, periodo: r2.periodo, requestId: "wa-1", fecha: AUG, store });
   const state = await obtenerEstadoUsoMensual({ userId: user.user_id, plan: PLAN_CARTES_GRATUITO, fecha: AUG, store });
   assert.equal(state.usadas, 2);
-  assert.equal(state.disponibles, 3);
+  assert.equal(state.disponibles, CARTES_FREE_QUERY_LIMIT - 2);
 });
 
-test("gratuito bloquea la sexta consulta compartida", async () => {
+test("gratuito bloquea la consulta posterior al limite compartido", async () => {
   const store = memoryStore();
   const user = await resolverOCrearUsuarioPorIdentidad({ tipo: "web", valor: "web_five", fecha: AUG, store });
-  for (let i=1; i<=5; i+=1) {
+  for (let i=1; i<=CARTES_FREE_QUERY_LIMIT; i+=1) {
     const r = await reservarConsultaMensual({ userId: user.user_id, plan: PLAN_CARTES_GRATUITO, requestId: `req-${i}`, channel: i % 2 ? "web" : "whatsapp", fecha: AUG, store });
     assert.equal(r.permitida, true);
     await completarConsultaMensual({ userId: user.user_id, periodo: r.periodo, requestId: `req-${i}`, fecha: AUG, store });
   }
-  const sixth = await reservarConsultaMensual({ userId: user.user_id, plan: PLAN_CARTES_GRATUITO, requestId: "req-6", channel: "web", fecha: AUG, store });
-  assert.equal(sixth.permitida, false);
-  assert.equal(sixth.disponibles, 0);
+  const blocked = await reservarConsultaMensual({ userId: user.user_id, plan: PLAN_CARTES_GRATUITO, requestId: `req-${CARTES_FREE_QUERY_LIMIT + 1}`, channel: "web", fecha: AUG, store });
+  assert.equal(blocked.permitida, false);
+  assert.equal(blocked.disponibles, 0);
 });
 
-test("Plus eleva el límite central a 50 sin reiniciar consumo", async () => {
+test("Plus eleva el limite central configurado sin reiniciar consumo", async () => {
   const store = memoryStore();
   const user = await resolverOCrearUsuarioPorIdentidad({ tipo: "whatsapp", valor: "5218111111111", fecha: AUG, store });
   const r = await reservarConsultaMensual({ userId: user.user_id, plan: PLAN_CARTES_GRATUITO, requestId: "free-1", channel: "whatsapp", fecha: AUG, store });
@@ -72,7 +73,7 @@ test("Plus eleva el límite central a 50 sin reiniciar consumo", async () => {
   await sincronizarPlanUsuario({ userId: user.user_id, plan: PLAN_CARTES_PLUS, source: "whatsapp", fecha: AUG, store });
   const state = await obtenerEstadoUsoMensual({ userId: user.user_id, fecha: AUG, store });
   assert.equal(state.plan, PLAN_CARTES_PLUS);
-  assert.equal(state.limite, 50);
+  assert.equal(state.limite, CARTES_PLUS_QUERY_LIMIT);
   assert.equal(state.usadas, 1);
-  assert.equal(state.disponibles, 49);
+  assert.equal(state.disponibles, CARTES_PLUS_QUERY_LIMIT - 1);
 });

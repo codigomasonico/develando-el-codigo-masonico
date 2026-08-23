@@ -9,7 +9,7 @@ Unir la identidad anónima persistente de Cartes Web con la identidad WhatsApp d
 ## Flujo implementado
 1. En Cartes Web aparece el botón `Vincular`.
 2. La Web solicita un código temporal al endpoint `/.netlify/functions/cartes-link`.
-3. El código tiene 6 dígitos y una vigencia de 10 minutos.
+3. El código tiene 6 dígitos y una vigencia definida por `CARTES_LINK_CODE_TTL_MINUTES` (actualmente 10 minutos).
 4. La Web abre el WhatsApp oficial de Cartes con el mensaje `VINCULAR 123456` preparado.
 5. El webhook de WhatsApp reconoce ese comando antes de procesarlo como consulta.
 6. WhatsApp resuelve su `user_id` y llama de forma interna y firmada a Cartes Account.
@@ -19,7 +19,7 @@ Unir la identidad anónima persistente de Cartes Web con la identidad WhatsApp d
 
 ## Seguridad
 - Código aleatorio de 6 dígitos.
-- Vigencia de 10 minutos.
+- Vigencia definida por `CARTES_LINK_CODE_TTL_MINUTES` (actualmente 10 minutos).
 - El código sólo se completa desde el canal WhatsApp autenticado por el webhook existente.
 - La llamada WhatsApp -> Cartes Account usa HMAC-SHA256 con `CARTES_INTERNAL_SECRET`.
 - Un navegador ya vinculado no puede generar un nuevo código para reasignar la cuenta.

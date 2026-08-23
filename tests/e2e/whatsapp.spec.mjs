@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import { test, expect } from '@playwright/test';
 import crypto from 'node:crypto';
 
@@ -83,8 +84,8 @@ function harness({
   let currentSubscription = subscription;
 
   let usage = plan === 'plus'
-    ? { usadas: 7, limite: 50, disponibles: 43 }
-    : { usadas: 0, limite: 5, disponibles: 5 };
+    ? { usadas: 7, limite: CARTES_PLUS_QUERY_LIMIT, disponibles: CARTES_PLUS_QUERY_LIMIT - 7 }
+    : { usadas: 0, limite: CARTES_FREE_QUERY_LIMIT, disponibles: CARTES_FREE_QUERY_LIMIT };
 
   const deps = {
     env: {
@@ -222,7 +223,7 @@ test('WhatsApp E2E procesa consulta, usa el Core y actualiza contador', async ()
   expect(h.sent[0].text).toContain('mismo Core');
 
   expect(h.sent[1].text).toContain(
-    '*Consultas disponibles:* 4 de 5'
+    `\*Consultas disponibles:\* ${CARTES_FREE_QUERY_LIMIT - 1} de ${CARTES_FREE_QUERY_LIMIT}`
   );
 });
 

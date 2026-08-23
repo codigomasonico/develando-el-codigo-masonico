@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 
 import {
   completarCambioNumeroWhatsApp,
@@ -307,7 +308,7 @@ test(
 
     assert.equal(
       after.limite,
-      50
+      CARTES_PLUS_QUERY_LIMIT
     );
 
     assert.equal(

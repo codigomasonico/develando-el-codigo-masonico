@@ -33,11 +33,11 @@
   <p>Las respuestas y observaciones son generadas automáticamente. Pueden contener errores, omisiones o interpretaciones incompletas. Cartes no representa oficialmente a una obediencia, rito, logia o jurisdicción masónica y no sustituye investigación especializada, criterio personal ni asesoría profesional.</p>
 
   <h2>3. Plan gratuito y Cartes Plus</h2>
-  <p>La versión gratuita permite hasta 5 consultas por periodo mensual. Cartes Plus tiene un precio de <strong>$149 MXN al mes</strong> e incluye hasta 50 consultas y 5 revisiones de documentos Word por periodo, con un máximo de 5 páginas por revisión.</p>
+  <p>La versión gratuita permite hasta <strong data-cartes-free-query-limit>...</strong> consultas por periodo mensual. Cartes Plus tiene un precio de <strong><span data-cartes-plus-price-mxn>...</span> MXN al mes</strong> e incluye hasta <strong data-cartes-plus-query-limit>...</strong> consultas y <strong data-cartes-plus-review-limit>...</strong> revisiones de documentos Word por periodo, con un máximo de <span data-cartes-document-max-pages>...</span> páginas por revisión.</p>
   <p>Los límites, precios y beneficios vigentes se muestran antes de contratar. Cualquier cambio futuro aplicará hacia adelante y se informará antes de una nueva contratación o renovación cuando corresponda.</p>
 
   <h2>4. Paquetes adicionales de revisiones</h2>
-  <p>Los usuarios con Cartes Plus activo pueden comprar paquetes adicionales de 3 revisiones por <strong>$99 MXN</strong>, con un máximo de 2 paquetes por periodo. Las revisiones adicionales vencen al finalizar el periodo mensual vigente y no se acumulan para periodos posteriores.</p>
+  <p>Los usuarios con Cartes Plus activo pueden comprar paquetes adicionales de <span data-cartes-review-pack-size>...</span> revisiones por <strong>$<span data-cartes-review-pack-price-mxn>...</span> MXN</strong>, con un máximo de <span data-cartes-review-pack-max-per-period>...</span> paquetes por periodo. Las revisiones adicionales vencen al finalizar el periodo mensual vigente y no se acumulan para periodos posteriores.</p>
 
   <h2>5. Pagos y activación</h2>
   <p>Los pagos se procesan mediante Mercado Pago o PayPal. Develando el Código Masónico no recibe ni almacena directamente los datos completos de las tarjetas. Cartes Plus y los paquetes adicionales se activan cuando el proveedor de pago confirma la aprobación de la operación.</p>
@@ -47,7 +47,7 @@
   <p>Cartes Plus se renueva mensualmente mientras la suscripción permanezca activa. El usuario puede cancelar la renovación desde el chat. La cancelación detiene cobros futuros, pero conserva los beneficios hasta la fecha final del periodo ya pagado. Al vencer ese periodo, la cuenta regresa automáticamente a la versión gratuita.</p>
 
   <h2>7. Revisión de documentos</h2>
-  <p>La revisión se limita a archivos Word en formato .doc o .docx, de hasta 5 páginas y dentro del tamaño técnico admitido por el servicio. El usuario debe confirmar previamente que autoriza el procesamiento del documento para generar las observaciones.</p>
+  <p>La revisión se limita a archivos Word en formato .doc o .docx, de hasta <span data-cartes-document-max-pages>...</span> páginas y dentro del tamaño técnico admitido por el servicio. El usuario debe confirmar previamente que autoriza el procesamiento del documento para generar las observaciones.</p>
   <p>Cartes puede señalar oportunidades de mejora en estructura, claridad, coherencia y contenido, así como posibles aspectos relacionados con citas, referencias o uso de materiales de terceros. Estas observaciones son preventivas y no constituyen un dictamen legal, una certificación de originalidad ni una declaración de plagio.</p>
   <p>El usuario conserva la responsabilidad sobre el contenido, la autoría, las fuentes, las autorizaciones y la versión final que presente o publique.</p>
 
@@ -78,5 +78,74 @@
 
   <footer>© 2026 Develando el Código Masónico. Todos los derechos reservados.</footer>
 </main>
+<script>
+(async () => {
+  const response = await fetch("/.netlify/functions/cartes-public-config", {
+    method: "GET",
+    cache: "no-store"
+  });
+
+  const data = await response.json().catch(() => ({}));
+  const gratuito = Number(data?.query_limits?.gratuito);
+  const plus = Number(data?.query_limits?.plus);
+      const reviewPlus = Number(data?.review_limits?.plus);
+      const plusPrice = Number(data?.pricing?.plus_mxn);
+      const reviewPackPrice = Number(data?.pricing?.review_pack_mxn);
+      const reviewPackSize = Number(data?.review_pack?.size);
+      const reviewPackMaxPerPeriod = Number(data?.review_pack?.max_per_period);
+      const documentMaxPages = Number(data?.document_limits?.max_pages);
+
+  if (
+    !response.ok ||
+    !Number.isSafeInteger(gratuito) ||
+    gratuito <= 0 ||
+    !Number.isSafeInteger(plus) ||
+    plus <= gratuito ||
+    !Number.isSafeInteger(reviewPlus) ||
+    reviewPlus <= 0 ||
+      !Number.isSafeInteger(plusPrice) ||
+      plusPrice <= 0 ||
+      !Number.isSafeInteger(reviewPackPrice) ||
+      reviewPackPrice <= 0 ||
+      !Number.isSafeInteger(reviewPackSize) ||
+      reviewPackSize <= 0 ||
+      !Number.isSafeInteger(reviewPackMaxPerPeriod) ||
+      reviewPackMaxPerPeriod <= 0 ||
+      !Number.isSafeInteger(documentMaxPages) ||
+      documentMaxPages <= 0
+  ) {
+    throw new Error("No fue posible cargar los límites vigentes de Cartes.");
+  }
+
+  document.querySelectorAll("[data-cartes-free-query-limit]")
+    .forEach((node) => { node.textContent = String(gratuito); });
+
+  document.querySelectorAll("[data-cartes-plus-query-limit]")
+    .forEach((node) => { node.textContent = String(plus); });
+
+  document.querySelectorAll("[data-cartes-plus-review-limit]")
+    .forEach((node) => { node.textContent = String(reviewPlus); });
+
+  document.querySelectorAll("[data-cartes-plus-price-mxn]")
+    .forEach((node) => { node.textContent = String(plusPrice); });
+
+  document.querySelectorAll("[data-cartes-review-pack-price-mxn]")
+    .forEach((node) => { node.textContent = String(reviewPackPrice); });
+
+  document.querySelectorAll("[data-cartes-review-pack-size]")
+    .forEach((node) => { node.textContent = String(reviewPackSize); });
+
+  document.querySelectorAll("[data-cartes-review-pack-max-per-period]")
+    .forEach((node) => { node.textContent = String(reviewPackMaxPerPeriod); });
+
+  document.querySelectorAll("[data-cartes-document-max-pages]")
+    .forEach((node) => { node.textContent = String(documentMaxPages); });
+})().catch((error) => {
+  console.error(
+    "CARTES_PUBLIC_QUERY_LIMITS_ERROR",
+    error instanceof Error ? error.message : String(error)
+  );
+});
+</script>
 </body>
 </html>

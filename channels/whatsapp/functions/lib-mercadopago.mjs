@@ -1,7 +1,8 @@
+import { CARTES_PLUS_PRICE_MXN } from "../../../core/ai/config.mjs";
 import crypto from "node:crypto";
 
 const API = "https://api.mercadopago.com";
-const PRICE = 149;
+const PRICE = CARTES_PLUS_PRICE_MXN;
 
 function env(name) { return String(process.env[name] || "").trim(); }
 

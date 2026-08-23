@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT, CARTES_PLUS_REVIEW_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import test from "node:test";
 
@@ -113,9 +114,9 @@ function makeDeps({
       return {
         usadas: 0,
         limite:
-          plan === "plus" ? 50 : 5,
+          plan === "plus" ? CARTES_PLUS_QUERY_LIMIT : CARTES_FREE_QUERY_LIMIT,
         disponibles:
-          plan === "plus" ? 50 : 5,
+          plan === "plus" ? CARTES_PLUS_QUERY_LIMIT : CARTES_FREE_QUERY_LIMIT,
         plan
       };
     },
@@ -124,8 +125,8 @@ function makeDeps({
       return {
         plan,
         usadas: 1,
-        limite: 5,
-        disponibles: 4
+        limite: CARTES_PLUS_REVIEW_LIMIT,
+        disponibles: CARTES_PLUS_REVIEW_LIMIT - 1
       };
     },
 
@@ -238,8 +239,8 @@ function makeDeps({
           "EVALUACIÓN GENERAL\nDocumento revisado.",
         reviews: {
           usadas: 2,
-          limite: 5,
-          disponibles: 3
+          limite: CARTES_PLUS_REVIEW_LIMIT,
+          disponibles: CARTES_PLUS_REVIEW_LIMIT - 2
         }
       };
     },

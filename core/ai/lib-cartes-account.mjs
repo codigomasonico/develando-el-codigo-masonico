@@ -1,3 +1,8 @@
+import { CARTES_CONCURRENCY_MAX_RETRIES } from "./config.mjs";
+import { CARTES_CONVERSATION_MESSAGE_MAX_CHARS } from "./config.mjs";
+import { CARTES_CONVERSATION_MEMORY_MESSAGES } from "./config.mjs";
+import { CARTES_LINK_CODE_TTL_MS } from "./config.mjs";
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "./config.mjs";
 // CARTES_QA_DEPLOY_STORE_GENERIC
 import crypto from "node:crypto";
 import {
@@ -13,8 +18,8 @@ import { fusionarPaquetesRevision } from "./lib-cartes-review-packs.mjs";
 export const PLAN_CARTES_GRATUITO = "gratuito";
 export const PLAN_CARTES_PLUS = "plus";
 export const LIMITES_MENSUALES_CARTES = Object.freeze({
-  [PLAN_CARTES_GRATUITO]: 5,
-  [PLAN_CARTES_PLUS]: 50
+  [PLAN_CARTES_GRATUITO]: CARTES_FREE_QUERY_LIMIT,
+  [PLAN_CARTES_PLUS]: CARTES_PLUS_QUERY_LIMIT
 });
 
 const STORE_NAME = "cartes-core";
@@ -24,18 +29,16 @@ const PREFIJO_PLAN = "plan-v1";
 const PREFIJO_VINCULO = "link-v1";
 const PREFIJO_SUSCRIPCION = "subscription-v1";
 const PREFIJO_CONVERSACION = "conversation-v1";
-const MAX_MENSAJES_CONVERSACION = 20;
-const MAX_CHARS_MENSAJE = 1800;
-const VINCULO_TTL_MS = 10 * 60 * 1000;
+const MAX_MENSAJES_CONVERSACION = CARTES_CONVERSATION_MEMORY_MESSAGES;
+const MAX_CHARS_MENSAJE = CARTES_CONVERSATION_MESSAGE_MAX_CHARS;
+const VINCULO_TTL_MS = CARTES_LINK_CODE_TTL_MS;
 const TIME_ZONE = "America/Mexico_City";
 const RESERVA_PENDIENTE_MS = 10 * 60 * 1000;
-const MAX_REINTENTOS = 10;
+const MAX_REINTENTOS = CARTES_CONCURRENCY_MAX_RETRIES;
 
 export async function getCartesAccountStore() {
   const { getStore, getDeployStore } = await import("@netlify/blobs");
-  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3"
-    ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined }))
-    : getStore)({
+  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3" && process.env.CARTES_QA_LOCAL_FRESH_STORE === "1" ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined })) : getStore)({
       name: STORE_NAME,
       consistency: "strong"
     });

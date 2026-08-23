@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
+import { CARTES_FREE_QUERY_LIMIT } from "../../core/ai/config.mjs";
 
 import {
   completarCambioNumeroWhatsApp,
@@ -225,7 +226,7 @@ test(
 
     assert.equal(
       newBefore.limite,
-      5
+      CARTES_FREE_QUERY_LIMIT
     );
 
     const link =

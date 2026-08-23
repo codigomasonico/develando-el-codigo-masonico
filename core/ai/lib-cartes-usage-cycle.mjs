@@ -1,10 +1,12 @@
+import { CARTES_CONCURRENCY_MAX_RETRIES } from "./config.mjs";
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "./config.mjs";
 const LEGACY_PREFIX = "usage-v2";
 const CYCLE_PREFIX = "usage-v3";
-const FREE_LIMIT = 5;
-const PLUS_LIMIT = 50;
+const FREE_LIMIT = CARTES_FREE_QUERY_LIMIT;
+const PLUS_LIMIT = CARTES_PLUS_QUERY_LIMIT;
 const PENDING_MS = 10 * 60 * 1000;
 const FREE_CYCLE_MS = 30 * 24 * 60 * 60 * 1000;
-const MAX_RETRIES = 10;
+const MAX_RETRIES = CARTES_CONCURRENCY_MAX_RETRIES;
 
 export async function obtenerEstadoUsoCicloCartes({
   userId,

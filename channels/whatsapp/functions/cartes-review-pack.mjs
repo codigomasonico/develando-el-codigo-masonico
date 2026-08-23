@@ -1,3 +1,4 @@
+import { CARTES_REVIEW_PACK_PRICE_MXN, CARTES_REVIEW_PACK_SIZE } from "../../../core/ai/config.mjs";
 import {
   obtenerPlanUsuario,
   obtenerSuscripcionUsuario,
@@ -389,11 +390,11 @@ function validarImporteMercadoPago(payment) {
 
   if (
     !Number.isFinite(amount) ||
-    Math.abs(amount - 99) > 0.001 ||
+    Math.abs(amount - CARTES_REVIEW_PACK_PRICE_MXN) > 0.001 ||
     currency !== "MXN"
   ) {
     throw new Error(
-      "El pago de Mercado Pago no corresponde al paquete de $99 MXN."
+      `El pago de Mercado Pago no corresponde al paquete de $${CARTES_REVIEW_PACK_PRICE_MXN} MXN.`
     );
   }
 }
@@ -406,7 +407,7 @@ function validarOrdenPayPal(order, userId) {
   if (
     String(unit?.custom_id || "") !== userId ||
     !Number.isFinite(amount) ||
-    Math.abs(amount - 99) > 0.001 ||
+    Math.abs(amount - CARTES_REVIEW_PACK_PRICE_MXN) > 0.001 ||
     currency !== "MXN"
   ) {
     throw new Error(
@@ -421,11 +422,11 @@ function validarCapturaPayPal(capture) {
 
   if (
     !Number.isFinite(amount) ||
-    Math.abs(amount - 99) > 0.001 ||
+    Math.abs(amount - CARTES_REVIEW_PACK_PRICE_MXN) > 0.001 ||
     currency !== "MXN"
   ) {
     throw new Error(
-      "La captura de PayPal no corresponde al paquete de $99 MXN."
+      `La captura de PayPal no corresponde al paquete de $${CARTES_REVIEW_PACK_PRICE_MXN} MXN.`
     );
   }
 }
@@ -440,7 +441,7 @@ async function notificarCompra(
     to: context.phone,
     phoneNumberId: context.phone_number_id,
     text:
-      `¡Listo! Se agregaron 3 revisiones adicionales a tu cuenta Cartes.\n\n*Revisiones disponibles:* ${reviews.disponibles}\n*Paquetes adicionales:* ${reviews.paquetes_comprados} de ${reviews.paquetes_maximo}`
+      `¡Listo! Se agregaron ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales a tu cuenta Cartes.\n\n*Revisiones disponibles:* ${reviews.disponibles}\n*Paquetes adicionales:* ${reviews.paquetes_comprados} de ${reviews.paquetes_maximo}`
   }).catch((error) => {
     console.warn(
       "REVIEW_PACK_WA_NOTIFY_ERROR",

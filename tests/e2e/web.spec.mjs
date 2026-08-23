@@ -1,11 +1,22 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import { test, expect } from '@playwright/test';
 
 async function mockCartesBackend(page, overrides = {}) {
+  await page.route("**/.netlify/functions/cartes-public-config", route =>
+    route.fulfill({
+      json: {
+        query_limits: {
+          gratuito: CARTES_FREE_QUERY_LIMIT,
+          plus: CARTES_PLUS_QUERY_LIMIT
+        }
+      }
+    })
+  );
   const usage = overrides.usage || {
     plan: 'gratuito',
-    limite: 5,
+    limite: CARTES_FREE_QUERY_LIMIT,
     usadas: 0,
-    disponibles: 5,
+    disponibles: CARTES_FREE_QUERY_LIMIT,
     periodo: '2026-08'
   };
 
@@ -52,9 +63,9 @@ async function mockCartesBackend(page, overrides = {}) {
       answer: 'Respuesta de prueba de Cartes.',
       usage: {
         plan: 'gratuito',
-        limite: 5,
+        limite: CARTES_FREE_QUERY_LIMIT,
         usadas: 1,
-        disponibles: 4,
+        disponibles: CARTES_FREE_QUERY_LIMIT - 1,
         periodo: '2026-08'
       }
     }
@@ -91,13 +102,13 @@ test('Cartes muestra y actualiza las consultas disponibles X de Y', async ({ pag
   await page.locator('.gm-launcher').click();
 
   await expect(page.locator('.gm-header__usage'))
-    .toHaveText('Consultas disponibles: 5 de 5');
+    .toHaveText(`Consultas disponibles: ${CARTES_FREE_QUERY_LIMIT} de ${CARTES_FREE_QUERY_LIMIT}`);
 
   await page.locator('.gm-input').fill('¿Qué representa la escuadra?');
   await page.locator('.gm-send').click();
 
   await expect(page.locator('.gm-header__usage'))
-    .toHaveText('Consultas disponibles: 4 de 5');
+    .toHaveText(`Consultas disponibles: ${CARTES_FREE_QUERY_LIMIT - 1} de ${CARTES_FREE_QUERY_LIMIT}`);
 });
 
 test('estado vinculado se refleja en la Web', async ({ page }) => {
@@ -140,9 +151,9 @@ test('aliases de Mi suscripción muestran estado sin consumir consulta', async (
 
   const usage = {
     plan: 'plus',
-    limite: 50,
+    limite: CARTES_PLUS_QUERY_LIMIT,
     usadas: 2,
-    disponibles: 48,
+    disponibles: CARTES_PLUS_QUERY_LIMIT - 2,
     periodo: '2026-08'
   };
 
@@ -188,11 +199,11 @@ test('aliases de Mi suscripción muestran estado sin consumir consulta', async (
 
     await expect(page.locator('.gm-messages')).toContainText('Plan: Cartes Plus');
     await expect(page.locator('.gm-messages')).toContainText('Medio de pago: PayPal');
-    await expect(page.locator('.gm-messages')).toContainText('Consultas usadas: 2 de 50');
+    await expect(page.locator('.gm-messages')).toContainText(`Consultas usadas: 2 de ${CARTES_PLUS_QUERY_LIMIT}`);
     await expect(page.locator('.gm-messages')).toContainText('Renovación: Cancelada');
 
     await expect(page.locator('.gm-header__usage'))
-      .toHaveText('Consultas disponibles: 48 de 50');
+      .toHaveText(`Consultas disponibles: ${CARTES_PLUS_QUERY_LIMIT - 2} de ${CARTES_PLUS_QUERY_LIMIT}`);
   }
 
   expect(consultasAlMotor).toBe(0);

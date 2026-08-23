@@ -1,3 +1,4 @@
+import { CARTES_PLUS_REVIEW_LIMIT, CARTES_REVIEW_PACK_SIZE, CARTES_REVIEW_PACK_MAX_PER_PERIOD } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
@@ -88,10 +89,10 @@ async function consumirRevisiones(store, count) {
   }
 }
 
-test("V091 0 de 5 pasa a 3 de 8 con primer paquete", async () => {
+test("V091 primer paquete suma el tamaño configurado al limite base", async () => {
   const store = memoryStore();
 
-  await consumirRevisiones(store, 5);
+  await consumirRevisiones(store, CARTES_PLUS_REVIEW_LIMIT);
 
   let state =
     await obtenerEstadoRevisionesMensual({
@@ -101,8 +102,8 @@ test("V091 0 de 5 pasa a 3 de 8 con primer paquete", async () => {
       store
     });
 
-  assert.equal(state.limite, 5);
-  assert.equal(state.usadas, 5);
+  assert.equal(state.limite, CARTES_PLUS_REVIEW_LIMIT);
+  assert.equal(state.usadas, CARTES_PLUS_REVIEW_LIMIT);
   assert.equal(state.disponibles, 0);
 
   await registrarPaqueteRevisionPagado({
@@ -122,15 +123,15 @@ test("V091 0 de 5 pasa a 3 de 8 con primer paquete", async () => {
       store
     });
 
-  assert.equal(state.limite_base, 5);
+  assert.equal(state.limite_base, CARTES_PLUS_REVIEW_LIMIT);
   assert.equal(state.extras, 3);
-  assert.equal(state.limite, 8);
-  assert.equal(state.usadas, 5);
-  assert.equal(state.disponibles, 3);
+  assert.equal(state.limite, CARTES_PLUS_REVIEW_LIMIT + CARTES_REVIEW_PACK_SIZE);
+  assert.equal(state.usadas, CARTES_PLUS_REVIEW_LIMIT);
+  assert.equal(state.disponibles, CARTES_REVIEW_PACK_SIZE);
   assert.equal(state.paquetes_comprados, 1);
 });
 
-test("V091 segundo paquete lleva limite a 11 y tercero se bloquea", async () => {
+test("V091 segundo paquete suma nuevamente el tamaño configurado y el tercero se bloquea", async () => {
   const store = memoryStore();
 
   await registrarPaqueteRevisionPagado({
@@ -159,8 +160,8 @@ test("V091 segundo paquete lleva limite a 11 y tercero se bloquea", async () => 
       store
     });
 
-  assert.equal(state.limite, 11);
-  assert.equal(state.paquetes_comprados, 2);
+  assert.equal(state.limite, CARTES_PLUS_REVIEW_LIMIT + (CARTES_REVIEW_PACK_SIZE * CARTES_REVIEW_PACK_MAX_PER_PERIOD));
+  assert.equal(state.paquetes_comprados, CARTES_REVIEW_PACK_MAX_PER_PERIOD);
 
   await assert.rejects(
     registrarPaqueteRevisionPagado({
@@ -223,7 +224,7 @@ test("V091 paquete vencido deja de ampliar cuota", async () => {
       store
     });
 
-  assert.equal(state.limite, 5);
+  assert.equal(state.limite, CARTES_PLUS_REVIEW_LIMIT);
   assert.equal(state.paquetes_comprados, 0);
 });
 
@@ -263,8 +264,8 @@ test("V091 paquetes se fusionan con la cuenta Web WhatsApp", async () => {
       store
     });
 
-  assert.equal(state.paquetes_comprados, 2);
-  assert.equal(state.limite, 11);
+  assert.equal(state.paquetes_comprados, CARTES_REVIEW_PACK_MAX_PER_PERIOD);
+  assert.equal(state.limite, CARTES_PLUS_REVIEW_LIMIT + (CARTES_REVIEW_PACK_SIZE * CARTES_REVIEW_PACK_MAX_PER_PERIOD));
 });
 
 test("V091 Mercado Pago usa Checkout Pro de pago unico", () => {
@@ -278,7 +279,7 @@ test("V091 Mercado Pago usa Checkout Pro de pago unico", () => {
     );
 
   assert.match(source, /\/checkout\/preferences/);
-  assert.match(source, /const PRICE = 99/);
+  assert.match(source, /const PRICE = CARTES_REVIEW_PACK_PRICE_MXN/);
   assert.match(source, /external_reference/);
   assert.match(source, /notification_url/);
   assert.match(source, /expiration_date_to/);
@@ -296,7 +297,7 @@ test("V091 PayPal usa Orders v2 y CAPTURE", () => {
 
   assert.match(source, /\/v2\/checkout\/orders/);
   assert.match(source, /intent:\s*"CAPTURE"/);
-  assert.match(source, /value:\s*"99\.00"/);
+  assert.match(source, /value:\s*PRICE\.toFixed\(2\)/);
   assert.match(source, /\/capture/);
   assert.match(source, /PayPal-Request-Id/);
 });
@@ -320,7 +321,7 @@ test("V091 suscripciones recurrentes permanecen separadas", () => {
       "utf8"
     );
 
-  assert.match(mp, /const PRICE = 149/);
+  assert.match(mp, /const PRICE = CARTES_PLUS_PRICE_MXN/);
   assert.match(mp, /\/preapproval_plan/);
   assert.match(paypal, /PAYPAL_PLAN_ID/);
   assert.match(paypal, /\/v1\/billing\/subscriptions/);
@@ -339,7 +340,7 @@ test("V091 Web ofrece compra desde Mi suscripcion", () => {
       "utf8"
     );
 
-  assert.match(source, /Comprar 3 revisiones - \$99/);
+  assert.match(source, /Comprar \$\{currentReviewPackSize\} revisiones - \$\$\{currentReviewPackPrice\}/);
   assert.match(source, /Paquetes adicionales:/);
   assert.match(source, /reviewPackEndpoint/);
   assert.match(source, /review_pack_provider/);

@@ -10,6 +10,7 @@
     conversationEndpoint: "/.netlify/functions/cartes-conversation",
     subscriptionEndpoint: "/.netlify/functions/cartes-subscription",
     subscriptionStatusEndpoint: "/.netlify/functions/cartes-subscription-status",
+    publicConfigEndpoint: "/.netlify/functions/cartes-public-config",
     documentReviewEndpoint: "/.netlify/functions/cartes-document-review",
     reviewPackEndpoint: "/.netlify/functions/cartes-review-pack",
     whatsappNumber: "523322338888",
@@ -31,9 +32,20 @@
   let busy = false;
   let webSubscriptionFlow = "";
   let currentWebPlan = "gratuito";
+  let currentQueryLimits = null;
+  let currentReviewLimits = null;
+  let currentPlusPrice = null;
+  let currentReviewPackPrice = null;
+  let currentReviewPackSize = null;
+  let currentReviewPackMaxPerPeriod = null;
+  let currentDocumentMaxPages = null;
+  let currentDocumentMaxMb = null;
+  let currentLinkCodeTtlMinutes = null;
   let recoveryNoticeShown = false;
   let reviewStatusLoading = false;
   let currentReviewPackExpiration = "";
+  let subscriptionCheckoutPending = false;
+  let subscriptionRefreshLoading = false;
 
   loadStyles();
   const ui = createInterface();
@@ -44,18 +56,97 @@
   void initializeServerState();
 
   // CARTES_REVIEW_PACKS_WEB_V091
+  // CARTES_SUBSCRIPTION_AUTO_REFRESH_V132
   window.addEventListener("focus", () => {
-    if (currentWebPlan === "plus") {
-      void refreshMenuPlanWeb();
-      void refreshReviewStatus();
+    void refreshAccountAfterCheckoutWeb();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      void refreshAccountAfterCheckoutWeb();
     }
   });
 
   async function initializeServerState() {
     await Promise.allSettled([
+      refreshPublicQueryLimitsWeb(),
       syncConversationFromServer(),
       refreshLinkStatus({ retries: 3 })
     ]);
+  }
+
+  async function refreshPublicQueryLimitsWeb() {
+    const response = await fetch(CONFIG.publicConfigEndpoint, {
+      method: "GET",
+      cache: "no-store"
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "No fue posible obtener la configuración de Cartes."
+      );
+    }
+
+    const gratuito = Number(data?.query_limits?.gratuito);
+    const plus = Number(data?.query_limits?.plus);
+    const reviewPlus = Number(data?.review_limits?.plus);
+    const plusPrice = Number(data?.pricing?.plus_mxn);
+    const reviewPackPrice = Number(data?.pricing?.review_pack_mxn);
+    const reviewPackSize = Number(data?.review_pack?.size);
+    const reviewPackMaxPerPeriod = Number(data?.review_pack?.max_per_period);
+    const documentMaxPages = Number(data?.document_limits?.max_pages);
+    const documentMaxMb = Number(data?.document_limits?.max_mb);
+    const linkCodeTtlMinutes = Number(data?.link_code_ttl_minutes);
+
+    if (
+      !Number.isSafeInteger(gratuito) ||
+      gratuito <= 0 ||
+      !Number.isSafeInteger(plus) ||
+      plus <= gratuito ||
+      !Number.isSafeInteger(reviewPlus) ||
+      reviewPlus <= 0 ||
+      !Number.isSafeInteger(plusPrice) ||
+      plusPrice <= 0 ||
+      !Number.isSafeInteger(reviewPackPrice) ||
+      reviewPackPrice <= 0 ||
+      !Number.isSafeInteger(reviewPackSize) ||
+      reviewPackSize <= 0 ||
+      !Number.isSafeInteger(reviewPackMaxPerPeriod) ||
+      reviewPackMaxPerPeriod <= 0 ||
+      !Number.isSafeInteger(documentMaxPages) ||
+      documentMaxPages <= 0 ||
+      !Number.isSafeInteger(documentMaxMb) ||
+      documentMaxMb <= 0 ||
+      !Number.isSafeInteger(linkCodeTtlMinutes) ||
+      linkCodeTtlMinutes <= 0
+    ) {
+      throw new Error("La configuración de límites de Cartes es inválida.");
+    }
+
+    currentQueryLimits = Object.freeze({
+      gratuito,
+      plus
+    });
+
+    currentReviewLimits = Object.freeze({
+      plus: reviewPlus
+    });
+
+    currentPlusPrice = plusPrice;
+    currentReviewPackPrice = reviewPackPrice;
+    currentReviewPackSize = reviewPackSize;
+    currentReviewPackMaxPerPeriod = reviewPackMaxPerPeriod;
+    currentDocumentMaxPages = documentMaxPages;
+    currentDocumentMaxMb = documentMaxMb;
+    currentLinkCodeTtlMinutes = linkCodeTtlMinutes;
+
+    return currentQueryLimits;
+  }
+
+  async function getQueryLimitsWeb() {
+    return currentQueryLimits || await refreshPublicQueryLimitsWeb();
   }
 
   function loadStyles() {
@@ -394,7 +485,7 @@
 
       addMessage(
         "assistant",
-        `Envía desde el WhatsApp que deseas vincular: ${data.instruction}. Al enviarlo, tu cuenta Web y ese WhatsApp compartirán plan, consultas, suscripción y conversación. El código vence en 10 minutos. Intentaré abrir el chat de Cartes; si no se abre, usa “Abrir chat con Cartes” o “Copiar código”.`,
+        `Envía desde el WhatsApp que deseas vincular: ${data.instruction}. Al enviarlo, tu cuenta Web y ese WhatsApp compartirán plan, consultas, suscripción y conversación. El código vence en ${currentLinkCodeTtlMinutes} minutos. Intentaré abrir el chat de Cartes; si no se abre, usa “Abrir chat con Cartes” o “Copiar código”.`,
         false
       );
 
@@ -587,7 +678,7 @@
         Number(reviews.paquetes_comprados || 0);
 
       const packagesMax =
-        Number(reviews.paquetes_maximo || 2);
+        Number(reviews.paquetes_maximo ?? currentReviewPackMaxPerPeriod);
 
       const reviewLines =
         plan === "plus"
@@ -629,7 +720,7 @@
       if (plan === "plus") {
         if (packagesBought < packagesMax) {
           actions.push({
-            label: "Comprar 3 revisiones - $99",
+            label: `Comprar ${currentReviewPackSize} revisiones - $${currentReviewPackPrice}`,
             value: "comprar revisiones"
           });
         }
@@ -739,7 +830,7 @@
 
       addMessage(
         "assistant",
-        `Código generado: ${instruction}\n\nDesde el NUEVO número de WhatsApp, abre el chat con Cartes y envía exactamente ese código. Vence en 10 minutos. Tu número actual seguirá vinculado hasta que el nuevo complete la verificación.`,
+        `Código generado: ${instruction}\n\nDesde el NUEVO número de WhatsApp, abre el chat con Cartes y envía exactamente ese código. Vence en ${currentLinkCodeTtlMinutes} minutos. Tu número actual seguirá vinculado hasta que el nuevo complete la verificación.`,
         false
       );
 
@@ -933,6 +1024,58 @@
     );
   }
 
+  // CARTES_SUBSCRIPTION_AUTO_REFRESH_V132
+  async function refreshAccountAfterCheckoutWeb() {
+    if (subscriptionRefreshLoading) return false;
+
+    if (
+      !subscriptionCheckoutPending &&
+      currentWebPlan !== "plus"
+    ) {
+      return false;
+    }
+
+    subscriptionRefreshLoading = true;
+
+    try {
+      const retries =
+        subscriptionCheckoutPending ? 7 : 0;
+
+      for (
+        let attempt = 0;
+        attempt <= retries;
+        attempt += 1
+      ) {
+        const refreshed =
+          await refreshMenuPlanWeb();
+
+        if (
+          refreshed &&
+          currentWebPlan === "plus"
+        ) {
+          subscriptionCheckoutPending = false;
+          await refreshReviewStatus();
+          return true;
+        }
+
+        if (
+          !subscriptionCheckoutPending ||
+          attempt >= retries
+        ) {
+          subscriptionCheckoutPending = false;
+          return refreshed;
+        }
+
+        await wait(1500);
+      }
+
+      subscriptionCheckoutPending = false;
+      return false;
+    }
+    finally {
+      subscriptionRefreshLoading = false;
+    }
+  }
   function renderMenuButtonsWeb() {
     ui.suggestionBox.classList.add("gm-suggestions--menu", "gm-suggestions--main-menu");
 
@@ -1074,15 +1217,16 @@
     }
 
     if (id === "plus_info") {
+      const queryLimits = await getQueryLimitsWeb();
+
       addMessage(
         "assistant",
-        "Cartes Plus amplía tu conocimiento con más consultas, revisión y retroalimentación de documentos.\n\nPor $149 MXN al mes tendrás hasta 50 consultas y 5 revisiones mensuales de documentos Word de hasta 5 páginas cada uno.\n\nEn cada revisión recibirás observaciones sobre estructura, claridad y contenido para mejorar tu trabajo antes de presentarlo en Logia.\n\nLa suscripción quedará vinculada a tu número de WhatsApp. Desde este mismo chat podrás consultar su estado o cancelarla.\n\nLa versión gratuita está pensada para consultas puntuales. Cartes Plus es para quienes desean estudiar con mayor profundidad y recibir apoyo en la preparación de sus trabajos.\n\nPara comenzar, selecciona “Suscribirme”.",
+        `Cartes Plus amplía tu conocimiento con más consultas, revisión y retroalimentación de documentos.\n\nPor $${currentPlusPrice} MXN al mes tendrás hasta ${queryLimits.plus} consultas y ${currentReviewLimits.plus} revisiones mensuales de documentos Word de hasta ${currentDocumentMaxPages} páginas cada uno.\n\nEn cada revisión recibirás observaciones sobre estructura, claridad y contenido para mejorar tu trabajo antes de presentarlo en Logia.\n\nLa suscripción quedará vinculada a tu número de WhatsApp. Desde este mismo chat podrás consultar su estado o cancelarla.\n\nLa versión gratuita está pensada para consultas puntuales. Cartes Plus es para quienes desean estudiar con mayor profundidad y recibir apoyo en la preparación de sus trabajos.\n\nPara comenzar, selecciona “Suscribirme”.`,
         false
       );
       restoreDefaultSuggestionsWeb();
       return;
     }
-
     if (id === "suscribirme") {
       await refreshMenuPlanWeb();
 
@@ -1201,7 +1345,7 @@
     ]);
   }
 
-  function mostrarAccionPagoWeb(provider, url) {
+  function mostrarAccionPagoWeb(provider, url, { trackSubscription = false } = {}) {
     ui.suggestionBox.replaceChildren();
     ui.suggestionBox.classList.remove(
       "gm-suggestions--menu",
@@ -1216,6 +1360,10 @@
     button.className = "gm-suggestion";
     button.textContent = `Abrir ${provider}`;
     button.addEventListener("click", () => {
+      if (trackSubscription) {
+        subscriptionCheckoutPending = true;
+      }
+
       window.open(url, "_blank", "noopener,noreferrer");
     });
 
@@ -1232,21 +1380,25 @@
     ui.messages.scrollTop = ui.messages.scrollHeight;
   }
 
-  function mostrarLimiteGratuitoWeb(usage) {
+  async function mostrarLimiteGratuitoWeb(usage) {
+    const queryLimits = await getQueryLimitsWeb();
+    const freeLimit = queryLimits.gratuito;
+    const plusLimit = queryLimits.plus;
+
     const cycleEnd =
       formatCartesDateWeb(usage?.cycle_end);
 
     const renewalLine =
       cycleEnd
-        ? `\n\nTus 5 consultas gratuitas estarán disponibles nuevamente el ${cycleEnd}.`
+        ? `\n\nTus ${freeLimit} consultas gratuitas estarán disponibles nuevamente el ${cycleEnd}.`
         : "";
 
     addMessage(
       "assistant",
-      "Consultas disponibles: 0 de 5\n\n" +
-        "Ya utilizaste las 5 consultas gratuitas de este periodo." +
+      `Consultas disponibles: 0 de ${freeLimit}\n\n` +
+        `Ya utilizaste las ${freeLimit} consultas gratuitas de este periodo.` +
         renewalLine +
-        "\n\nSi quieres seguir conversando con Cartes ahora, puedes activar Cartes Plus por $149 MXN al mes, con hasta 50 consultas y 5 revisiones de documentos Word.",
+        `\n\nSi quieres seguir conversando con Cartes ahora, puedes activar Cartes Plus por $${currentPlusPrice} MXN al mes, con hasta ${plusLimit} consultas y ${currentReviewLimits.plus} revisiones de documentos Word.`,
       false
     );
 
@@ -1422,7 +1574,7 @@
       if (
         [
           "comprar revisiones",
-          "comprar 3 revisiones",
+          `comprar ${currentReviewPackSize} revisiones`,
           "paquete de revisiones"
         ].includes(normalized)
       ) {
@@ -1434,7 +1586,7 @@
 
         addMessage(
           "assistant",
-          `El paquete incluye 3 revisiones adicionales por $99 MXN en un solo pago. No es recurrente y las revisiones vencerán el ${expiration}.\n\nSelecciona el medio de pago.`,
+          `El paquete incluye ${currentReviewPackSize} revisiones adicionales por $${currentReviewPackPrice} MXN en un solo pago. No es recurrente y las revisiones vencerán el ${expiration}.\n\nSelecciona el medio de pago.`,
           false
         );
 
@@ -1616,7 +1768,7 @@
           `${providerLabel} está listo. Abre el enlace para completar la suscripción. Cartes Plus se activará en esta misma cuenta cuando el proveedor confirme el pago.`,
           false
         );
-        mostrarAccionPagoWeb(providerLabel, data.url);
+        mostrarAccionPagoWeb(providerLabel, data.url, { trackSubscription: true });
         return true;
       } catch (error) {
         addMessage(
@@ -1699,7 +1851,7 @@
 
         addMessage(
           "assistant",
-          `${providerLabel} está listo. El pago es único por $99 MXN e incluye 3 revisiones adicionales. Al confirmarse, el saldo se actualizará en la misma cuenta de Web y WhatsApp.`,
+          `${providerLabel} está listo. El pago es único por $${currentReviewPackPrice} MXN e incluye ${currentReviewPackSize} revisiones adicionales. Al confirmarse, el saldo se actualizará en la misma cuenta de Web y WhatsApp.`,
           false
         );
 
@@ -1856,14 +2008,14 @@
     }
 
     const maxBytes =
-      4 * 1024 * 1024;
+      currentDocumentMaxMb * 1024 * 1024;
 
     if (
       Number(file?.size || 0) > maxBytes
     ) {
       addMessage(
         "assistant",
-        "El documento supera el tamaño técnico máximo de 4 MB.",
+        `El documento supera el tamaño técnico máximo de ${currentDocumentMaxMb} MB.`,
         false,
         true
       );
@@ -1874,7 +2026,7 @@
 
     const accepted =
       window.confirm(
-        `Cartes procesará temporalmente "${name}" para validar que tenga un máximo de 5 páginas y, si cumple, realizar la revisión. El archivo no se guardará después del procesamiento.\n\n¿Autorizas el procesamiento de este documento?`
+        `Cartes procesará temporalmente "${name}" para validar que tenga un máximo de ${currentDocumentMaxPages} páginas y, si cumple, realizar la revisión. El archivo no se guardará después del procesamiento.\n\n¿Autorizas el procesamiento de este documento?`
       );
 
     if (!accepted) {
@@ -2112,7 +2264,7 @@
           data?.code === "usage_limit" &&
           usagePlan !== "plus"
         ) {
-          mostrarLimiteGratuitoWeb(data.usage);
+          await mostrarLimiteGratuitoWeb(data.usage);
           return;
         }
 
@@ -2138,7 +2290,7 @@
         ).toLowerCase() !== "plus" &&
         Number(data?.usage?.disponibles) <= 0
       ) {
-        mostrarLimiteGratuitoWeb(data.usage);
+        await mostrarLimiteGratuitoWeb(data.usage);
       }
     } catch (error) {
       addMessage(

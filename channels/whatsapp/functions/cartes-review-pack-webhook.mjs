@@ -1,3 +1,4 @@
+import { CARTES_REVIEW_PACK_PRICE_MXN, CARTES_REVIEW_PACK_SIZE } from "../../../core/ai/config.mjs";
 import {
   obtenerEstadoRevisionesCartes
 } from "../../../core/ai/cartes-document-review.mjs";
@@ -102,7 +103,7 @@ export function createReviewPackWebhookHandler(overrides = {}) {
 
     if (
       !Number.isFinite(amount) ||
-      Math.abs(amount - 99) > 0.001 ||
+      Math.abs(amount - CARTES_REVIEW_PACK_PRICE_MXN) > 0.001 ||
       currency !== "MXN"
     ) {
       return Response.json(
@@ -149,7 +150,7 @@ export function createReviewPackWebhookHandler(overrides = {}) {
         to: context.phone,
         phoneNumberId: context.phone_number_id,
         text:
-          `¡Listo! Se agregaron 3 revisiones adicionales a tu cuenta Cartes.\n\n*Revisiones disponibles:* ${reviews.disponibles}\n*Paquetes adicionales:* ${reviews.paquetes_comprados} de ${reviews.paquetes_maximo}`
+          `¡Listo! Se agregaron ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales a tu cuenta Cartes.\n\n*Revisiones disponibles:* ${reviews.disponibles}\n*Paquetes adicionales:* ${reviews.paquetes_comprados} de ${reviews.paquetes_maximo}`
       }).catch(() => {});
     }
 

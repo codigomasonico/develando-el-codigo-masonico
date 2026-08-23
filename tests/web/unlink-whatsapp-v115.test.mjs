@@ -1,3 +1,4 @@
+import { CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
@@ -181,7 +182,7 @@ test(
 
     assert.equal(after.user_id, wa.user_id);
     assert.equal(after.plan, "plus");
-    assert.equal(after.limite, 50);
+    assert.equal(after.limite, CARTES_PLUS_QUERY_LIMIT);
     assert.equal(after.usadas, before.usadas);
 
     const status =

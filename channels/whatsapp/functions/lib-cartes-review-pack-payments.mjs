@@ -1,9 +1,10 @@
+import { CARTES_REVIEW_PACK_PRICE_MXN, CARTES_REVIEW_PACK_SIZE } from "../../../core/ai/config.mjs";
 import crypto from "node:crypto";
 
 const MP_API = "https://api.mercadopago.com";
 const PAYPAL_SANDBOX = "https://api-m.sandbox.paypal.com";
 const PAYPAL_LIVE = "https://api-m.paypal.com";
-const PRICE = 99;
+const PRICE = CARTES_REVIEW_PACK_PRICE_MXN;
 
 function env(name) {
   return String(process.env[name] || "").trim();
@@ -100,8 +101,8 @@ export async function createMercadoPagoReviewPackCheckout({
         items: [
           {
             id: "cartes-review-pack-3",
-            title: "Cartes - 3 revisiones adicionales",
-            description: "Paquete único de 3 revisiones de documentos",
+            title: `Cartes - ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales`,
+            description: `Paquete único de ${CARTES_REVIEW_PACK_SIZE} revisiones de documentos`,
             quantity: 1,
             currency_id: "MXN",
             unit_price: PRICE
@@ -272,10 +273,10 @@ export async function createPayPalReviewPackOrder({
           {
             reference_id: "cartes-review-pack-3",
             custom_id: userId,
-            description: "Cartes - 3 revisiones adicionales",
+            description: `Cartes - ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales`,
             amount: {
               currency_code: "MXN",
-              value: "99.00"
+              value: PRICE.toFixed(2)
             }
           }
         ],

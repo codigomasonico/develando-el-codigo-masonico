@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
@@ -62,7 +63,7 @@ test("la fusión conserva el consumo de Web y WhatsApp", async () => {
   await completarVinculacionConWhatsApp({ code: link.code, whatsappUserId: wa.user_id, fecha: NOW, store });
   const state = await obtenerEstadoUsoMensual({ userId: wa.user_id, fecha: NOW, store });
   assert.equal(state.usadas, 2);
-  assert.equal(state.disponibles, 3);
+  assert.equal(state.disponibles, CARTES_FREE_QUERY_LIMIT - 2);
 });
 
 test("un código expirado no vincula cuentas", async () => {
@@ -294,7 +295,7 @@ test("un navegador nuevo recupera una cuenta Plus mediante el mismo WhatsApp", a
     store
   });
 
-  assert.equal(usage.limite, 50);
+  assert.equal(usage.limite, CARTES_PLUS_QUERY_LIMIT);
   assert.equal(usage.usadas, 1);
-  assert.equal(usage.disponibles, 49);
+  assert.equal(usage.disponibles, CARTES_PLUS_QUERY_LIMIT - 1);
 });

@@ -1,3 +1,4 @@
+import { CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
@@ -23,7 +24,7 @@ test("Cartes Plus incorpora Revisar documento", () => {
 
   assert.match(
     source,
-    /Revisa un archivo Word de hasta 5 páginas/
+    /Revisa un archivo Word de hasta \$\{CARTES_DOCUMENT_MAX_PAGES\} páginas/
   );
 });
 
@@ -35,7 +36,7 @@ test("Revisar documento indica cómo adjuntar el DOCX", () => {
 
   assert.match(
     source,
-    /Máximo 5 páginas y 4 MB/
+    /Máximo \$\{CARTES_DOCUMENT_MAX_PAGES\} páginas y \$\{CARTES_DOCUMENT_MAX_MB\} MB/
   );
 
   assert.match(
@@ -52,12 +53,12 @@ test("Gratuito recibe oferta clara de Cartes Plus", () => {
 
   assert.match(
     source,
-    /5 revisiones de documentos por mes/
+    /\$\{CARTES_PLUS_REVIEW_LIMIT\} revisiones de documentos por mes/
   );
 
   assert.match(
     source,
-    /50 consultas mensuales/
+    /\$\{CARTES_PLUS_QUERY_LIMIT\} consultas mensuales/
   );
 
   assert.match(

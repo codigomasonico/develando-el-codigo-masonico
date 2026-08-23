@@ -1,3 +1,4 @@
+import { CARTES_PLUS_PRICE_MXN } from "../../../core/ai/config.mjs";
 import { obtenerSuscripcionUsuario, sincronizarSuscripcionUsuario } from "../../../core/ai/lib-cartes-account.mjs";
 import { getMercadoPagoSubscription, normalizeMercadoPagoSubscription, verifyMercadoPagoWebhook } from "./lib-mercadopago.mjs";
 import { getPaymentContext, savePaymentContext } from "./lib-state.mjs";
@@ -64,7 +65,7 @@ export function createMercadoPagoWebhookHandler(overrides = {}) {
       await d.sendWhatsAppTextParts({
         to: context.phone,
         phoneNumberId: context.phone_number_id,
-        text: "¡Bienvenido a Cartes Plus! Tu suscripción de $149 MXN al mes ya está activa. Tus beneficios se comparten entre Web y WhatsApp."
+        text: `¡Bienvenido a Cartes Plus! Tu suscripción de $${CARTES_PLUS_PRICE_MXN} MXN al mes ya está activa. Tus beneficios se comparten entre Web y WhatsApp.`
       }).catch((e) => console.error("MP_WA_NOTIFY_ERROR", e));
     }
 

@@ -1,3 +1,4 @@
+import { CARTES_DOCUMENT_MAX_PAGES, CARTES_DOCUMENT_MAX_MB, CARTES_DOCUMENT_MAX_BYTES } from "./config.mjs";
 import mammoth from "mammoth";
 import JSZip from "jszip";
 import WordExtractor from "word-extractor";
@@ -13,8 +14,8 @@ import {
   reservarRevisionMensual
 } from "./lib-cartes-reviews.mjs";
 
-const MAX_DOCX_BYTES = 4 * 1024 * 1024;
-const MAX_PAGES = 5;
+const MAX_DOCX_BYTES = CARTES_DOCUMENT_MAX_BYTES;
+const MAX_PAGES = CARTES_DOCUMENT_MAX_PAGES;
 const MAX_TEXT_CHARS = 30000;
 const WORDS_PER_ESTIMATED_PAGE = 500;
 
@@ -104,7 +105,7 @@ export async function revisarDocumentoCartes({
 
   if (buffer.length > MAX_DOCX_BYTES) {
     throw new CartesDocumentError(
-      "El documento supera el tamaño técnico máximo de 4 MB.",
+      `El documento supera el tamaño técnico máximo de ${CARTES_DOCUMENT_MAX_MB} MB.`,
       "document_too_large",
       413
     );
@@ -128,7 +129,7 @@ export async function revisarDocumentoCartes({
 
     if (extracted.text.length > MAX_TEXT_CHARS) {
       throw new CartesDocumentError(
-        "El documento contiene demasiado texto para una revisión de hasta 5 páginas.",
+        `El documento contiene demasiado texto para una revisión de hasta ${MAX_PAGES} páginas.`,
         "document_text_too_large",
         400
       );

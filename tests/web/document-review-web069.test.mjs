@@ -1,3 +1,4 @@
+import { CARTES_PLUS_REVIEW_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
@@ -38,9 +39,9 @@ function deps(overrides = {}) {
       return {
         user_id: USER,
         plan: "plus",
-        limite: 5,
+        limite: CARTES_PLUS_REVIEW_LIMIT,
         usadas: 2,
-        disponibles: 3
+        disponibles: CARTES_PLUS_REVIEW_LIMIT - 2
       };
     },
 
@@ -56,9 +57,9 @@ function deps(overrides = {}) {
         review: "Revisión documental correcta.",
         reviews: {
           plan: "plus",
-          limite: 5,
+          limite: CARTES_PLUS_REVIEW_LIMIT,
           usadas: 3,
-          disponibles: 2
+          disponibles: CARTES_PLUS_REVIEW_LIMIT - 3
         }
       };
     },
@@ -97,14 +98,8 @@ test(
     const data = await response.json();
 
     assert.equal(data.plan, "plus");
-    assert.equal(
-      data.reviews.disponibles,
-      3
-    );
-    assert.equal(
-      data.reviews.limite,
-      5
-    );
+    assert.equal(data.reviews.disponibles, CARTES_PLUS_REVIEW_LIMIT - 2);
+    assert.equal(data.reviews.limite, CARTES_PLUS_REVIEW_LIMIT);
   }
 );
 

@@ -1,3 +1,4 @@
+import { CARTES_PLUS_REVIEW_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import test from "node:test";
 import JSZip from "jszip";
@@ -190,7 +191,7 @@ test("Cartes gratuito no puede usar revisión documental", async () => {
   );
 });
 
-test("Cartes Plus comparte un límite central de 5 revisiones", async () => {
+test("Cartes Plus comparte el límite central configurado de revisiones", async () => {
   const store = memoryStore();
 
   await sincronizarPlanUsuario({
@@ -200,7 +201,7 @@ test("Cartes Plus comparte un límite central de 5 revisiones", async () => {
     store
   });
 
-  for (let i = 1; i <= 5; i += 1) {
+  for (let i = 1; i <= CARTES_PLUS_REVIEW_LIMIT; i += 1) {
     const result = await revisarDocumentoCartes({
       userId: USER,
       fileBuffer: await makeDocx(),
@@ -215,7 +216,7 @@ test("Cartes Plus comparte un límite central de 5 revisiones", async () => {
 
     assert.equal(result.ok, true);
     assert.equal(result.reviews.usadas, i);
-    assert.equal(result.reviews.disponibles, 5 - i);
+    assert.equal(result.reviews.disponibles, CARTES_PLUS_REVIEW_LIMIT - i);
   }
 
   const state = await obtenerEstadoRevisionesMensual({
@@ -225,8 +226,8 @@ test("Cartes Plus comparte un límite central de 5 revisiones", async () => {
     store
   });
 
-  assert.equal(state.limite, 5);
-  assert.equal(state.usadas, 5);
+  assert.equal(state.limite, CARTES_PLUS_REVIEW_LIMIT);
+  assert.equal(state.usadas, CARTES_PLUS_REVIEW_LIMIT);
   assert.equal(state.disponibles, 0);
 
   await assert.rejects(
@@ -247,7 +248,7 @@ test("Cartes Plus comparte un límite central de 5 revisiones", async () => {
   );
 });
 
-test("documento de más de 5 páginas se rechaza sin consumir revisión", async () => {
+test("documento que supera el maximo de paginas se rechaza sin consumir revisión", async () => {
   const store = memoryStore();
 
   await sincronizarPlanUsuario({
@@ -284,7 +285,7 @@ test("documento de más de 5 páginas se rechaza sin consumir revisión", async 
   });
 
   assert.equal(state.usadas, 0);
-  assert.equal(state.disponibles, 5);
+  assert.equal(state.disponibles, CARTES_PLUS_REVIEW_LIMIT);
 });
 
 test("fallo del motor IA libera la revisión reservada", async () => {
@@ -339,7 +340,7 @@ test("fallo del motor IA libera la revisión reservada", async () => {
     });
 
     assert.equal(state.usadas, 0);
-    assert.equal(state.disponibles, 5);
+    assert.equal(state.disponibles, CARTES_PLUS_REVIEW_LIMIT);
   }
   finally {
     if (oldKey === undefined) {

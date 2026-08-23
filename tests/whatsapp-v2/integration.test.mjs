@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
@@ -64,7 +65,7 @@ function makeDeps({ plan = "gratuito", flow = null, duplicate = false, subscript
     async reservarConsultaMensual(args) { calls.push(["reserve", args]); return { permitida: true, duplicada: false, plan, periodo: "2026-08" }; },
     async completarConsultaMensual(args) { calls.push(["complete", args]); return true; },
     async liberarConsultaMensual(args) { calls.push(["release", args]); return true; },
-    async obtenerEstadoUsoMensual() { return { usadas: 1, limite: plan === "plus" ? 50 : 5, disponibles: plan === "plus" ? 49 : 4 }; },
+    async obtenerEstadoUsoMensual() { return { usadas: 1, limite: plan === "plus" ? CARTES_PLUS_QUERY_LIMIT : CARTES_FREE_QUERY_LIMIT, disponibles: plan === "plus" ? CARTES_PLUS_QUERY_LIMIT - 1 : CARTES_FREE_QUERY_LIMIT - 1 }; },
     async obtenerSuscripcionUsuario() { return subscription; },
     async sincronizarSuscripcionUsuario(args) { calls.push(["sync-sub", args]); return { plan: "gratuito" }; },
     async completarVinculacionConWhatsApp() { return { linked: true }; },
@@ -128,7 +129,7 @@ test("mensaje real usa phone_number_id del webhook, mismo Core y completa consum
 
   assert.equal(sent[1].phoneNumberId, PHONE_ID);
   assert.equal(sent[1].to, PHONE);
-  assert.match(sent[1].text, /\*Consultas disponibles:\*\s*4 de 5/);
+  assert.match(sent[1].text, new RegExp(`\\*Consultas disponibles:\\*\\s*${CARTES_FREE_QUERY_LIMIT - 1} de ${CARTES_FREE_QUERY_LIMIT}`));
   const core = calls.find((x) => x[0] === "core");
   assert.equal(core[1].client.channel, "whatsapp");
   assert.equal(core[1].client.user_id, USER_ID);

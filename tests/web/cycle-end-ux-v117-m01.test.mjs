@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
@@ -33,7 +34,7 @@ test("117-M01 WA límite bloqueado recibe reservation con cycle_end", () => {
   );
 });
 
-test("117-M01 WA quinta consulta usa estado posterior", () => {
+test("117-M01 WA consulta que agota el limite usa estado posterior", () => {
   assert.match(
     wa,
     /const usageAfterQuery[\s\S]*?ofrecerCartesPlusPorLimite\([\s\S]*?usage:\s*usageAfterQuery/
@@ -48,7 +49,7 @@ test("117-M01 WA muestra fecha real y no una fecha fija", () => {
 
   assert.match(
     wa,
-    /Tus 5 consultas gratuitas estarán disponibles nuevamente/
+    /Tus \$\{CARTES_FREE_QUERY_LIMIT\} consultas gratuitas estar/
   );
 });
 
@@ -73,7 +74,7 @@ test("117-M01 Mi suscripción WA usa cycle_end para gratuito", () => {
   );
 });
 
-test("117-M01 Web 0 de 5 usa cycle_end real", () => {
+test("117-M01 Web sin saldo usa cycle_end real", () => {
   assert.match(
     web,
     /function mostrarLimiteGratuitoWeb\(usage\)[\s\S]*?usage\?\.cycle_end[\s\S]*?formatCartesDateWeb/
@@ -81,7 +82,7 @@ test("117-M01 Web 0 de 5 usa cycle_end real", () => {
 
   assert.match(
     web,
-    /Tus 5 consultas gratuitas estarán disponibles nuevamente/
+    /Tus \$\{freeLimit\} consultas gratuitas estar/
   );
 });
 

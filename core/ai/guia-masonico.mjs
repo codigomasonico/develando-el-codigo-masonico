@@ -1,4 +1,5 @@
 import cartesCore from "./cartes-core.mjs";
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "./config.mjs";
 import {
   completarConsultaMensual,
   liberarConsultaMensual,
@@ -143,8 +144,8 @@ export default async (request) => {
 function esUserIdValido(value) { return /^usr_[a-f0-9]{32}$/.test(String(value || "")); }
 function mensajeLimite(plan) {
   return plan === "plus"
-    ? "Ya utilizaste las 50 consultas incluidas en Cartes Plus durante este periodo."
-    : "Ya utilizaste las 5 consultas gratuitas disponibles en este periodo.";
+    ? `Ya utilizaste las ${CARTES_PLUS_QUERY_LIMIT} consultas incluidas en Cartes Plus durante este periodo.`
+    : `Ya utilizaste las ${CARTES_FREE_QUERY_LIMIT} consultas gratuitas disponibles en este periodo.`;
 }
 async function agregarUsoRespuesta(response, usage) {
   let data;

@@ -1,3 +1,5 @@
+import { CARTES_CONCURRENCY_MAX_RETRIES } from "./config.mjs";
+import { CARTES_PLUS_REVIEW_LIMIT } from "./config.mjs";
 // CARTES_QA_DEPLOY_STORE_GENERIC
 import { getStore, getDeployStore } from "@netlify/blobs";
 
@@ -8,13 +10,13 @@ import {
   obtenerEstadoPaquetesRevision
 } from "./lib-cartes-review-packs.mjs";
 
-export const LIMITE_REVISIONES_PLUS = 5;
+export const LIMITE_REVISIONES_PLUS = CARTES_PLUS_REVIEW_LIMIT;
 
 const STORE_NAME = "cartes-core";
 const PREFIJO_REVISIONES = "review-usage-v1";
 const TIME_ZONE = "America/Mexico_City";
 const RESERVA_PENDIENTE_MS = 10 * 60 * 1000;
-const MAX_REINTENTOS = 10;
+const MAX_REINTENTOS = CARTES_CONCURRENCY_MAX_RETRIES;
 
 export async function obtenerEstadoRevisionesMensual({
   userId,
@@ -377,7 +379,7 @@ async function actualizarRevision({
 }
 
 async function getReviewStore() {
-  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3" ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined })) : getStore)({
+  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3" && process.env.CARTES_QA_LOCAL_FRESH_STORE === "1" ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined })) : getStore)({
     name: STORE_NAME,
     consistency: "strong"
   });

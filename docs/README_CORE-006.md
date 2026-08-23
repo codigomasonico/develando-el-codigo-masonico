@@ -7,7 +7,7 @@ Centralizar el contexto conversacional por `user_id` para que Web y WhatsApp com
 - Sin vinculación, Web y WhatsApp mantienen memorias independientes.
 - Con vinculación, ambas interfaces usan el mismo historial central.
 - La memoria reside en Netlify Blobs dentro del store `cartes-core`.
-- Se conservan como máximo 20 mensajes (10 intercambios usuario/asistente) por usuario.
+- Se conservan como máximo los mensajes definidos por `CARTES_CONVERSATION_MEMORY_MESSAGES` (actualmente 20 mensajes, equivalentes a 10 intercambios usuario/asistente) por usuario.
 - Cada intercambio registra el canal y `request_id` para evitar duplicados.
 - Al vincular dos identidades, sus memorias previas se fusionan cronológicamente.
 - `Limpiar conversación` desde Web limpia la memoria central asociada al `user_id`.

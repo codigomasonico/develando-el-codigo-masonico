@@ -37,7 +37,7 @@ test("Meta envía al phone_number_id recibido, no a uno hardcodeado", async () =
   assert.equal(called.options.headers.Authorization, "Bearer TOKEN");
 });
 
-test("Mercado Pago crea plan mensual de 149 MXN con fetch simulado", async () => {
+test("Mercado Pago crea plan mensual con el precio configurado y fetch simulado", async () => {
   const old = process.env.MERCADOPAGO_ACCESS_TOKEN;
   process.env.MERCADOPAGO_ACCESS_TOKEN = "MP_TEST";
   try {
@@ -49,7 +49,7 @@ test("Mercado Pago crea plan mensual de 149 MXN con fetch simulado", async () =>
     const result = await createMercadoPagoCheckout({ userId: USER_ID, phone: "5218115774235", fetchImpl: fakeFetch });
     assert.equal(result.url, "https://mp.test/init");
     assert.equal(call.url, "https://api.mercadopago.com/preapproval_plan");
-    assert.equal(call.body.auto_recurring.transaction_amount, 149);
+    assert.equal(call.body.auto_recurring.transaction_amount, Number(process.env.CARTES_PLUS_PRICE_MXN));
     assert.equal(call.body.auto_recurring.currency_id, "MXN");
   } finally {
     if (old === undefined) delete process.env.MERCADOPAGO_ACCESS_TOKEN; else process.env.MERCADOPAGO_ACCESS_TOKEN = old;

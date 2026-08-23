@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "../../../core/ai/config.mjs";
 import {
   MENU_IDS,
   construirMenuPrincipal,
@@ -16,12 +17,12 @@ export function crearSesionInicial() {
   return {
     plusActivo: false,
     consultasUsadas: 0,
-    limiteConsultas: 5
+    limiteConsultas: CARTES_FREE_QUERY_LIMIT
   };
 }
 
 export function construirResumenLocal(sesion) {
-  const limite = sesion.plusActivo ? 50 : 5;
+  const limite = sesion.plusActivo ? CARTES_PLUS_QUERY_LIMIT : CARTES_FREE_QUERY_LIMIT;
   const usadas = Number(sesion.consultasUsadas || 0);
   const disponibles = Math.max(0, limite - usadas);
   const plan = sesion.plusActivo ? "Cartes Plus" : "Cartes gratuito";
@@ -37,6 +38,7 @@ export function construirResumenLocal(sesion) {
 
 export function procesarEntradaLocal({ entrada = "", id = "", sesion = crearSesionInicial() }) {
   const estado = { ...crearSesionInicial(), ...sesion };
+  estado.limiteConsultas = estado.plusActivo ? CARTES_PLUS_QUERY_LIMIT : CARTES_FREE_QUERY_LIMIT;
   const mensajes = [];
   let consumioConsulta = false;
 

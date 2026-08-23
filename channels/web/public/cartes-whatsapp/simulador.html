@@ -25,18 +25,18 @@
   <div class="tools"><button id="menu" type="button">Menú</button><button id="reset" type="button">Reiniciar</button><span class="status" id="estado"></span></div>
 </main>
 <script>
-let sesion={plusActivo:false,consultasUsadas:0,limiteConsultas:5};
+let sesion={plusActivo:false,consultasUsadas:0};
 const chat=document.querySelector('#chat');
 const estado=document.querySelector('#estado');
 function marcarNegritas(texto){return texto.replace(/\*([^*]+)\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}
 function msg(contenido,clase='bot'){const d=document.createElement('div');d.className='msg '+clase;d.innerHTML=marcarNegritas(contenido);chat.append(d)}
 function menu(data){const c=document.createElement('div');c.className='card';c.innerHTML=`<h2>${data.button||'Menú'}</h2><p>${data.body||''}</p>`;(data.sections||[]).flatMap(s=>s.rows||[]).forEach(r=>{const b=document.createElement('button');b.className='option';b.innerHTML=`<strong>${r.title}</strong><span>${r.description||''}</span>`;b.onclick=()=>enviar('',r.id,r.title);c.append(b)});chat.append(c)}
 function render(m){if(m.tipo==='texto')msg(m.contenido);if(m.tipo==='menu')menu(m.menu);if(m.tipo==='botones'){const c=document.createElement('div');c.className='card';m.botones.forEach(r=>{const b=document.createElement('button');b.className='option';b.textContent=r.titulo;b.onclick=()=>enviar('',r.id,r.titulo);c.append(b)});chat.append(c)}}
-function refresh(){estado.textContent=`Consultas simuladas: ${sesion.consultasUsadas}/${sesion.plusActivo?50:5}`;chat.scrollTop=chat.scrollHeight}
+function refresh(){const limite=Number(sesion.limiteConsultas);estado.textContent=Number.isFinite(limite)&&limite>0?`Consultas simuladas: ${sesion.consultasUsadas}/${limite}`:"Límite no disponible";chat.scrollTop=chat.scrollHeight}
 async function enviar(entrada='',id='',visible=''){if(entrada||visible)msg(visible||entrada,'user');const r=await fetch('/api/simular',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({entrada,id,sesion})});const data=await r.json();sesion=data.sesion;data.mensajes.forEach(render);refresh()}
 document.querySelector('#form').onsubmit=e=>{e.preventDefault();const i=document.querySelector('#entrada');enviar(i.value);i.value=''};
 document.querySelector('#menu').onclick=()=>enviar('Menú');
-document.querySelector('#reset').onclick=()=>{sesion={plusActivo:false,consultasUsadas:0,limiteConsultas:5};chat.innerHTML='';enviar('Hola')};
+document.querySelector('#reset').onclick=()=>{sesion={plusActivo:false,consultasUsadas:0};chat.innerHTML='';enviar('Hola')};
 enviar('Hola');
 </script>
 </body>

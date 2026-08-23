@@ -138,8 +138,13 @@
           );
         }
 
+        const reviewPackSize =
+          Number(data?.reviews?.creditos_por_paquete);
+
         status.textContent =
-          "¡Compra confirmada! Se agregaron 3 revisiones adicionales a tu cuenta Cartes.";
+          Number.isSafeInteger(reviewPackSize) && reviewPackSize > 0
+            ? `¡Compra confirmada! Se agregaron ${reviewPackSize} revisiones adicionales a tu cuenta Cartes.`
+            : "¡Compra confirmada! Se agregaron revisiones adicionales a tu cuenta Cartes.";
 
         if (data?.reviews) {
           detail.textContent =

@@ -1,3 +1,4 @@
+import { CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import test from "node:test";
 
@@ -179,7 +180,7 @@ test("V115C desvincular WhatsApp conserva Plus, consumo y acceso Web", async () 
 
   assert.equal(after.user_id, wa.user_id);
   assert.equal(after.usadas, before.usadas);
-  assert.equal(after.limite, 50);
+  assert.equal(after.limite, CARTES_PLUS_QUERY_LIMIT);
 
   const subscription =
     await obtenerSuscripcionUsuario({
@@ -328,7 +329,7 @@ test("V115C cambiar número conserva user_id, Plus y contador y revoca el anteri
 
   assert.equal(state.plan, "plus");
   assert.equal(state.usadas, 1);
-  assert.equal(state.limite, 50);
+  assert.equal(state.limite, CARTES_PLUS_QUERY_LIMIT);
 });
 
 test("V115C número nuevo ocupado no fusiona ni modifica cuentas", async () => {

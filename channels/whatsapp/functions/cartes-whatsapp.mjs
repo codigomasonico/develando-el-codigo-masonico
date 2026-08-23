@@ -1,3 +1,12 @@
+import { CARTES_LINK_CODE_TTL_MINUTES } from "../../../core/ai/config.mjs";
+import { CARTES_DOCUMENT_MAX_BYTES } from "../../../core/ai/config.mjs";
+import { CARTES_DOCUMENT_MAX_MB } from "../../../core/ai/config.mjs";
+import { CARTES_DOCUMENT_MAX_PAGES } from "../../../core/ai/config.mjs";
+import { CARTES_REVIEW_PACK_MAX_PER_PERIOD } from "../../../core/ai/config.mjs";
+import { CARTES_REVIEW_PACK_SIZE } from "../../../core/ai/config.mjs";
+import { CARTES_REVIEW_PACK_PRICE_MXN } from "../../../core/ai/config.mjs";
+import { CARTES_PLUS_PRICE_MXN } from "../../../core/ai/config.mjs";
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT, CARTES_PLUS_REVIEW_LIMIT } from "../../../core/ai/config.mjs";
 import {
   completarCambioNumeroWhatsApp,
   completarConsultaMensual,
@@ -453,7 +462,7 @@ async function processMessage(message, d) {
         to: phone,
         phoneNumberId,
         text:
-          `Código generado: *${change.instruction}*\n\nDesde el NUEVO número de WhatsApp, escribe a Cartes y envía exactamente ese código. Vence en 10 minutos. Este número actual seguirá vinculado hasta que el nuevo complete la verificación.`
+          `Código generado: *${change.instruction}*\n\nDesde el NUEVO número de WhatsApp, escribe a Cartes y envía exactamente ese código. Vence en ${CARTES_LINK_CODE_TTL_MINUTES} minutos. Este número actual seguirá vinculado hasta que el nuevo complete la verificación.`
       });
     }
     catch (error) {
@@ -629,7 +638,7 @@ async function processMessage(message, d) {
     "privacidad y terminos",
 
     "comprar revisiones",
-    "comprar 3 revisiones",
+    `comprar ${CARTES_REVIEW_PACK_SIZE} revisiones`,
     "paquete de revisiones"
   ]);
 
@@ -824,7 +833,7 @@ async function processMessage(message, d) {
     await d.sendWhatsAppTextParts({
       to: phone,
       phoneNumberId,
-      text: "Cartes Plus amplía tu conocimiento con más consultas, revisión y retroalimentación de documentos.\n\nPor $149 MXN al mes tendrás hasta 50 consultas y 5 revisiones mensuales de documentos Word de hasta 5 páginas cada uno.\n\nEn cada revisión recibirás observaciones sobre estructura, claridad y contenido para mejorar tu trabajo antes de presentarlo en Logia.\n\nLa suscripción quedará vinculada a tu número de WhatsApp. Desde este mismo chat podrás consultar su estado o cancelarla.\n\nLa versión gratuita está pensada para consultas puntuales. Cartes Plus es para quienes desean estudiar con mayor profundidad y recibir apoyo en la preparación de sus trabajos.\n\nPara comenzar, selecciona “Suscribirme”."
+      text: `Cartes Plus amplía tu conocimiento con más consultas, revisión y retroalimentación de documentos.\n\nPor $${CARTES_PLUS_PRICE_MXN} MXN al mes tendrás hasta ${CARTES_PLUS_QUERY_LIMIT} consultas y ${CARTES_PLUS_REVIEW_LIMIT} revisiones mensuales de documentos Word de hasta ${CARTES_DOCUMENT_MAX_PAGES} páginas cada uno.\n\nEn cada revisión recibirás observaciones sobre estructura, claridad y contenido para mejorar tu trabajo antes de presentarlo en Logia.\n\nLa suscripción quedará vinculada a tu número de WhatsApp. Desde este mismo chat podrás consultar su estado o cancelarla.\n\nLa versión gratuita está pensada para consultas puntuales. Cartes Plus es para quienes desean estudiar con mayor profundidad y recibir apoyo en la preparación de sus trabajos.\n\nPara comenzar, selecciona “Suscribirme”.`
     });
     return;
   }
@@ -863,7 +872,7 @@ async function processMessage(message, d) {
   if (
     [
       "comprar revisiones",
-      "comprar 3 revisiones",
+      `comprar ${CARTES_REVIEW_PACK_SIZE} revisiones`,
       "paquete de revisiones"
     ].includes(normalized)
   ) {
@@ -981,7 +990,7 @@ async function processMessage(message, d) {
     await d.sendWhatsAppTextParts({
       to: phone,
       phoneNumberId,
-      text: "Ya utilizaste las 50 consultas incluidas en Cartes Plus durante este periodo. Escribe *Mi suscripción* para revisar tu estado."
+      text: `Ya utilizaste las ${CARTES_PLUS_QUERY_LIMIT} consultas incluidas en Cartes Plus durante este periodo. Escribe *Mi suscripción* para revisar tu estado.`
     });
     return;
   }
@@ -1236,7 +1245,7 @@ async function recibirDocumentoWhatsApp({
     );
 
   const MAX_DOCUMENT_BYTES_WHATSAPP =
-    4 * 1024 * 1024;
+    CARTES_DOCUMENT_MAX_BYTES;
 
   if (
     Number.isFinite(
@@ -1249,7 +1258,7 @@ async function recibirDocumentoWhatsApp({
       to: phone,
       phoneNumberId,
       text:
-        "El documento supera el máximo de 4 MB permitido para revisión.\n\n" +
+        `El documento supera el máximo de ${CARTES_DOCUMENT_MAX_MB} MB permitido para revisión.\n\n` +
         "El documento no fue revisado y no se consumió ninguna revisión."
     });
 
@@ -1283,8 +1292,8 @@ async function enviarAutorizacionDocumentoWhatsApp({
 }, d) {
   const body =
     `Recibí el documento *${fileName}*.\n\n` +
-    "Cartes procesará temporalmente el documento para validar que tenga un máximo de 5 páginas y, si cumple, realizar la revisión. El archivo no se conservará después del procesamiento.\n\n" +
-    "Cartes Plus incluye hasta 5 revisiones mensuales.\n\n" +
+    `Cartes procesará temporalmente el documento para validar que tenga un máximo de ${CARTES_DOCUMENT_MAX_PAGES} páginas y, si cumple, realizar la revisión. El archivo no se conservará después del procesamiento.\n\n` +
+    `Cartes Plus incluye hasta ${CARTES_PLUS_REVIEW_LIMIT} revisiones mensuales.\n\n` +
     "¿Autorizas a Cartes a procesar temporalmente este documento?";
 
   try {
@@ -1454,7 +1463,7 @@ async function enviarGuiaRevisionDocumentoWhatsApp(
     text:
       "*Revisar documento*\n\n" +
       "Adjunta ahora tu documento Word (.docx) o Word antiguo (.doc) usando el botón de adjuntar de WhatsApp.\n\n" +
-      "Máximo 5 páginas y 4 MB.\n" +
+      `Máximo ${CARTES_DOCUMENT_MAX_PAGES} páginas y ${CARTES_DOCUMENT_MAX_MB} MB.\n` +
       "Antes de procesarlo, Cartes te pedirá autorización. El archivo no se conservará después de la revisión."
   });
 }
@@ -1468,14 +1477,14 @@ async function ofrecerCartesPlusPorLimite(
 
   const renewalLine =
     cycleEnd
-      ? `\n\nTus 5 consultas gratuitas estarán disponibles nuevamente el ${cycleEnd}.`
+      ? `\n\nTus ${CARTES_FREE_QUERY_LIMIT} consultas gratuitas estarán disponibles nuevamente el ${cycleEnd}.`
       : "";
 
   const body =
-    "*Consultas disponibles:* 0 de 5\n\n" +
-    "Ya utilizaste las 5 consultas gratuitas de este periodo." +
+    `*Consultas disponibles:* 0 de ${CARTES_FREE_QUERY_LIMIT}\n\n` +
+    `Ya utilizaste las ${CARTES_FREE_QUERY_LIMIT} consultas gratuitas de este periodo.` +
     renewalLine +
-    "\n\nSi quieres seguir conversando con Cartes ahora, puedes activar *Cartes Plus* por $149 MXN al mes, con hasta 50 consultas y 5 revisiones de documentos Word.";
+    `\n\nSi quieres seguir conversando con Cartes ahora, puedes activar *Cartes Plus* por $${CARTES_PLUS_PRICE_MXN} MXN al mes, con hasta ${CARTES_PLUS_QUERY_LIMIT} consultas y ${CARTES_PLUS_REVIEW_LIMIT} revisiones de documentos Word.`;
 
   try {
     await d.sendWhatsAppReplyButtons({
@@ -1520,7 +1529,7 @@ async function ofrecerCartesPlusPorDocumento(
 ) {
   const body =
     "*La revisión de documentos está disponible con Cartes Plus.*\n\n" +
-    "Con Plus tienes hasta *5 revisiones de documentos por mes* y *50 consultas mensuales*.\n\n" +
+    `Con Plus tienes hasta *${CARTES_PLUS_REVIEW_LIMIT} revisiones de documentos por mes* y *${CARTES_PLUS_QUERY_LIMIT} consultas mensuales*.\n\n` +
     "Contrata Cartes Plus para revisar este documento.";
 
   try {
@@ -1605,7 +1614,7 @@ async function showSubscription({ phone, phoneNumberId, userId }, d) {
         `\nRevisiones disponibles: ${reviews.disponibles}`;
 
       packageLine =
-        `\nPaquetes adicionales: ${reviews.paquetes_comprados || 0} de ${reviews.paquetes_maximo || 2}`;
+        `\nPaquetes adicionales: ${reviews.paquetes_comprados || 0} de ${reviews.paquetes_maximo ?? CARTES_REVIEW_PACK_MAX_PER_PERIOD}`;
     }
     catch (error) {
       console.warn(
@@ -1648,7 +1657,7 @@ async function showSubscription({ phone, phoneNumberId, userId }, d) {
 
   if (
     Number(reviews.paquetes_comprados || 0) <
-    Number(reviews.paquetes_maximo || 2)
+    Number(reviews.paquetes_maximo ?? CARTES_REVIEW_PACK_MAX_PER_PERIOD)
   ) {
     buttons.push({
       id: "review_pack_buy",
@@ -1688,8 +1697,8 @@ async function showSubscription({ phone, phoneNumberId, userId }, d) {
 
     const buy =
       Number(reviews.paquetes_comprados || 0) <
-      Number(reviews.paquetes_maximo || 2)
-        ? "\nEscribe *COMPRAR REVISIONES* para adquirir 3 revisiones adicionales por $99 MXN."
+      Number(reviews.paquetes_maximo ?? CARTES_REVIEW_PACK_MAX_PER_PERIOD)
+        ? "\nEscribe *COMPRAR REVISIONES* para adquirir ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales por $${CARTES_REVIEW_PACK_PRICE_MXN} MXN."
         : "";
 
     await d.sendWhatsAppTextParts({
@@ -1892,7 +1901,7 @@ async function handlePublicEntryWhatsApp({
       text:
         "Hola, soy Cartes, el asistente de Develando el Código Masónico.\n\n" +
         "Puedo ayudarte con consultas sobre historia, simbolismo, filosofía y pensamiento masónico.\n\n" +
-        "Tu cuenta gratuita incluye 5 consultas. Tu periodo de 30 días comenzará con la primera consulta válida que Cartes responda. También puedes conocer Cartes Plus, que amplía las consultas e incluye revisión de documentos Word.\n\n" +
+        `Tu cuenta gratuita incluye ${CARTES_FREE_QUERY_LIMIT} consultas. Tu periodo de 30 días comenzará con la primera consulta válida que Cartes responda. También puedes conocer Cartes Plus, que amplía las consultas e incluye revisión de documentos Word.\n\n` +
         "Esta bienvenida y el uso del menú no consumen ninguna consulta."
     });
 
@@ -1931,7 +1940,7 @@ async function handlePublicEntryWhatsApp({
         formatDateForUser(usage?.cycle_end);
 
       statusText += cycleEnd
-        ? `\nTus 5 consultas gratuitas se renuevan el ${cycleEnd}.`
+        ? `\nTus ${CARTES_FREE_QUERY_LIMIT} consultas gratuitas se renuevan el ${cycleEnd}.`
         : "\nTu periodo gratuito de 30 días comenzará con tu primera consulta válida respondida por Cartes.";
     }
 
@@ -2002,7 +2011,7 @@ async function sendMainMenu({ phone, phoneNumberId, userId }, d) {
           {
             id: "menu_document_review",
             title: "Revisar documento",
-            description: "Revisa un archivo Word de hasta 5 páginas."
+            description: `Revisa un archivo Word de hasta ${CARTES_DOCUMENT_MAX_PAGES} páginas.`
           }
         ]
       : [
@@ -2122,7 +2131,7 @@ async function iniciarCompraPaqueteWhatsApp({
 
   if (
     Number(reviews.paquetes_comprados || 0) >=
-    Number(reviews.paquetes_maximo || 2)
+    Number(reviews.paquetes_maximo ?? CARTES_REVIEW_PACK_MAX_PER_PERIOD)
   ) {
     await d.sendWhatsAppTextParts({
       to: phone,
@@ -2220,7 +2229,7 @@ async function procesarProveedorPaqueteWhatsApp({
 
   if (
     Number(reviews.paquetes_comprados || 0) >=
-    Number(reviews.paquetes_maximo || 2)
+    Number(reviews.paquetes_maximo ?? CARTES_REVIEW_PACK_MAX_PER_PERIOD)
   ) {
     await d.clearFlow(userId);
 
@@ -2270,7 +2279,7 @@ async function procesarProveedorPaqueteWhatsApp({
     to: phone,
     phoneNumberId,
     text:
-      `*${providerLabel}*\n\nEl paquete cuesta $99 MXN e incluye 3 revisiones adicionales. Es un pago único, no recurrente.\n\nCompleta el pago aquí:\n${checkout.url}\n\nCuando el proveedor confirme la compra, las revisiones se agregarán a tu misma cuenta de Web y WhatsApp.`
+      `*${providerLabel}*\n\nEl paquete cuesta $${CARTES_REVIEW_PACK_PRICE_MXN} MXN e incluye ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales. Es un pago único, no recurrente.\n\nCompleta el pago aquí:\n${checkout.url}\n\nCuando el proveedor confirme la compra, las revisiones se agregarán a tu misma cuenta de Web y WhatsApp.`
   });
 }
 
@@ -2284,7 +2293,7 @@ async function sendReviewPackProviderOptions({
     "el final de tu periodo Plus vigente";
 
   const body =
-    `*3 revisiones adicionales por $99 MXN*\n\nPago único, no recurrente.\nLas revisiones vencerán el ${expiration}.\n\nSelecciona el medio de pago.`;
+    `*${CARTES_REVIEW_PACK_SIZE} revisiones adicionales por $${CARTES_REVIEW_PACK_PRICE_MXN} MXN*\n\nPago único, no recurrente.\nLas revisiones vencerán el ${expiration}.\n\nSelecciona el medio de pago.`;
 
   try {
     await d.sendWhatsAppReplyButtons({

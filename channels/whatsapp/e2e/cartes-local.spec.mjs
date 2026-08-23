@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT } from "../../../core/ai/config.mjs";
 import { test, expect } from "@playwright/test";
 
 test("el menú usa el título Menú", async ({ page }) => {
@@ -12,7 +13,7 @@ test("una entrada inútil muestra el menú y no consume consultas", async ({ pag
   await input.fill(".");
   await page.getByRole("button", { name: "Enviar" }).click();
   await expect(page.getByText("No entendí tu mensaje", { exact: false })).toBeVisible();
-  await expect(page.getByText("Consultas simuladas: 0/5")).toBeVisible();
+  await expect(page.getByText(`Consultas simuladas: 0/${CARTES_FREE_QUERY_LIMIT}`)).toBeVisible();
 });
 
 test("Suscribirme inicia el flujo legal y Mercado Pago sin pedir otro comando", async ({ page }) => {
@@ -29,7 +30,7 @@ test("Mi suscripción gratuita no muestra cancelación", async ({ page }) => {
   await page.getByRole("button", { name: "Mi suscripción" }).first().click();
   await expect(page.getByText("Cartes gratuito", { exact: true })).toBeVisible();
   await expect(page.getByText("Inactivo", { exact: true })).toBeVisible();
-  await expect(page.getByText("0 de 5", { exact: true })).toBeVisible();
+  await expect(page.getByText(`0 de ${CARTES_FREE_QUERY_LIMIT}`, { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Darme de baja" })).toHaveCount(0);
 });
 

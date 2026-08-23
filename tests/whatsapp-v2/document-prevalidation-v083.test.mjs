@@ -1,3 +1,4 @@
+import { CARTES_DOCUMENT_MAX_BYTES } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
@@ -60,7 +61,7 @@ test(
                 mime_type:
                   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 file_size:
-                  5 * 1024 * 1024
+                  CARTES_DOCUMENT_MAX_BYTES + 1024 * 1024
               }),
               { status: 200 }
             );
@@ -70,7 +71,7 @@ test(
     assert.equal(calls, 1);
     assert.equal(
       result.fileSize,
-      5 * 1024 * 1024
+      CARTES_DOCUMENT_MAX_BYTES + 1024 * 1024
     );
   }
 );
@@ -137,13 +138,13 @@ test(
 );
 
 test(
-  "V083 archivo mayor a 4 MB termina antes de consentimiento",
+  "V083 archivo mayor al limite tecnico termina antes de consentimiento",
   () => {
     const fn = getReceiveFunction();
 
     const reject =
       fn.indexOf(
-        "El documento supera el máximo de 4 MB permitido para revisión."
+        "El documento supera el máximo de ${CARTES_DOCUMENT_MAX_MB} MB permitido para revisión."
       );
 
     const returnPos =
@@ -203,7 +204,7 @@ test(
   () => {
     assert.match(
       source,
-      /validar que tenga un máximo de 5 páginas/
+      /validar que tenga un máximo de \$\{CARTES_DOCUMENT_MAX_PAGES\} páginas/
     );
 
     assert.match(

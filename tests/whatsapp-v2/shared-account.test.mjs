@@ -1,3 +1,4 @@
+import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -46,25 +47,25 @@ test("Web y WhatsApp pueden converger en el mismo user_id", async () => {
   assert.equal(webAfter.user_id, waAfter.user_id);
 });
 
-test("plan gratuito comparte límite central de 5 consultas", async () => {
+test("plan gratuito comparte el limite central configurado", async () => {
   const store = new MemoryStore();
   const user = await resolverOCrearUsuarioPorIdentidad({ tipo: "whatsapp", valor: "5218115774235", store });
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= CARTES_FREE_QUERY_LIMIT; i++) {
     const r = await reservarConsultaMensual({ userId: user.user_id, requestId: `req-${i}`, channel: i % 2 ? "whatsapp" : "web", store });
     assert.equal(r.permitida, true);
     await completarConsultaMensual({ userId: user.user_id, periodo: r.periodo, requestId: `req-${i}`, store });
   }
-  const blocked = await reservarConsultaMensual({ userId: user.user_id, requestId: "req-6", channel: "web", store });
+  const blocked = await reservarConsultaMensual({ userId: user.user_id, requestId: `req-${CARTES_FREE_QUERY_LIMIT + 1}`, channel: "web", store });
   assert.equal(blocked.permitida, false);
-  assert.equal(blocked.limite, 5);
+  assert.equal(blocked.limite, CARTES_FREE_QUERY_LIMIT);
 });
 
-test("suscripción Plus central eleva el límite compartido a 50", async () => {
+test("suscripcion Plus usa el limite compartido configurado", async () => {
   const store = new MemoryStore();
   const user = await resolverOCrearUsuarioPorIdentidad({ tipo: "whatsapp", valor: "5218115774235", store });
   await sincronizarSuscripcionUsuario({ userId: user.user_id, subscription: { provider: "paypal", status: "authorized", subscription_id: "I-TEST" }, source: "test", store });
   assert.equal(await obtenerPlanUsuario({ userId: user.user_id, store }), "plus");
   const usage = await obtenerEstadoUsoMensual({ userId: user.user_id, store });
-  assert.equal(usage.limite, 50);
-  assert.equal(usage.disponibles, 50);
+  assert.equal(usage.limite, CARTES_PLUS_QUERY_LIMIT);
+  assert.equal(usage.disponibles, CARTES_PLUS_QUERY_LIMIT);
 });

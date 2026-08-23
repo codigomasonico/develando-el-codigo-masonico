@@ -1,3 +1,4 @@
+import { CARTES_PLUS_QUERY_LIMIT } from "../../core/ai/config.mjs";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
@@ -34,7 +35,7 @@ test(
 );
 
 test(
-  "117-D01 WhatsApp quinta consulta con 0 disponibles ofrece Plus",
+  "117-D01 WhatsApp consulta que agota el limite ofrece Plus",
   () => {
     assert.match(
       wa,
@@ -48,7 +49,7 @@ test(
   () => {
     assert.match(
       wa,
-      /Ya utilizaste las 50 consultas incluidas en Cartes Plus/
+      /Ya utilizaste las \$\{CARTES_PLUS_QUERY_LIMIT\} consultas incluidas en Cartes Plus/
     );
   }
 );
@@ -64,7 +65,7 @@ test(
 );
 
 test(
-  "117-D01 Web quinta consulta con 0 disponibles ofrece Plus",
+  "117-D01 Web consulta que agota el limite ofrece Plus",
   () => {
     assert.match(
       web,

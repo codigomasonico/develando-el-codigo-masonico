@@ -1,15 +1,17 @@
+import { CARTES_CONCURRENCY_MAX_RETRIES } from "./config.mjs";
+import { CARTES_REVIEW_PACK_PRICE_MXN, CARTES_REVIEW_PACK_SIZE, CARTES_REVIEW_PACK_MAX_PER_PERIOD } from "./config.mjs";
 // CARTES_QA_DEPLOY_STORE_GENERIC
 import { getStore, getDeployStore } from "@netlify/blobs";
 
-export const REVISIONES_POR_PAQUETE = 3;
-export const MAX_PAQUETES_REVISION_POR_PERIODO = 2;
-export const PRECIO_PAQUETE_REVISION_MXN = 99;
+export const REVISIONES_POR_PAQUETE = CARTES_REVIEW_PACK_SIZE;
+export const MAX_PAQUETES_REVISION_POR_PERIODO = CARTES_REVIEW_PACK_MAX_PER_PERIOD;
+export const PRECIO_PAQUETE_REVISION_MXN = CARTES_REVIEW_PACK_PRICE_MXN;
 
 const STORE_NAME = "cartes-core";
 const PREFIJO_PAQUETES = "review-pack-v1";
 const PREFIJO_PAGO = "review-pack-payment-v1";
 const PREFIJO_ACCOUNT_USER = "account-v1:user";
-const MAX_REINTENTOS = 10;
+const MAX_REINTENTOS = CARTES_CONCURRENCY_MAX_RETRIES;
 
 export async function obtenerEstadoPaquetesRevision({
   userId,
@@ -126,7 +128,7 @@ export async function registrarPaqueteRevisionPagado({
 
     if (activos.length >= MAX_PAQUETES_REVISION_POR_PERIODO) {
       throw crearError(
-        "Ya compraste los 2 paquetes adicionales permitidos durante este periodo de Cartes Plus.",
+        `Ya compraste los ${MAX_PAQUETES_REVISION_POR_PERIODO} paquetes adicionales permitidos durante este periodo de Cartes Plus.`,
         "pack_limit"
       );
     }
@@ -361,7 +363,7 @@ async function resolverUsuarioCanonico(userId, store) {
 }
 
 async function getStoreReviewPacks() {
-  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3" ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined })) : getStore)({
+  return (process.env.SITE_ID === "c91954f4-08d6-4df6-a831-59457b9a59b3" && process.env.CARTES_QA_LOCAL_FRESH_STORE === "1" ? ((options) => getDeployStore({ ...options, deployID: process.env.DEPLOY_ID || undefined })) : getStore)({
     name: STORE_NAME,
     consistency: "strong"
   });
