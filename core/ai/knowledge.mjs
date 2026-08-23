@@ -94,6 +94,47 @@ function phraseScore(question, phrases) {
   return best;
 }
 
+
+function formatGlossaryContext(item) {
+  const lines = [String(item?.definition || "").trim()];
+
+  if (Array.isArray(item?.tags) && item.tags.length) {
+    lines.push(`Ámbito: ${item.tags.join(", ")}.`);
+  }
+
+  if (
+    Array.isArray(item?.do_not_confuse_with) &&
+    item.do_not_confuse_with.length
+  ) {
+    lines.push(`No confundir con: ${item.do_not_confuse_with.join(", ")}.`);
+  }
+
+  if (Array.isArray(item?.editorial_notes) && item.editorial_notes.length) {
+    lines.push(`Notas de uso: ${item.editorial_notes.join(" ")}`);
+  }
+
+  return lines.filter(Boolean).join("\n");
+}
+
+function countMatchedPhrases(question, phrases) {
+  const normalizedQuestion = ` ${normalize(question)} `;
+  let count = 0;
+
+  for (const phrase of phrases.filter(Boolean)) {
+    const normalizedPhrase = normalize(phrase);
+    if (!normalizedPhrase) continue;
+
+    if (
+      normalizedQuestion.includes(` ${normalizedPhrase} `) ||
+      compact(question).includes(compact(phrase))
+    ) {
+      count += 1;
+    }
+  }
+
+  return count;
+}
+
 export function retrieveLocalKnowledge(question, limit = 6) {
   const questionTokens = new Set(tokens(question));
   const candidates = [];
@@ -103,7 +144,13 @@ export function retrieveLocalKnowledge(question, limit = 6) {
     const phrase = phraseScore(question, phrases);
     const overlap = tokenScore(
       questionTokens,
-      `${item.term} ${item.definition} ${(item.aliases || []).join(" ")}`
+      [
+        item.term,
+        item.definition,
+        ...(item.aliases || []),
+        ...(item.tags || []),
+        ...(item.do_not_confuse_with || [])
+      ].join(" ")
     );
     const score = phrase + overlap + (phrase ? 3 : 0);
 
@@ -113,7 +160,58 @@ export function retrieveLocalKnowledge(question, limit = 6) {
         type: "glosario",
         id: item.term,
         title: item.term,
-        text: item.definition
+        text: formatGlossaryContext(item)
+      });
+    }
+  }
+
+  for (const item of glossary.distinctions || []) {
+    const phrases = item.terms || [];
+    const phrase = phraseScore(question, phrases);
+    const overlap = tokenScore(
+      questionTokens,
+      `${item.title} ${item.text} ${phrases.join(" ")}`
+    );
+    const matchedPhrases = countMatchedPhrases(question, phrases);
+    const score =
+      phrase +
+      overlap +
+      (matchedPhrases >= 2 ? 8 : phrase ? 2 : 0);
+
+    if (score > 0) {
+      candidates.push({
+        score,
+        type: "distincion",
+        id: item.id || item.title,
+        title: item.title,
+        text: item.text
+      });
+    }
+  }
+
+  for (const item of glossary.reaa_degrees || []) {
+    const phrases = [
+      `${item.degree}°`,
+      `grado ${item.degree}`,
+      item.spanish,
+      item.english,
+      ...(item.aliases || [])
+    ];
+    const phrase = phraseScore(question, phrases);
+    const overlap = tokenScore(
+      questionTokens,
+      `${item.degree} ${item.spanish} ${item.english} ${(item.aliases || []).join(" ")}`
+    );
+    const score = phrase + overlap + (phrase ? 3 : 0);
+
+    if (score > 0) {
+      const note = item.note ? ` ${item.note}` : "";
+      candidates.push({
+        score,
+        type: "grado_reaa",
+        id: `REAA-${String(item.degree).padStart(2, "0")}`,
+        title: `${item.degree}° ${item.spanish}`,
+        text: `${item.spanish}${item.english ? ` / ${item.english}` : ""}.${note}`.trim()
       });
     }
   }

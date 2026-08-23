@@ -139,7 +139,7 @@ function findGlossaryByTarget(target) {
   for (const item of glossary.entries || []) {
     const names = [item.term, ...(item.aliases || [])].filter(Boolean);
 
-    for (const name of names) {
+    for (const [index, name] of names.entries()) {
       const normalizedName = removeLeadingArticle(normalize(name));
       if (!normalizedName) continue;
 
@@ -150,13 +150,18 @@ function findGlossaryByTarget(target) {
       if (exactMatch) {
         candidates.push({
           item,
+          canonical: index === 0,
           matchedLength: normalizedName.length
         });
       }
     }
   }
 
-  candidates.sort((a, b) => b.matchedLength - a.matchedLength);
+  candidates.sort(
+    (a, b) =>
+      Number(b.canonical) - Number(a.canonical) ||
+      b.matchedLength - a.matchedLength
+  );
   return candidates[0]?.item || null;
 }
 
