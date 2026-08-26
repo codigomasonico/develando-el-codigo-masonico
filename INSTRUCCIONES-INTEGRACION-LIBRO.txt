@@ -1,0 +1,41 @@
+INTEGRACIÓN DE "LA CÁMARA DE REFLEXIONES" EN WEB2
+
+PAQUETE PREPARADO PARA:
+D:\01 Logia\_Podcast\1000 - Desarrollo\01 - Desarrollo\web2
+
+MÉTODO RECOMENDADO
+1. Haz una copia de seguridad de la carpeta web2 actual.
+2. Cierra el servidor local de Web2 si está abierto.
+3. Extrae el contenido del ZIP de integración directamente dentro de la carpeta web2.
+4. Cuando Windows lo solicite, acepta combinar carpetas y reemplazar los cuatro archivos existentes.
+5. La extracción agrega el módulo del libro sin borrar ni reemplazar otros directorios de Web2.
+6. Levanta Web2 con tu proceso local habitual.
+7. Revisa estas dos direcciones:
+   - Página principal: http://localhost:PUERTO/
+   - Libro: http://localhost:PUERTO/libro-la-camara-de-reflexiones/
+8. Verifica el formulario de preventa en la página del libro.
+9. Después de validar localmente, continúa con tu proceso DEV a QA.
+10. La publicación del Draft de QA se realiza manualmente desde Netlify.
+
+ARCHIVOS EXISTENTES QUE SERÁN REEMPLAZADOS
+- channels\web\public\index.html
+- channels\web\public\assets\css\styles.css
+- channels\web\public\assets\js\header.js
+- channels\web\public\sitemap.xml
+
+CARPETAS Y ARCHIVOS QUE SERÁN AGREGADOS
+- channels\web\public\libro-la-camara-de-reflexiones\
+- tests\web\book-launch-v136.test.mjs
+- reports\136-integracion-libro-camara-reflexiones\
+
+PRUEBA ESPECÍFICA OPCIONAL
+Desde la raíz de web2:
+node --test tests/web/book-launch-v136.test.mjs
+
+RESULTADO ESPERADO
+5 pruebas aprobadas, 0 fallidas.
+
+IMPORTANTE
+- No extraigas este paquete en la carpeta local de Producción.
+- El formulario Netlify puede probarse visualmente en local, pero su registro real debe verificarse en QA.
+- Antes de publicar, confirma los datos SPEI y el criterio de entrega del libro físico.

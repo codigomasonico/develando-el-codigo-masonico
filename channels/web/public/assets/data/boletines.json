@@ -198,5 +198,15 @@
     "archivo": "archivo-boletines/boletin_2619.pdf",
     "imagen": "",
     "orden": 19
+	},
+  {
+    "numero": 20,
+    "especial": false,
+    "titulo": "El código que se vive",
+    "fecha": "2026-08-23",
+    "descripcion": "Descifrar el código masónico exige más que reconocer sus signos, comienza cuando una herramienta, un silencio o una forma modifica nuestra manera de vivir.",
+    "archivo": "archivo-boletines/boletin_2620.pdf",
+    "imagen": "",
+    "orden": 20
 	}
 ]

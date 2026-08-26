@@ -51,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
         activePage = 'reflexiones';
       }
 
+      if (path.includes('/libro-la-camara-de-reflexiones/')) {
+        activePage = '';
+      }
+
       document.querySelectorAll('.nav-link').forEach((link) => {
         if (link.dataset.page === activePage) {
           link.classList.add('active');

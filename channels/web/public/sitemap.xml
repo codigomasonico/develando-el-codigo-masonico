@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-16"?>
+<?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://develandoelcodigomasonico.com/</loc>
@@ -17,6 +17,9 @@
     </url>
     <url>
         <loc>https://develandoelcodigomasonico.com/comunidad.html</loc>
+    </url>
+    <url>
+        <loc>https://develandoelcodigomasonico.com/libro-la-camara-de-reflexiones/</loc>
     </url>
     <url>
         <loc>https://develandoelcodigomasonico.com/archivo-reflexiones/reflexion-2613.html</loc>

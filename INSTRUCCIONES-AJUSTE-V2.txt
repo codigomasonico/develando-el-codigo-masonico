@@ -1,0 +1,36 @@
+AJUSTE V2 DEL MÓDULO "LA CÁMARA DE REFLEXIONES"
+
+REQUISITO
+La integración V1 del libro debe estar instalada previamente en Web2.
+
+CARPETA DESTINO
+D:\01 Logia\_Podcast\1000 - Desarrollo\01 - Desarrollo\web2
+
+INSTALACIÓN
+1. Cierra el servidor local de Web2 si está abierto.
+2. Extrae el contenido de este ZIP directamente dentro de la carpeta web2.
+3. Acepta combinar carpetas y reemplazar los tres archivos existentes.
+4. Levanta Web2 con el procedimiento local habitual.
+5. Revisa la página principal y la landing del libro.
+
+ARCHIVOS REEMPLAZADOS
+- channels\web\public\index.html
+- channels\web\public\assets\css\styles.css
+- tests\web\book-launch-v136.test.mjs
+
+ARCHIVO AGREGADO
+- reports\136-integracion-libro-camara-reflexiones\260823-002-2254-DEV-ajuste-visual-promocion-libro-136.txt
+
+CAMBIOS
+- Se retiraron los precios del módulo de Inicio.
+- Se amplió la descripción con un gancho editorial.
+- El CTA ahora dice "Descubrir el libro".
+- La franja gris fue reemplazada por una tarjeta rectangular con borde dorado.
+- Los precios y la preventa dentro de la landing permanecen sin cambios.
+
+PRUEBA OPCIONAL
+Desde la raíz de web2:
+node --test tests/web/book-launch-v136.test.mjs
+
+RESULTADO ESPERADO
+6 pruebas aprobadas, 0 fallidas.

@@ -297,5 +297,18 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/4sGwieenKOoM8oCKRUoEic?si=LXXXJfdYSKq4depXKfUB9w",
 		"youtube": ""
+	},
+	{
+		"id": "ep-024",
+		"numero": 24,
+		"titulo": "Los Instrumentos del Compañero",
+		"categoria": "Simbolismo",
+		"fecha": "2026-08-26",
+		"duracion": "41:49",
+		"descripcion": "La plomada, el nivel y la regla dejan de ser simples herramientas cuando empiezan a mostrar la distancia entre lo que decimos valorar y la forma en que realmente vivimos.",
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/1dCgWxFpqJCDJJYQsmSOt6?si=wlrqo37WQaSYxvEGpFiW-g",
+		"youtube": ""
 	}	
 ]
