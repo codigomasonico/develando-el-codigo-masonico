@@ -310,5 +310,18 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/1dCgWxFpqJCDJJYQsmSOt6?si=wlrqo37WQaSYxvEGpFiW-g",
 		"youtube": ""
+	}	,
+	{
+		"id": "ep-025",
+		"numero": 25,
+		"titulo": "El Papel del Ritual",
+		"categoria": "Filosofía",
+		"fecha": "2026-09-02",
+		"duracion": "43:00",
+		"descripcion": "Una ceremonia puede salir perfecta y no dejar nada en nosotros. ¿Qué queda realmente cuando el ritual termina?",
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/3IHah0cZMgCqnFNuXm4Cg5?si=3jMv0U7VTLCqbTCVoD7YXA",
+		"youtube": ""
 	}	
 ]

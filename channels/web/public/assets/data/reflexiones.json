@@ -240,7 +240,7 @@
 		"titulo": "Lo que una medida puede revelar",
 		"slug": "reflexion-2624",
 		"url": "/archivo-reflexiones/reflexion-2624.html",
-		"fecha": "2026-08-17",
+		"fecha": "2026-08-26",
 		"categoria": "Simbolismo",
 		"descripcion": "La plomada, el nivel y la regla muestran que medir no transforma por sí mismo, pero puede revelar la distancia entre principios y conducta.",
 		"palabrasClave": [
@@ -254,6 +254,19 @@
 		],
 		"episodioRelacionado": "Los Instrumentos del Compañero",
 		"spotify": "https://open.spotify.com/episode/1dCgWxFpqJCDJJYQsmSOt6?si=wlrqo37WQaSYxvEGpFiW-g"
-	}	
-	
+	},
+	{
+		"id": "ref-025-cuando-la-forma-deja-de-interpelarnos",
+		"episodioId": "ep-025",
+		"episodioNumero": 25,
+		"titulo": "Cuando la forma deja de interpelarnos",
+		"slug": "reflexion-2625",
+		"url": "/archivo-reflexiones/reflexion-2625.html",
+		"fecha": "2026-09-02",
+		"categoria": "Ritual",
+		"descripcion": "Una reflexión sobre el ritual masónico, la repetición y la distancia que puede abrirse entre una ceremonia bien ejecutada y la conducta cotidiana.",
+		"palabrasClave": ["ritual masonico", "masoneria", "repeticion ritual", "conducta masonica", "ceremonia masonica", "reflexion"],
+		"episodioRelacionado": "El papel del ritual",
+		"spotify": "https://open.spotify.com/episode/3IHah0cZMgCqnFNuXm4Cg5?si=3jMv0U7VTLCqbTCVoD7YXA"
+	}
 ]

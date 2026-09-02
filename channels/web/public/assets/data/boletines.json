@@ -208,5 +208,15 @@
     "archivo": "archivo-boletines/boletin_2620.pdf",
     "imagen": "",
     "orden": 20
+	},
+  {
+    "numero": 21,
+    "especial": false,
+    "titulo": "Entre el símbolo y la palabra",
+    "fecha": "2026-08-30",
+    "descripcion": "Símbolo y palabra se encuentran en una búsqueda que no ofrece respuestas definitivas, sino nuevas formas de mirar, comprender y llevar lo pensado a la vida cotidiana.",
+    "archivo": "archivo-boletines/boletin_2621.pdf",
+    "imagen": "",
+    "orden": 21
 	}
 ]
