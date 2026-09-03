@@ -198,7 +198,7 @@ img {
 
 .hero__copy {
   display: grid;
-  grid-template-rows: auto auto minmax(22px, 1fr) auto;
+  grid-template-rows: auto auto minmax(18px, 1fr) auto;
   align-content: stretch;
   height: 100%;
 }
@@ -670,7 +670,7 @@ form select option {
 
 .newsbar {
 	grid-row: 4;
-  margin-top: 0px;
+  margin-top: 0;
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 14px;
