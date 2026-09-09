@@ -172,7 +172,7 @@
 
         <div class="book-launch-section__head">
           <h2>Elige tu formato</h2>
-          <p>
+          <p id="physicalOfferIntro">
             Reserva la edición física con precio especial hasta el 15 de septiembre de 2026.<br>
             La edición Kindle está disponible en preventa exclusivamente en Amazon.
           </p>
@@ -181,24 +181,24 @@
         <div class="preorder-grid">
 
           <article class="preorder-card preorder-card--featured">
-            <span class="preorder-card__badge">Preventa disponible</span>
+            <span id="physicalOfferBadge" class="preorder-card__badge">Preventa disponible</span>
             <h3>Libro físico</h3>
             <p class="preorder-card__desc">
               Edición impresa en tapa blanda.
             </p>
 
             <div class="preorder-card__price">
-              <strong>$429</strong>
-              <span>MXN · preventa*</span>
+              <strong id="physicalBookPrice">$429</strong>
+              <span id="physicalBookPriceLabel">MXN · preventa*</span>
             </div>
 
-            <p class="preorder-card__regular">
-              Precio regular desde el 15 de septiembre: <s>$499 MXN</s>
+            <p id="physicalRegularPriceNote" class="preorder-card__regular">
+              Precio regular desde el 16 de septiembre: <s>$499 MXN</s>
             </p>
 
             <ul>
               <li>Edición física</li>
-              <li>Precio especial de preventa</li>
+              <li id="physicalOfferBenefit">Precio especial de preventa</li>
             </ul>
 
             <button
@@ -250,9 +250,9 @@
           </article>
         </div>
 
-        <p class="tiny muted">
-          * Los ejemplares físicos se entregan sin costo únicamente en Monterrey o Guadalajara.
-          Por el momento, la preventa no incluye envíos a otras ciudades.
+        <p id="physicalDeliveryPageNote" class="tiny muted">
+          * Hasta el 15 de septiembre la entrega local es gratuita en Guadalajara y Monterrey.
+          Para el resto de México se calcula una tarifa de envío por estado. Desde el 16 de septiembre todos los pedidos se envían por paquetería.
         </p>
 
       </div>
@@ -321,7 +321,7 @@
     <div class="preorder-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="preorderModalTitle">
       <button class="preorder-modal__close" type="button" aria-label="Cerrar" data-close-preorder>×</button>
 
-      <div class="book-launch-kicker">Preventa</div>
+      <div id="preorderModalKicker" class="book-launch-kicker">Preventa</div>
       <h2 id="preorderModalTitle">Reserva tu ejemplar</h2>
 
       <div id="preorderStepForm">
@@ -339,6 +339,13 @@
           <input type="hidden" name="form-name" value="preventa-libro" />
           <input type="hidden" name="formato" id="preorderFormat" />
           <input type="hidden" name="importe" id="preorderAmount" />
+          <input type="hidden" name="precio_libro" id="preorderBookPrice" />
+          <input type="hidden" name="costo_envio" id="preorderShippingCost" />
+          <input type="hidden" name="tipo_entrega" id="preorderDeliveryType" />
+          <input type="hidden" name="etapa_precio" id="preorderPriceStage" />
+          <input type="hidden" name="estado" id="preorderDeliveryState" />
+          <input type="hidden" name="municipio" id="preorderDeliveryMunicipality" />
+          <input type="hidden" name="origen_envio" id="preorderShippingOrigin" />
           <input type="hidden" name="referencia" id="preorderReferenceField" />
 
           <div hidden aria-hidden="true">
@@ -361,26 +368,86 @@
               <input id="buyerPhone" name="telefono" type="tel" autocomplete="tel" required />
             </label>
 
-            <label id="deliveryCityField" hidden>
-              <span id="deliveryCityLabel">Ciudad de entrega del libro físico</span>
-              <select id="buyerCity" name="ciudad" autocomplete="address-level2" disabled>
-                <option value="">Selecciona Monterrey o Guadalajara</option>
-                <option value="Monterrey">Monterrey</option>
-                <option value="Guadalajara">Guadalajara</option>
+            <label id="deliveryPostalCodeField" hidden>
+              Código postal de entrega
+              <input
+                id="buyerPostalCode"
+                name="codigo_postal"
+                type="text"
+                inputmode="numeric"
+                autocomplete="postal-code"
+                pattern="[0-9]{5}"
+                maxlength="5"
+                placeholder="Ej. 44100"
+                disabled
+              />
+            </label>
+
+            <label id="deliveryStateField" hidden>
+              Estado de entrega (automático)
+              <select id="buyerState" autocomplete="address-level1" disabled>
+                <option value="">Se completa con el C.P.</option>
+                <option value="Aguascalientes">Aguascalientes</option>
+                <option value="Baja California">Baja California</option>
+                <option value="Baja California Sur">Baja California Sur</option>
+                <option value="Campeche">Campeche</option>
+                <option value="Chiapas">Chiapas</option>
+                <option value="Chihuahua">Chihuahua</option>
+                <option value="Ciudad de México">Ciudad de México</option>
+                <option value="Coahuila">Coahuila</option>
+                <option value="Colima">Colima</option>
+                <option value="Durango">Durango</option>
+                <option value="Estado de México">Estado de México</option>
+                <option value="Guanajuato">Guanajuato</option>
+                <option value="Guerrero">Guerrero</option>
+                <option value="Hidalgo">Hidalgo</option>
+                <option value="Jalisco">Jalisco</option>
+                <option value="Michoacán">Michoacán</option>
+                <option value="Morelos">Morelos</option>
+                <option value="Nayarit">Nayarit</option>
+                <option value="Nuevo León">Nuevo León</option>
+                <option value="Oaxaca">Oaxaca</option>
+                <option value="Puebla">Puebla</option>
+                <option value="Querétaro">Querétaro</option>
+                <option value="Quintana Roo">Quintana Roo</option>
+                <option value="San Luis Potosí">San Luis Potosí</option>
+                <option value="Sinaloa">Sinaloa</option>
+                <option value="Sonora">Sonora</option>
+                <option value="Tabasco">Tabasco</option>
+                <option value="Tamaulipas">Tamaulipas</option>
+                <option value="Tlaxcala">Tlaxcala</option>
+                <option value="Veracruz">Veracruz</option>
+                <option value="Yucatán">Yucatán</option>
+                <option value="Zacatecas">Zacatecas</option>
               </select>
+            </label>
+
+            <label id="deliveryMunicipalityField" hidden>
+              Municipio o alcaldía (automático)
+              <input
+                id="buyerMunicipality"
+                type="text"
+                autocomplete="address-level2"
+                placeholder="Se completa con el C.P."
+                disabled
+              />
             </label>
           </div>
 
           <div class="preorder-summary">
             <span>Formato seleccionado</span>
             <strong id="preorderSelectedFormat">—</strong>
+            <span>Libro</span>
+            <strong id="preorderSelectedBookPrice">—</strong>
+            <span>Envío</span>
+            <strong id="preorderSelectedShipping">Ingresa el C.P.</strong>
             <span>Total</span>
             <strong id="preorderSelectedAmount">—</strong>
           </div>
 
           <p id="physicalDeliveryNote" class="tiny muted" hidden>
-            * Para los formatos físicos, la entrega sin costo está disponible únicamente en Monterrey o Guadalajara.
-            Por el momento, la preventa no incluye envíos a otras ciudades.
+            * Hasta el 15 de septiembre la entrega local es gratuita en Guadalajara y Monterrey.
+            Para el resto de México se suma la tarifa de envío indicada. Desde el 16 de septiembre todos los pedidos se envían por paquetería.
           </p>
 
           <button class="btn btn-primary preorder-continue" type="submit">
@@ -454,7 +521,7 @@
 
   <script src="../assets/js/header.js" defer></script>
   <script src="../assets/js/footer.js" defer></script>
-  <script src="assets/js/preventa.js?v=20260824-6" defer></script>
+  <script src="assets/js/preventa.js?v=20260909-16" defer></script>
   <script src="/bot/guia-masonico.js" defer></script>
 
 </body>
