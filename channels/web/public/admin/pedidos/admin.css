@@ -1,0 +1,361 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b0c10;
+  --panel: #11131a;
+  --panel-2: #17191f;
+  --border: rgba(201, 162, 39, 0.26);
+  --gold: #c9a227;
+  --ivory: #f2ede4;
+  --text: #e8e7ea;
+  --muted: #aeb4c2;
+  --danger: #ffb4ab;
+  --ok: #b7e4c7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.admin-shell {
+  width: min(1500px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 64px;
+}
+
+.eyebrow {
+  margin-bottom: 8px;
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  color: var(--ivory);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+}
+
+p {
+  color: var(--muted);
+}
+
+.login-card {
+  width: min(440px, 100%);
+  margin: 10vh auto 0;
+  padding: 30px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--panel);
+}
+
+.login-card form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+input,
+select {
+  min-height: 44px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: 0;
+  background: #0f1117;
+  color: var(--text);
+}
+
+input:focus,
+select:focus {
+  border-color: var(--gold);
+}
+
+button {
+  min-height: 42px;
+  padding: 9px 15px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: var(--gold);
+  color: #171307;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.button--secondary {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: var(--text);
+}
+
+.admin-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.admin-header p {
+  margin-bottom: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.stats article {
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+}
+
+.stats span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.stats strong {
+  color: var(--ivory);
+  font-size: 1.65rem;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 220px;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.orders {
+  display: grid;
+  gap: 14px;
+}
+
+.order-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.order-card__top {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.9fr) minmax(240px, 1.25fr) minmax(210px, 1fr) minmax(190px, 0.8fr);
+  gap: 18px;
+  padding: 18px;
+}
+
+.order-card__bottom {
+  display: grid;
+  grid-template-columns: minmax(240px, 1.1fr) minmax(250px, 1fr) minmax(260px, 1.15fr);
+  gap: 18px;
+  padding: 16px 18px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  background: var(--panel-2);
+}
+
+.block-title {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.reference {
+  color: var(--gold);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 800;
+}
+
+.primary {
+  color: var(--ivory);
+  font-weight: 800;
+}
+
+.small {
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.money-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  font-size: 0.86rem;
+}
+
+.money-grid span {
+  color: var(--muted);
+}
+
+.money-grid strong {
+  color: var(--ivory);
+}
+
+.payment-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.payment-control input {
+  width: 20px;
+  min-height: 20px;
+  height: 20px;
+  accent-color: var(--gold);
+}
+
+.payment-control label {
+  display: inline;
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.actions button,
+.actions a {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 11px;
+  border: 1px solid rgba(201, 162, 39, 0.55);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gold);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.actions button.action-primary {
+  background: var(--gold);
+  color: #171307;
+}
+
+.quote-positive {
+  color: var(--ok);
+}
+
+.quote-negative {
+  color: var(--danger);
+}
+
+.status-chip {
+  display: inline-flex;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(201, 162, 39, 0.09);
+  color: var(--gold);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.message,
+.empty {
+  margin: 18px 0;
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(201, 162, 39, 0.05);
+}
+
+.message--error {
+  border-color: rgba(255, 180, 171, 0.35);
+  color: var(--danger);
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+}
+
+@media (max-width: 1050px) {
+  .order-card__top,
+  .order-card__bottom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-shell {
+    width: min(100% - 20px, 1500px);
+    padding-top: 18px;
+  }
+
+  .admin-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .toolbar,
+  .order-card__top,
+  .order-card__bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions button {
+    flex: 1;
+  }
+}

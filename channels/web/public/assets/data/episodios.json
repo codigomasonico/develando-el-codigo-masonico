@@ -310,7 +310,7 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/1dCgWxFpqJCDJJYQsmSOt6?si=wlrqo37WQaSYxvEGpFiW-g",
 		"youtube": ""
-	}	,
+	},
 	{
 		"id": "ep-025",
 		"numero": 25,
@@ -322,6 +322,19 @@
 		"imagen": "",
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/3IHah0cZMgCqnFNuXm4Cg5?si=3jMv0U7VTLCqbTCVoD7YXA",
+		"youtube": ""
+	},
+	{
+		"id": "ep-026",
+		"numero": 26,
+		"titulo": "La Cadena de Unión",
+		"categoria": "Ética",
+		"fecha": "2026-09-23",
+		"duracion": "40:33",
+		"descripcion": "La Cadena de Unión pone a prueba la distancia entre la fraternidad que proclamamos y la que demostramos con nuestras decisiones.",
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/4GYkK71QxaebKzyyUnKjPs?si=YMlRS8ygTpOZquL5EIW9Mg",
 		"youtube": ""
 	}	
 ]

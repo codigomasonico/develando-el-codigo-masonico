@@ -251,8 +251,8 @@
         </div>
 
         <p id="physicalDeliveryPageNote" class="tiny muted">
-          * Hasta el 15 de septiembre la entrega local es gratuita en Guadalajara y Monterrey.
-          Para el resto de México se calcula una tarifa de envío por estado. Desde el 16 de septiembre todos los pedidos se envían por paquetería.
+          * Hasta el 15 de septiembre la entrega local es gratuita en Guadalajara, Zapopan y Monterrey.
+          Para el resto de México el costo de envío se cotiza en tiempo real. Desde el 16 de septiembre todos los pedidos se envían por paquetería.
         </p>
 
       </div>
@@ -345,7 +345,13 @@
           <input type="hidden" name="etapa_precio" id="preorderPriceStage" />
           <input type="hidden" name="estado" id="preorderDeliveryState" />
           <input type="hidden" name="municipio" id="preorderDeliveryMunicipality" />
+          <input type="hidden" name="colonia" id="preorderDeliveryNeighborhood" />
           <input type="hidden" name="origen_envio" id="preorderShippingOrigin" />
+          <input type="hidden" name="skydropx_quotation_id" id="preorderSkydropxQuotationId" />
+          <input type="hidden" name="skydropx_rate_id" id="preorderSkydropxRateId" />
+          <input type="hidden" name="skydropx_provider" id="preorderSkydropxProvider" />
+          <input type="hidden" name="skydropx_service" id="preorderSkydropxService" />
+          <input type="hidden" name="skydropx_raw_cost" id="preorderSkydropxRawCost" />
           <input type="hidden" name="referencia" id="preorderReferenceField" />
 
           <div hidden aria-hidden="true">
@@ -385,41 +391,13 @@
 
             <label id="deliveryStateField" hidden>
               Estado de entrega (automático)
-              <select id="buyerState" autocomplete="address-level1" disabled>
-                <option value="">Se completa con el C.P.</option>
-                <option value="Aguascalientes">Aguascalientes</option>
-                <option value="Baja California">Baja California</option>
-                <option value="Baja California Sur">Baja California Sur</option>
-                <option value="Campeche">Campeche</option>
-                <option value="Chiapas">Chiapas</option>
-                <option value="Chihuahua">Chihuahua</option>
-                <option value="Ciudad de México">Ciudad de México</option>
-                <option value="Coahuila">Coahuila</option>
-                <option value="Colima">Colima</option>
-                <option value="Durango">Durango</option>
-                <option value="Estado de México">Estado de México</option>
-                <option value="Guanajuato">Guanajuato</option>
-                <option value="Guerrero">Guerrero</option>
-                <option value="Hidalgo">Hidalgo</option>
-                <option value="Jalisco">Jalisco</option>
-                <option value="Michoacán">Michoacán</option>
-                <option value="Morelos">Morelos</option>
-                <option value="Nayarit">Nayarit</option>
-                <option value="Nuevo León">Nuevo León</option>
-                <option value="Oaxaca">Oaxaca</option>
-                <option value="Puebla">Puebla</option>
-                <option value="Querétaro">Querétaro</option>
-                <option value="Quintana Roo">Quintana Roo</option>
-                <option value="San Luis Potosí">San Luis Potosí</option>
-                <option value="Sinaloa">Sinaloa</option>
-                <option value="Sonora">Sonora</option>
-                <option value="Tabasco">Tabasco</option>
-                <option value="Tamaulipas">Tamaulipas</option>
-                <option value="Tlaxcala">Tlaxcala</option>
-                <option value="Veracruz">Veracruz</option>
-                <option value="Yucatán">Yucatán</option>
-                <option value="Zacatecas">Zacatecas</option>
-              </select>
+              <input
+                id="buyerState"
+                type="text"
+                autocomplete="address-level1"
+                placeholder="Se completa con el C.P."
+                disabled
+              />
             </label>
 
             <label id="deliveryMunicipalityField" hidden>
@@ -432,21 +410,102 @@
                 disabled
               />
             </label>
+
+            <label id="deliveryNeighborhoodField" hidden>
+              Colonia
+              <select
+                id="buyerNeighborhood"
+                autocomplete="address-level3"
+                disabled
+              >
+                <option value="">Selecciona primero el C.P.</option>
+              </select>
+            </label>
+
+            <label id="deliveryNeighborhoodCustomField" hidden>
+              Colonia (escríbela)
+              <input
+                id="buyerNeighborhoodCustom"
+                type="text"
+                autocomplete="address-level3"
+                maxlength="120"
+                placeholder="Escribe la colonia"
+                disabled
+              />
+            </label>
+
+            <label id="deliveryStreetField" hidden>
+              Calle
+              <input
+                id="buyerStreet"
+                name="calle"
+                type="text"
+                autocomplete="address-line1"
+                maxlength="160"
+                placeholder="Ej. Av. Vallarta"
+                disabled
+              />
+            </label>
+
+            <label id="deliveryExteriorNumberField" hidden>
+              Número exterior
+              <input
+                id="buyerExteriorNumber"
+                name="numero_exterior"
+                type="text"
+                maxlength="30"
+                placeholder="Ej. 1234"
+                disabled
+              />
+            </label>
+
+            <label id="deliveryInteriorNumberField" hidden>
+              Número interior (opcional)
+              <input
+                id="buyerInteriorNumber"
+                name="numero_interior"
+                type="text"
+                autocomplete="address-line2"
+                maxlength="30"
+                placeholder="Ej. 4B"
+                disabled
+              />
+            </label>
+
+            <label id="deliveryReferencesField" hidden>
+              Referencias para la entrega (opcional)
+              <input
+                id="buyerDeliveryReferences"
+                name="referencias_entrega"
+                type="text"
+                maxlength="200"
+                placeholder="Ej. Portón negro, frente al parque"
+                disabled
+              />
+            </label>
           </div>
 
           <div class="preorder-summary">
-            <span>Formato seleccionado</span>
-            <strong id="preorderSelectedFormat">—</strong>
-            <span>Libro</span>
-            <strong id="preorderSelectedBookPrice">—</strong>
-            <span>Envío</span>
-            <strong id="preorderSelectedShipping">Ingresa el C.P.</strong>
-            <span>Total</span>
-            <strong id="preorderSelectedAmount">—</strong>
+            <div class="preorder-summary__item">
+              <span>Formato seleccionado</span>
+              <strong id="preorderSelectedFormat">—</strong>
+            </div>
+            <div class="preorder-summary__item">
+              <span>Libro</span>
+              <strong id="preorderSelectedBookPrice">—</strong>
+            </div>
+            <div class="preorder-summary__item">
+              <span>Envío</span>
+              <strong id="preorderSelectedShipping">Ingresa el C.P.</strong>
+            </div>
+            <div class="preorder-summary__item">
+              <span>Total</span>
+              <strong id="preorderSelectedAmount">—</strong>
+            </div>
           </div>
 
           <p id="physicalDeliveryNote" class="tiny muted" hidden>
-            * Hasta el 15 de septiembre la entrega local es gratuita en Guadalajara y Monterrey.
+            * Hasta el 15 de septiembre la entrega local es gratuita en Guadalajara, Zapopan y Monterrey.
             Para el resto de México se suma la tarifa de envío indicada. Desde el 16 de septiembre todos los pedidos se envían por paquetería.
           </p>
 
@@ -455,7 +514,7 @@
           </button>
 
           <p class="tiny muted">
-            Estos datos se usarán únicamente para identificar tu preventa y confirmar el pago.
+            Estos datos se usarán únicamente para identificar tu preventa, confirmar el pago y realizar la entrega.
           </p>
         </form>
       </div>
@@ -521,7 +580,7 @@
 
   <script src="../assets/js/header.js" defer></script>
   <script src="../assets/js/footer.js" defer></script>
-  <script src="assets/js/preventa.js?v=20260909-16" defer></script>
+  <script src="assets/js/preventa.js?v=20260910-02" defer></script>
   <script src="/bot/guia-masonico.js" defer></script>
 
 </body>

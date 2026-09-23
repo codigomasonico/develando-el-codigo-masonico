@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>Pedidos del libro</title>
+  <link rel="stylesheet" href="admin.css?v=20260910-01" />
+</head>
+<body>
+  <main class="admin-shell">
+    <section id="loginView" class="login-card" hidden>
+      <div class="eyebrow">Administración privada</div>
+      <h1>Pedidos del libro</h1>
+      <p>Ingresa tu contraseña administrativa.</p>
+
+      <form id="loginForm">
+        <label>
+          Contraseña
+          <input id="adminPassword" type="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Ingresar</button>
+        <p id="loginError" class="message message--error" hidden></p>
+      </form>
+    </section>
+
+    <section id="panelView" hidden>
+      <header class="admin-header">
+        <div>
+          <div class="eyebrow">La Cámara de Reflexiones</div>
+          <h1>Pedidos</h1>
+          <p>Confirma pagos, actualiza la tarifa de Skydropx y genera la guía.</p>
+        </div>
+
+        <div class="header-actions">
+          <button id="refreshButton" class="button button--secondary" type="button">Actualizar</button>
+          <button id="logoutButton" class="button button--secondary" type="button">Salir</button>
+        </div>
+      </header>
+
+      <section class="stats" aria-label="Resumen">
+        <article>
+          <span>Pedidos</span>
+          <strong id="statTotal">0</strong>
+        </article>
+        <article>
+          <span>Pago pendiente</span>
+          <strong id="statPending">0</strong>
+        </article>
+        <article>
+          <span>Pagados</span>
+          <strong id="statPaid">0</strong>
+        </article>
+        <article>
+          <span>Guías generadas</span>
+          <strong id="statGuides">0</strong>
+        </article>
+      </section>
+
+      <section class="toolbar">
+        <label class="search">
+          <span>Buscar</span>
+          <input id="searchInput" type="search" placeholder="Referencia, nombre, correo o C.P." />
+        </label>
+
+        <label>
+          <span>Estado</span>
+          <select id="statusFilter">
+            <option value="all">Todos</option>
+            <option value="pending">Pago pendiente</option>
+            <option value="paid">Pagados</option>
+            <option value="guide">Guía generada</option>
+          </select>
+        </label>
+      </section>
+
+      <p id="panelMessage" class="message" hidden></p>
+
+      <div id="ordersContainer" class="orders"></div>
+
+      <div id="emptyState" class="empty" hidden>
+        No hay pedidos que coincidan con el filtro.
+      </div>
+    </section>
+  </main>
+
+  <script src="admin.js?v=20260910-01" defer></script>
+</body>
+</html>

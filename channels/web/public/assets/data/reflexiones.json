@@ -268,5 +268,27 @@
 		"palabrasClave": ["ritual masonico", "masoneria", "repeticion ritual", "conducta masonica", "ceremonia masonica", "reflexion"],
 		"episodioRelacionado": "El papel del ritual",
 		"spotify": "https://open.spotify.com/episode/3IHah0cZMgCqnFNuXm4Cg5?si=3jMv0U7VTLCqbTCVoD7YXA"
+	},
+	{
+		"id": "ref-026-cuando-la-union-es-solo-una-forma",
+		"episodioId": "ep-026",
+		"episodioNumero": 26,
+		"titulo": "Cuando la unión es solo una forma",
+		"slug": "reflexion-2626",
+		"url": "/archivo-reflexiones/reflexion-2626.html",
+		"fecha": "2026-09-23",
+		"categoria": "Masonería contemporánea",
+		"descripcion": "La Cadena de Unión invita a revisar qué queda de la fraternidad cuando el gesto termina y el vínculo debe demostrarse en la vida cotidiana.",
+		"palabrasClave": [
+			"cadena de union",
+			"fraternidad masonica",
+			"masoneria",
+			"unidad",
+			"responsabilidad",
+			"reflexion"
+		],
+		"episodioRelacionado": "La Cadena de Unión",
+		"spotify": "https://open.spotify.com/episode/4GYkK71QxaebKzyyUnKjPs?si=YMlRS8ygTpOZquL5EIW9Mg"
 	}
+	
 ]

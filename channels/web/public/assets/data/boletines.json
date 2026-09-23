@@ -218,5 +218,35 @@
     "archivo": "archivo-boletines/boletin_2621.pdf",
     "imagen": "",
     "orden": 21
+	},
+  {
+    "numero": 22,
+    "especial": false,
+    "titulo": "Las huellas del camino interior",
+    "fecha": "2026-09-09",
+    "descripcion": "Un recorrido por las huellas que deja la experiencia y por la forma en que, al mirar hacia dentro, reconocemos cuánto hemos cambiado sin darnos cuenta.",
+    "archivo": "archivo-boletines/boletin_2622.pdf",
+    "imagen": "",
+    "orden": 22
+	},
+  {
+    "numero": 23,
+    "especial": false,
+    "titulo": "La piedra y el tiempo",
+    "fecha": "2026-09-13",
+    "descripcion": "Una reflexión sobre cómo el tiempo y el trabajo consciente van transformando, poco a poco, nuestra propia piedra.",
+    "archivo": "archivo-boletines/boletin_2623.pdf",
+    "imagen": "",
+    "orden": 23
+	},
+  {
+    "numero": 24,
+    "especial": false,
+    "titulo": "Lo que sostienen las columnas",
+    "fecha": "2026-09-21",
+    "descripcion": "Las columnas permanecen en silencio, pero su presencia plantea una pregunta esencial. ¿Qué sostiene realmente nuestras decisiones, vínculos y convicciones cuando nadie las está mirando?",
+    "archivo": "archivo-boletines/boletin_2624.pdf",
+    "imagen": "",
+    "orden": 24
 	}
 ]
