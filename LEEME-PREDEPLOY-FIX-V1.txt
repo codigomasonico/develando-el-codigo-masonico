@@ -1,0 +1,25 @@
+CARTES - PREDEPLOY FIX V1
+
+Objetivo:
+Corregir fallos de infraestructura del Quality Gate sin cambiar el funcionamiento de Cartes.
+
+Cambios:
+1. predeploy-quality-gate.mjs carga .env y completa variables operativas de QA si faltan.
+2. test:critical deja de usar pruebas WhatsApp legacy que importan módulos eliminados y usa WhatsApp V2.
+3. book-launch-v136.test.mjs se alinea al sitio actual: libro antes de Cartes y Kindle ya disponible en Amazon.
+4. parser TAP reconoce el formato de Node 24 (ℹ tests/pass/fail).
+5. .env.example documenta límites y precios operativos actuales.
+
+No modifica:
+- Core de Cartes
+- Límites ni precios en producción
+- Netlify Functions
+- Dashboard Admin V4
+- Blobs
+
+Validación:
+Unblock-File .\scripts\validate-predeploy-fix-v1.ps1
+.\scripts\validate-predeploy-fix-v1.ps1
+
+Luego ejecutar:
+.\run-predeploy.bat

@@ -33,8 +33,9 @@ test("V136 integra el acceso al libro entre Cartes y la guía gratuita", () => {
   const guide = home.indexOf('class="guia-section"');
 
   assert.ok(cartes >= 0);
-  assert.ok(book > cartes);
-  assert.ok(guide > book);
+  assert.ok(book >= 0);
+  assert.ok(cartes > book);
+  assert.ok(guide > cartes);
   assert.match(home, /href="\/libro-la-camara-de-reflexiones\/"/);
 });
 
@@ -42,13 +43,13 @@ test("V136 conserva el precio físico en la landing y deriva Kindle a Amazon", (
   assert.match(landing, /data-format="fisico"[\s\S]*?data-price="429"/);
   assert.match(
     landing,
-    /<h3>Edición Kindle<\/h3>[\s\S]*?Próximamente en Amazon[\s\S]*?Reservar edición Kindle en Amazon/
+    /<h3>Edición Kindle<\/h3>[\s\S]*?Disponible en Amazon[\s\S]*?Reservar edición Kindle en Amazon/
   );
   assert.doesNotMatch(landing, /data-format="digital"/);
   assert.doesNotMatch(landing, /data-format="ambos"/);
 
   const promoStart = home.indexOf('class="book-home-promo"');
-  const promoEnd = home.indexOf('class="guia-section"');
+  const promoEnd = home.indexOf('class="cartes-launch"');
   const promo = home.slice(promoStart, promoEnd);
 
   assert.doesNotMatch(promo, /\$(429|249|599)/);

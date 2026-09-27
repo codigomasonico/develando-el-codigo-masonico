@@ -13,6 +13,7 @@ import {
   getPayPalSubscription,
   normalizePayPalSubscription
 } from "./lib-paypal.mjs";
+import { normalizeLocale } from "../../../core/ai/i18n.mjs";
 
 const realDeps = {
   obtenerSuscripcionUsuario,
@@ -46,6 +47,9 @@ export function createCartesSubscriptionHandler(overrides = {}) {
     }
 
     const action = String(body?.action || "").trim().toLowerCase();
+    const locale = normalizeLocale(
+      body?.locale || request.headers.get("x-cartes-locale") || "es"
+    );
 
     if (!["checkout", "cancel"].includes(action)) {
       return json({ ok: false, error: "Acción no soportada." }, 400);
@@ -79,7 +83,8 @@ export function createCartesSubscriptionHandler(overrides = {}) {
 
         const checkout = await d.createCheckoutForCartes({
           provider: body?.provider,
-          userId
+          userId,
+          locale
         });
 
         return json({

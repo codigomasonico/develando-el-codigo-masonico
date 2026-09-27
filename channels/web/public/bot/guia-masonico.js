@@ -17,15 +17,272 @@
     maxChars: 900,
     maxHistory: 8,
     storageKey: "dcm_guia_masonico_v1",
-    identityKey: "dcm_cartes_web_identity_v1"
+    identityKey: "dcm_cartes_web_identity_v1",
+    localeKey: "dcm_cartes_locale_v1"
   };
 
-  const suggestions = [
-    "¿La masonería es una religión?",
-    "¿Qué representa la escuadra?",
-    "¿Qué es la Cámara de Reflexiones?",
-    "¿Por qué los masones utilizan mandil?"
-  ];
+  const UI_TEXT = Object.freeze({
+    es: Object.freeze({
+      open: "Abrir Cartes",
+      dialog: "Cartes, asistente de Develando el Código Masónico",
+      link: "Vincular",
+      linked: "Vinculado",
+      linkLabel: "Vincular Cartes con WhatsApp",
+      linkTitle: "Vincular con WhatsApp",
+      clear: "Limpiar",
+      clearLabel: "Limpiar conversación",
+      close: "Cerrar Cartes",
+      subtitle: "Asistente de Develando el Código Masónico",
+      usageLoading: "Consultas disponibles: cargando…",
+      reviewsLoading: "Revisiones de documentos disponibles: cargando…",
+      conversation: "Conversación",
+      suggestions: "Preguntas sugeridas",
+      placeholder: "Escribe tu pregunta sobre masonería…",
+      question: "Pregunta",
+      send: "Enviar pregunta",
+      language: "Idioma de Cartes",
+      disclaimer: "Cartes puede equivocarse. Contrasta la información importante con fuentes confiables. No representa oficialmente a ninguna obediencia, rito o jurisdicción.",
+      menuTitle: "Menú de Cartes",
+      menuSubtitle: "Selecciona una opción:",
+      mySubscription: "Mi suscripción",
+      typing: "Cartes está escribiendo"
+    }),
+    en: Object.freeze({
+      open: "Open Cartes",
+      dialog: "Cartes, assistant for Develando el Código Masónico",
+      link: "Connect",
+      linked: "Connected",
+      linkLabel: "Connect Cartes with WhatsApp",
+      linkTitle: "Connect with WhatsApp",
+      clear: "Clear",
+      clearLabel: "Clear conversation",
+      close: "Close Cartes",
+      subtitle: "Assistant for Develando el Código Masónico",
+      usageLoading: "Questions available: loading…",
+      reviewsLoading: "Document reviews available: loading…",
+      conversation: "Conversation",
+      suggestions: "Suggested questions",
+      placeholder: "Enter your question about Freemasonry…",
+      question: "Question",
+      send: "Send question",
+      language: "Cartes language",
+      disclaimer: "Cartes can make mistakes. Verify important information with reliable sources. It does not officially represent any Masonic obedience, rite, or jurisdiction.",
+      menuTitle: "Cartes Menu",
+      menuSubtitle: "Select an option:",
+      mySubscription: "My subscription",
+      typing: "Cartes is typing"
+    })
+  });
+
+  const SUGGESTIONS = Object.freeze({
+    es: Object.freeze([
+      "¿La masonería es una religión?",
+      "¿Qué representa la escuadra?",
+      "¿Qué es la Cámara de Reflexiones?",
+      "¿Por qué los masones utilizan mandil?"
+    ]),
+    en: Object.freeze([
+      "Is Freemasonry a religion?",
+      "What does the square represent?",
+      "What is the Chamber of Reflection?",
+      "Why do Freemasons wear aprons?"
+    ])
+  });
+
+  const WEB_SEGMENT_EN = Object.freeze([
+    ["Hola, soy Cartes, el asistente de Develando el Código Masónico.", "Hello, I am Cartes, the assistant for Develando el Código Masónico."],
+    ["Puedo ayudarte con consultas sobre historia, simbolismo, filosofía y pensamiento masónico.", "I can help with questions about Masonic history, symbolism, philosophy, and thought."],
+    ["También puedo revisar tus trabajos si tienes Cartes Plus.", "I can also review your papers if you have Cartes Plus."],
+    ["¿Quieres borrar toda la conversación guardada? Si vinculaste WhatsApp, también se borrará el contexto compartido. Esta acción no se puede deshacer.", "Do you want to delete the entire saved conversation? If you linked WhatsApp, the shared context will also be deleted. This action cannot be undone."],
+    ["Este navegador ya está vinculado con tu Cartes de WhatsApp.", "This browser is already linked with your Cartes account on WhatsApp."],
+    ["Protege tu cuenta Cartes Plus: vincúlala con WhatsApp. Así podrás recuperar tu suscripción, consultas y conversación si cambias de navegador, borras los datos del sitio o pierdes esta sesión.", "Protect your Cartes Plus account by linking it with WhatsApp. This lets you recover your subscription, questions, and conversation if you change browsers, clear site data, or lose this session."],
+    ["Envía desde el WhatsApp que deseas vincular:", "Send this from the WhatsApp account you want to link:"],
+    ["Al enviarlo, tu cuenta Web y ese WhatsApp compartirán plan, consultas, suscripción y conversación.", "Once sent, your Web account and that WhatsApp account will share the same plan, questions, subscription, and conversation."],
+    ["El código vence en", "The code expires in"],
+    ["Intentaré abrir el chat de Cartes; si no se abre, usa “Abrir chat con Cartes” o “Copiar código”.", "I will try to open the Cartes chat. If it does not open, use “Open chat with Cartes” or “Copy code”."],
+    ["El estado de Cartes no devolvió datos de uso válidos.", "The Cartes status did not return valid usage data."],
+    ["No fue posible consultar el estado de uso.", "Unable to retrieve usage status."],
+    ["Cartes Plus amplía tu conocimiento con más consultas, revisión y retroalimentación de documentos.", "Cartes Plus expands your access with more questions and document review feedback."],
+    ["En cada revisión recibirás observaciones sobre estructura, claridad y contenido para mejorar tu trabajo antes de presentarlo en Logia.", "Each review provides feedback on structure, clarity, and content so you can improve your paper before presenting it in lodge."],
+    ["La suscripción quedará vinculada a tu número de WhatsApp. Desde este mismo chat podrás consultar su estado o cancelarla.", "The subscription will be linked to your WhatsApp number. You can view its status or cancel renewal from this chat."],
+    ["La versión gratuita está pensada para consultas puntuales. Cartes Plus es para quienes desean estudiar con mayor profundidad y recibir apoyo en la preparación de sus trabajos.", "The free plan is intended for occasional questions. Cartes Plus is for those who want to study in greater depth and receive support preparing their papers."],
+    ["Para comenzar, selecciona “Suscribirme”.", "To begin, select “Subscribe”."],
+    ["MXN al mes tendrás hasta", "MXN per month, you will receive up to"],
+    ["documentos Word de hasta", "Word documents of up to"],
+    ["cada uno.", "each."],
+    ["Al utilizar Cartes aceptas sus Términos de uso y el Aviso de privacidad de Develando el Código Masónico.", "By using Cartes, you accept its Terms of Use and the Develando el Código Masónico Privacy Notice."],
+    ["Tus mensajes y los documentos que envíes serán tratados únicamente para prestar el servicio y mejorar tu experiencia.", "Your messages and submitted documents will be processed only to provide the service and improve your experience."],
+    ["Puedes consultar la información completa en nuestros términos y aviso de privacidad.", "You can review the complete information in our terms and privacy notice."],
+    ["Para cualquier duda, escríbenos a soporte@develandoelcodigomasonico.com.", "For questions, email soporte@develandoelcodigomasonico.com."],
+    ["Antes de continuar, confirma que leíste y aceptas los Términos de uso y el Aviso de privacidad de Cartes.", "Before continuing, confirm that you have read and accept the Cartes Terms of Use and Privacy Notice."],
+    ["No se generará ningún enlace de pago ni se activará Cartes Plus. Puedes seguir utilizando Cartes y volver a Suscribirme cuando quieras.", "No payment link will be generated and Cartes Plus will not be activated. You can continue using Cartes and subscribe whenever you wish."],
+    ["Gracias. Tu aceptación quedó registrada. Ahora selecciona el medio de pago que te resulte más conveniente.", "Thank you. Your acceptance has been recorded. Now select the payment method you prefer."],
+    ["Tu cuenta ya tiene Cartes Plus vigente. Consulta “Mi suscripción” para revisar su estado y vigencia.", "Your account already has an active Cartes Plus plan. Select “My subscription” to review its status and validity."],
+    ["Para recibir ayuda con Cartes, tu suscripción o un pago, escríbenos a soporte@develandoelcodigomasonico.com y cuéntanos brevemente qué ocurrió.", "For help with Cartes, your subscription, or a payment, email soporte@develandoelcodigomasonico.com and briefly describe what happened."],
+    ["La revisión de documentos está disponible únicamente para Cartes Plus.", "Document review is available only with Cartes Plus."],
+    ["Este tipo de archivo no es compatible. Cartes admite únicamente documentos Word en formato .doc o .docx para revisión.", "This file type is not supported. Cartes accepts only Word documents in .doc or .docx format for review."],
+    ["El archivo no fue revisado y no se consumió ninguna revisión.", "The file was not reviewed and no review credit was used."],
+    ["El archivo no se guardará después del procesamiento.", "The file will not be retained after processing."],
+    ["¿Autorizas el procesamiento de este documento?", "Do you authorize processing this document?"],
+    ["No se realizó ningún cambio. Tu número actual continúa vinculado a Cartes.", "No changes were made. Your current number remains linked to Cartes."],
+    ["No se realizó ningún cambio. WhatsApp continúa vinculado a tu cuenta Cartes.", "No changes were made. WhatsApp remains linked to your Cartes account."],
+    ["Entendido. No se realizó ningún cambio y la renovación de Cartes Plus continúa activa.", "Understood. No changes were made and your Cartes Plus renewal remains active."],
+    ["La renovación de Cartes Plus ya estaba cancelada. Conservas tus beneficios hasta finalizar el periodo vigente.", "Cartes Plus renewal was already canceled. Your benefits remain available until the current period ends."],
+    ["La renovación de Cartes Plus fue cancelada. Conservas tus beneficios hasta finalizar el periodo ya pagado.", "Cartes Plus renewal has been canceled. Your benefits remain available until the paid period ends."],
+    ["WhatsApp quedó desvinculado de esta cuenta.", "WhatsApp has been unlinked from this account."],
+    ["El número anterior ya no puede acceder a ella.", "The previous number can no longer access it."],
+    ["Tu plan, consultas, revisiones y suscripción permanecen sin cambios.", "Your plan, questions, reviews, and subscription remain unchanged."],
+    ["Puedes volver a vincular WhatsApp cuando quieras desde Vincular.", "You can link WhatsApp again at any time by selecting Connect."],
+    ["Cartes Plus se activará en esta misma cuenta cuando el proveedor confirme el pago.", "Cartes Plus will be activated on this same account when the provider confirms payment."],
+    ["Al confirmarse, el saldo se actualizará en la misma cuenta de Web y WhatsApp.", "Once confirmed, the balance will be updated on the same Web and WhatsApp account."],
+    ["Escribe tu pregunta sobre historia, simbolismo o filosofía masónica y con gusto te ayudaré.", "Enter your question about Masonic history, symbolism, or philosophy and I will be glad to help."],
+    ["Selecciona Aceptar para continuar o No aceptar para volver sin activar Cartes Plus.", "Select Accept to continue or Do not accept to return without activating Cartes Plus."],
+    ["Selecciona Mercado Pago o PayPal para continuar.", "Select Mercado Pago or PayPal to continue."],
+    ["Selecciona Mercado Pago o PayPal para comprar el paquete.", "Select Mercado Pago or PayPal to purchase the package."],
+    ["Selecciona el medio de pago.", "Select a payment method."],
+    ["Selecciona Cancelar renovación o Volver al menú.", "Select Cancel renewal or Back to menu."],
+    ["Selecciona Sí, cancelar o No cancelar.", "Select Yes, cancel or Do not cancel."],
+    ["Confirma si deseas iniciar el cambio de número.", "Confirm whether you want to start changing your number."],
+    ["Confirma si deseas desvincular WhatsApp.", "Confirm whether you want to unlink WhatsApp."],
+    ["Esta acción no cancela Cartes Plus ni modifica tu saldo o suscripción.", "This action does not cancel Cartes Plus or change your balance or subscription."],
+    ["Tu número actual seguirá funcionando hasta que verifiques el nuevo número.", "Your current number will keep working until you verify the new number."],
+    ["¿Confirmas que deseas cambiar el número de WhatsApp vinculado?", "Do you confirm that you want to change the linked WhatsApp number?"],
+    ["Tu número actual seguirá funcionando hasta que el nuevo número sea verificado.", "Your current number will keep working until the new number is verified."],
+    ["Tu plan, consultas, revisiones, suscripción y conversación permanecerán en la misma cuenta.", "Your plan, questions, reviews, subscription, and conversation will remain on the same account."],
+    ["¿Confirmas que deseas desvincular WhatsApp?", "Do you confirm that you want to unlink WhatsApp?"],
+    ["Ese número dejará de acceder a esta cuenta.", "That number will no longer have access to this account."],
+    ["Tu plan, consultas, revisiones y suscripción permanecerán en Cartes Web y esta acción no cancela Cartes Plus.", "Your plan, questions, reviews, and subscription will remain in Cartes Web, and this action does not cancel Cartes Plus."],
+    ["¿Confirmas que deseas cancelar la renovación de Cartes Plus?", "Do you confirm that you want to cancel Cartes Plus renewal?"],
+    ["Conservarás tus beneficios hasta finalizar el periodo ya pagado.", "You will keep your benefits until the paid period ends."],
+    ["El pago es único por", "This is a one-time payment of"],
+    ["No es recurrente y las revisiones vencerán el", "It is non-recurring and the reviews will expire on"],
+    ["El paquete incluye", "The package includes"],
+    ["revisiones adicionales por", "additional reviews for"],
+    ["en un solo pago.", "as a one-time payment."],
+    ["está listo. Abre el enlace para completar la suscripción.", "is ready. Open the link to complete your subscription."],
+    ["está listo.", "is ready."],
+    ["Documento para revisión:", "Document for review:"],
+    ["Cartes procesará temporalmente", "Cartes will temporarily process"],
+    ["para validar que tenga un máximo de", "to verify that it has no more than"],
+    ["páginas y, si cumple, realizar la revisión.", "pages and, if eligible, perform the review."],
+    ["El documento supera el tamaño técnico máximo de", "The document exceeds the technical maximum size of"],
+    ["Cartes devolvió una revisión vacía.", "Cartes returned an empty review."],
+    ["Cartes no devolvió un código de cambio válido.", "Cartes did not return a valid number-change code."],
+    ["Código generado:", "Code generated:"],
+    ["Desde el NUEVO número de WhatsApp, abre el chat con Cartes y envía exactamente ese código.", "From the NEW WhatsApp number, open the Cartes chat and send that exact code."],
+    ["Vence en", "It expires in"],
+    ["minutos.", "minutes."],
+    ["Tu número actual seguirá vinculado hasta que el nuevo complete la verificación.", "Your current number will remain linked until the new number completes verification."],
+    ["No fue posible revisar el documento.", "The document could not be reviewed."],
+    ["No fue posible obtener una respuesta.", "Unable to obtain an answer."],
+    ["Cartes devolvió una respuesta vacía.", "Cartes returned an empty answer."],
+    ["Ocurrió un error inesperado.", "An unexpected error occurred."],
+    ["No fue posible consultar tu suscripción.", "Unable to retrieve your subscription."],
+    ["No fue posible cancelar la renovación.", "Unable to cancel renewal."],
+    ["No fue posible iniciar el pago.", "Unable to start payment."],
+    ["No fue posible iniciar la compra.", "Unable to start the purchase."],
+    ["No se pudo iniciar la vinculación.", "Unable to start linking."],
+    ["No fue posible iniciar el cambio de número.", "Unable to start the number change."],
+    ["No fue posible desvincular WhatsApp.", "Unable to unlink WhatsApp."],
+    ["No encontré una suscripción recurrente asociada a tu cuenta.", "I did not find a recurring subscription associated with your account."],
+    ["No encontré una suscripción cancelable de Mercado Pago o PayPal.", "I did not find a Mercado Pago or PayPal subscription that can be canceled."],
+    ["Debes aceptar los Términos y el Aviso de privacidad antes de continuar.", "You must accept the Terms and Privacy Notice before continuing."],
+    ["Proveedor de pago no soportado.", "Unsupported payment provider."],
+    ["Los paquetes adicionales están disponibles únicamente para Cartes Plus vigente.", "Additional packages are available only with an active Cartes Plus plan."],
+    ["Ya compraste los 2 paquetes adicionales permitidos durante este periodo de Cartes Plus.", "You have already purchased the two additional packages allowed during this Cartes Plus period."],
+    ["No fue posible determinar la fecha de vencimiento del periodo Plus vigente.", "Unable to determine the expiration date of the current Plus period."],
+    ["No fue posible obtener la configuración de Cartes.", "Unable to retrieve the Cartes configuration."],
+    ["La configuración de límites de Cartes es inválida.", "The Cartes limits configuration is invalid."],
+    ["La pregunta supera el máximo de", "The question exceeds the maximum of"],
+    ["caracteres.", "characters."],
+    ["Sin suscripción recurrente", "No recurring subscription"],
+    ["Cartes gratuito", "Cartes Free"],
+    ["Consultas usadas:", "Questions used:"],
+    ["Consultas disponibles:", "Questions available:"],
+    ["consulta disponible", "question available"],
+    ["consultas disponibles", "questions available"],
+    ["Revisiones de documentos disponibles:", "Document reviews available:"],
+    ["Revisiones disponibles:", "Reviews available:"],
+    ["revisión disponible", "review available"],
+    ["revisiones disponibles", "reviews available"],
+    ["Paquetes adicionales:", "Additional packages:"],
+    ["Fecha de vencimiento:", "Expiration date:"],
+    ["Renovación de consultas gratuitas:", "Free question renewal:"],
+    ["Renovación:", "Renewal:"],
+    ["Periodo gratuito: comienza con la primera consulta válida respondida por Cartes", "Free period: begins with the first valid question answered by Cartes"],
+    ["Medio de pago:", "Payment method:"],
+    ["No aplica", "Not applicable"],
+    ["Cancelada", "Canceled"],
+    ["Conversar con Cartes", "Talk with Cartes"],
+    ["Revisar documento", "Review document"],
+    ["Conoce Cartes Plus", "Learn about Cartes Plus"],
+    ["Suscribirme", "Subscribe"],
+    ["Mi suscripción", "My subscription"],
+    ["Ayuda y soporte", "Help and support"],
+    ["Privacidad y términos", "Privacy and terms"],
+    ["Idioma / Language", "Language"],
+    ["Cambiar número de WhatsApp", "Change WhatsApp number"],
+    ["Desvincular WhatsApp", "Unlink WhatsApp"],
+    ["Comprar", "Buy"],
+    ["Cancelar renovación", "Cancel renewal"],
+    ["Volver al menú", "Back to menu"],
+    ["Contratar Plus", "Get Plus"],
+    ["Sí, generar código", "Yes, generate code"],
+    ["No cambiar", "Do not change"],
+    ["Sí, desvincular", "Yes, unlink"],
+    ["No desvincular", "Do not unlink"],
+    ["Sí, cancelar", "Yes, cancel"],
+    ["No cancelar", "Do not cancel"],
+    ["No aceptar", "Do not accept"],
+    ["Aceptar", "Accept"],
+    ["Ver Términos de uso", "View Terms of Use"],
+    ["Ver Aviso de privacidad", "View Privacy Notice"],
+    ["Abrir chat con Cartes", "Open chat with Cartes"],
+    ["Copiar código", "Copy code"],
+    ["Código copiado", "Code copied"],
+    ["Abrir ", "Open "],
+    ["Aviso de privacidad:", "Privacy Notice:"],
+    ["Términos:", "Terms:"],
+    ["revisiones mensuales", "monthly reviews"],
+    ["consultas gratuitas", "free questions"],
+    ["consultas", "questions"],
+    ["revisiones", "reviews"],
+    ["páginas", "pages"],
+    ["al mes", "per month"],
+    ["estarán disponibles nuevamente el", "will be available again on"],
+    ["Ya utilizaste las", "You have used all"],
+    ["de este periodo.", "for this period."],
+    ["Si quieres seguir conversando con Cartes ahora, puedes activar Cartes Plus por", "To continue talking with Cartes now, you can activate Cartes Plus for"]
+  ]);
+
+  let currentLocale = loadPreferredLocaleWeb();
+
+  function normalizeLocaleWeb(value) {
+    return String(value || "").trim().toLowerCase().startsWith("en") ? "en" : "es";
+  }
+
+  function t(key) {
+    return UI_TEXT[currentLocale]?.[key] || UI_TEXT.es[key] || key;
+  }
+
+  function getSuggestionsWeb() {
+    return SUGGESTIONS[currentLocale] || SUGGESTIONS.es;
+  }
+
+  function translateWebText(value) {
+    const text = String(value ?? "");
+    if (currentLocale !== "en" || !text) return text;
+
+    let result = text;
+    for (const [spanish, english] of WEB_SEGMENT_EN) {
+      result = result.split(spanish).join(english);
+    }
+
+    return result
+      .replace(/\/cartes-whatsapp\/terminos\.html/g, "/cartes-whatsapp/terms.html")
+      .replace(/\/cartes-whatsapp\/privacy\.html/g, "/cartes-whatsapp/privacy-en.html")
+      .replace(/\/cartes-whatsapp\/suscripcion\.html/g, "/cartes-whatsapp/subscription.html");
+  }
 
   const history = sanitizeLegacyMenuNoise(loadHistory());
   const webIdentity = loadOrCreateWebIdentity();
@@ -162,7 +419,7 @@
     const launcher = document.createElement("button");
     launcher.type = "button";
     launcher.className = "gm-launcher";
-    launcher.setAttribute("aria-label", "Abrir Cartes");
+    launcher.setAttribute("aria-label", t("open"));
     launcher.setAttribute("aria-expanded", "false");
     launcher.innerHTML = `
       <span class="gm-launcher__icon" aria-hidden="true">✦</span>
@@ -174,7 +431,7 @@
     shell.dataset.open = "false";
     shell.setAttribute("role", "dialog");
     shell.setAttribute("aria-modal", "false");
-    shell.setAttribute("aria-label", "Cartes, asistente de Develando el Código Masónico");
+    shell.setAttribute("aria-label", t("dialog"));
     shell.innerHTML = `
       <header class="gm-header">
         <div class="gm-header__identity">
@@ -184,21 +441,36 @@
           </div>
         </div>
         <div class="gm-header__actions">
-          <button class="gm-link" type="button" aria-label="Vincular Cartes con WhatsApp" title="Vincular con WhatsApp">Vincular</button>
-          <button class="gm-clear" type="button" aria-label="Limpiar conversación" title="Limpiar conversación">
+          <div class="gm-language" role="group" aria-label="${t("language")}" title="${t("language")}">
+            <button
+              class="gm-language__option${currentLocale === "es" ? " is-active" : ""}"
+              type="button"
+              data-locale="es"
+              aria-pressed="${currentLocale === "es" ? "true" : "false"}"
+            >ES</button>
+            <span class="gm-language__separator" aria-hidden="true">|</span>
+            <button
+              class="gm-language__option${currentLocale === "en" ? " is-active" : ""}"
+              type="button"
+              data-locale="en"
+              aria-pressed="${currentLocale === "en" ? "true" : "false"}"
+            >EN</button>
+          </div>
+          <button class="gm-link" type="button" aria-label="${t("linkLabel")}" title="${t("linkTitle")}">${t("link")}</button>
+          <button class="gm-clear" type="button" aria-label="${t("clearLabel")}" title="${t("clearLabel")}">
             <span aria-hidden="true">↺</span>
-            <span class="gm-clear__label">Limpiar</span>
+            <span class="gm-clear__label">${t("clear")}</span>
           </button>
-          <button class="gm-close" type="button" aria-label="Cerrar Cartes">×</button>
+          <button class="gm-close" type="button" aria-label="${t("close")}">×</button>
         </div>
-        <div class="gm-header__subtitle gm-header__status">Asistente de Develando el Código Masónico</div>
+        <div class="gm-header__subtitle gm-header__status">${t("subtitle")}</div>
         <div class="gm-header__metrics">
-          <div class="gm-header__usage" aria-live="polite">Consultas disponibles: cargando…</div>
-          <div class="gm-header__reviews" aria-live="polite" hidden>Revisiones de documentos disponibles: cargando…</div>
+          <div class="gm-header__usage" aria-live="polite">${t("usageLoading")}</div>
+          <div class="gm-header__reviews" aria-live="polite" hidden>${t("reviewsLoading")}</div>
         </div>
       </header>
-      <div class="gm-messages" aria-live="polite" aria-label="Conversación"></div>
-      <div class="gm-suggestions" aria-label="Preguntas sugeridas"></div>
+      <div class="gm-messages" aria-live="polite" aria-label="${t("conversation")}"></div>
+      <div class="gm-suggestions" aria-label="${t("suggestions")}"></div>
       <div>
         <input
           class="gm-document-input"
@@ -207,10 +479,10 @@
           hidden
         >
         <form class="gm-form">
-          <textarea class="gm-input" rows="1" maxlength="${CONFIG.maxChars}" placeholder="Escribe tu pregunta sobre masonería…" aria-label="Pregunta"></textarea>
-          <button class="gm-send" type="submit" aria-label="Enviar pregunta">➤</button>
+          <textarea class="gm-input" rows="1" maxlength="${CONFIG.maxChars}" placeholder="${t("placeholder")}" aria-label="${t("question")}"></textarea>
+          <button class="gm-send" type="submit" aria-label="${t("send")}">➤</button>
         </form>
-        <p class="gm-footer-note">Cartes puede equivocarse. Contrasta la información importante con fuentes confiables. No representa oficialmente a ninguna obediencia, rito o jurisdicción.</p>
+        <p class="gm-footer-note">${t("disclaimer")}</p>
       </div>
     `;
 
@@ -219,6 +491,7 @@
     const close = shell.querySelector(".gm-close");
     const clear = shell.querySelector(".gm-clear");
     const link = shell.querySelector(".gm-link");
+    const language = shell.querySelector(".gm-language");
     const form = shell.querySelector(".gm-form");
     const input = shell.querySelector(".gm-input");
     const send = shell.querySelector(".gm-send");
@@ -228,7 +501,7 @@
     const reviewsUsage = shell.querySelector(".gm-header__reviews");
     const documentInput = shell.querySelector(".gm-document-input");
 
-    suggestions.forEach((question) => {
+    getSuggestionsWeb().forEach((question) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "gm-suggestion";
@@ -241,6 +514,15 @@
     close.addEventListener("click", () => setOpen(false));
     clear.addEventListener("click", clearConversation);
     link.addEventListener("click", startWhatsAppLink);
+    language.addEventListener("click", (event) => {
+      const option = event.target.closest(".gm-language__option");
+      if (!option) return;
+
+      void setLocaleWeb(option.dataset.locale, {
+        sync: true,
+        announce: true
+      });
+    });
 
     documentInput.addEventListener("change", () => {
       const file = documentInput.files?.[0] || null;
@@ -279,10 +561,119 @@
       messages,
       suggestionBox,
       link,
+      language,
       usage,
       reviewsUsage,
       documentInput
     };
+  }
+
+  function setLocalizedText(element, source) {
+    if (!element) return;
+    const original = String(source ?? "");
+    element.dataset.cartesI18nSource = original;
+    element.textContent = translateWebText(original);
+  }
+
+  function applyStaticLocaleWeb() {
+    if (!ui) return;
+
+    ui.language
+      .querySelectorAll(".gm-language__option")
+      .forEach((option) => {
+        const active = option.dataset.locale === currentLocale;
+        option.classList.toggle("is-active", active);
+        option.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    ui.launcher.setAttribute("aria-label", t("open"));
+    ui.shell.setAttribute("aria-label", t("dialog"));
+    ui.link.setAttribute("aria-label", t("linkLabel"));
+    ui.link.setAttribute("title", t("linkTitle"));
+    ui.link.textContent = ui.link.dataset.linked === "true" ? t("linked") : t("link");
+    ui.shell.querySelector(".gm-clear")?.setAttribute("aria-label", t("clearLabel"));
+    ui.shell.querySelector(".gm-clear")?.setAttribute("title", t("clearLabel"));
+    const clearLabel = ui.shell.querySelector(".gm-clear__label");
+    if (clearLabel) clearLabel.textContent = t("clear");
+    ui.shell.querySelector(".gm-close")?.setAttribute("aria-label", t("close"));
+    const subtitle = ui.shell.querySelector(".gm-header__subtitle");
+    if (subtitle) subtitle.textContent = t("subtitle");
+    ui.messages.setAttribute("aria-label", t("conversation"));
+    ui.suggestionBox.setAttribute("aria-label", t("suggestions"));
+    ui.input.placeholder = t("placeholder");
+    ui.input.setAttribute("aria-label", t("question"));
+    ui.send.setAttribute("aria-label", t("send"));
+    ui.language.setAttribute("aria-label", t("language"));
+    ui.language.setAttribute("title", t("language"));
+    const footer = ui.shell.querySelector(".gm-footer-note");
+    if (footer) footer.textContent = t("disclaimer");
+
+    if (ui.usage.dataset.state === "ready") {
+      renderUsageFromDatasetWeb();
+    } else {
+      ui.usage.textContent = t("usageLoading");
+    }
+
+    if (ui.reviewsUsage.dataset.state === "ready") {
+      renderReviewUsageFromDatasetWeb();
+    } else {
+      ui.reviewsUsage.textContent = t("reviewsLoading");
+    }
+
+    ui.shell.querySelectorAll("[data-cartes-i18n-source]").forEach((element) => {
+      element.textContent = translateWebText(element.dataset.cartesI18nSource || "");
+    });
+
+    if (ui.suggestionBox.classList.contains("gm-suggestions--main-menu")) {
+      renderMenuButtonsWeb();
+    } else if (!webSubscriptionFlow) {
+      restoreDefaultSuggestionsWeb();
+    }
+  }
+
+  async function setLocaleWeb(value, { sync = true, announce = false } = {}) {
+    const nextLocale = normalizeLocaleWeb(value);
+    const changed = nextLocale !== currentLocale;
+    currentLocale = nextLocale;
+
+    try {
+      localStorage.setItem(CONFIG.localeKey, currentLocale);
+    } catch {}
+
+    applyStaticLocaleWeb();
+
+    if (sync) {
+      try {
+        const response = await fetch(CONFIG.linkEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Cartes-Locale": currentLocale
+          },
+          body: JSON.stringify({
+            action: "locale_set",
+            web_identity: webIdentity,
+            locale: currentLocale
+          }),
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error("Unable to save the Cartes language preference.");
+        }
+      } catch (error) {
+        console.warn("CARTES_WEB_LOCALE_SYNC_V140", error);
+      }
+    }
+
+    if (announce && changed) {
+      addMessage(
+        "assistant",
+        currentLocale === "en"
+          ? "Language changed to English. Your preference is shared with Cartes on WhatsApp."
+          : "Idioma cambiado a español. Tu preferencia se comparte con Cartes en WhatsApp.",
+        false
+      );
+    }
   }
 
   function setOpen(open) {
@@ -348,9 +739,9 @@
   async function clearConversation() {
     if (busy) return;
 
-    const confirmed = window.confirm(
+    const confirmed = window.confirm(translateWebText(
       "¿Quieres borrar toda la conversación guardada? Si vinculaste WhatsApp, también se borrará el contexto compartido. Esta acción no se puede deshacer."
-    );
+    ));
 
     if (!confirmed) return;
 
@@ -358,7 +749,7 @@
       await fetch(CONFIG.conversationEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "clear", web_identity: webIdentity })
+        body: JSON.stringify({ action: "clear", web_identity: webIdentity, locale: currentLocale })
       });
     } catch {
       // La limpieza local continúa aunque el servidor no esté disponible.
@@ -382,7 +773,7 @@
       const response = await fetch(CONFIG.conversationEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "history", web_identity: webIdentity })
+        body: JSON.stringify({ action: "history", web_identity: webIdentity, locale: currentLocale })
       });
 
       if (!response.ok) return;
@@ -423,7 +814,7 @@
     const abrir = document.createElement("button");
     abrir.type = "button";
     abrir.className = "gm-suggestion";
-    abrir.textContent = "Abrir chat con Cartes";
+    setLocalizedText(abrir, "Abrir chat con Cartes");
     abrir.addEventListener("click", () => {
       window.open(url, "_blank", "noopener,noreferrer");
     });
@@ -431,11 +822,11 @@
     const copiar = document.createElement("button");
     copiar.type = "button";
     copiar.className = "gm-suggestion";
-    copiar.textContent = "Copiar código";
+    setLocalizedText(copiar, "Copiar código");
     copiar.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(instruction);
-        copiar.textContent = "Código copiado";
+        setLocalizedText(copiar, "Código copiado");
       } catch {
         const area = document.createElement("textarea");
         area.value = instruction;
@@ -446,7 +837,7 @@
         area.select();
         document.execCommand("copy");
         area.remove();
-        copiar.textContent = "Código copiado";
+        setLocalizedText(copiar, "Código copiado");
       }
     });
 
@@ -463,7 +854,7 @@
       const response = await fetch(CONFIG.linkEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "start", web_identity: webIdentity })
+        body: JSON.stringify({ action: "start", web_identity: webIdentity, locale: currentLocale })
       });
 
       const data = await response.json().catch(() => ({}));
@@ -475,7 +866,7 @@
       updateUsage(data.usage);
 
       if (data.linked) {
-        ui.link.textContent = "Vinculado";
+        ui.link.textContent = t("linked");
         ui.link.dataset.linked = "true";
         addMessage("assistant", "Este navegador ya está vinculado con tu Cartes de WhatsApp.", false);
         return;
@@ -511,11 +902,15 @@
         const response = await fetch(CONFIG.linkEndpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "status", web_identity: webIdentity }),
+          body: JSON.stringify({ action: "status", web_identity: webIdentity, locale: currentLocale }),
           cache: "no-store"
         });
 
         const data = await response.json().catch(() => ({}));
+
+        if (response.ok && data.locale && normalizeLocaleWeb(data.locale) !== currentLocale) {
+          await setLocaleWeb(data.locale, { sync: false, announce: false });
+        }
 
         // Incluso si el endpoint responde con error, intentamos recuperar
         // cualquier bloque usage válido incluido en la respuesta.
@@ -523,11 +918,11 @@
 
         if (response.ok) {
           if (data.linked) {
-            ui.link.textContent = "Vinculado";
+            ui.link.textContent = t("linked");
             ui.link.disabled = true;
             ui.link.dataset.linked = "true";
           } else {
-            ui.link.textContent = "Vincular";
+            ui.link.textContent = t("link");
             ui.link.disabled = false;
             delete ui.link.dataset.linked;
 
@@ -601,7 +996,11 @@
       "suscripcion",
       "mi suscripcion",
       "estado de mi suscripcion",
-      "ver mi suscripcion"
+      "ver mi suscripcion",
+      "subscription",
+      "my subscription",
+      "subscription status",
+      "view my subscription"
     ]).has(normalizarComandoWeb(texto));
   }
 
@@ -617,7 +1016,8 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          web_identity: webIdentity
+          web_identity: webIdentity,
+          locale: currentLocale
         }),
         cache: "no-store"
       });
@@ -663,14 +1063,14 @@
       currentReviewPackExpiration = expirationRaw;
 
       const expiration =
-        formatCartesDateWeb(expirationRaw) ||
+        formatCartesDateWeb(expirationRaw, currentLocale) ||
         "No aplica";
 
       const renewal =
         subscription?.renovacion_cancelada
           ? "Cancelada"
           : (
-              formatCartesDateWeb(subscription?.next_payment_date) ||
+              formatCartesDateWeb(subscription?.next_payment_date, currentLocale) ||
               "No aplica"
             );
 
@@ -798,7 +1198,8 @@
             },
             body: JSON.stringify({
               action: "start_change_whatsapp",
-              web_identity: webIdentity
+              web_identity: webIdentity,
+              locale: currentLocale
             }),
             cache: "no-store"
           }
@@ -873,7 +1274,8 @@
             },
             body: JSON.stringify({
               action: "unlink_whatsapp",
-              web_identity: webIdentity
+              web_identity: webIdentity,
+              locale: currentLocale
             }),
             cache: "no-store"
           }
@@ -893,6 +1295,9 @@
       updateUsage(data.usage);
 
       ui.link.textContent = "Vincular";
+      if (currentLocale === "en") {
+        ui.link.textContent = "Connect";
+      }
       ui.link.disabled = false;
       delete ui.link.dataset.linked;
 
@@ -924,14 +1329,13 @@
       setBusy(false);
     }
   }
-  function formatCartesDateWeb(value) {
+  function formatCartesDateWeb(value, locale = currentLocale) {
     const raw = String(value || "").trim();
     if (!raw) return "";
 
-    const months = [
-      "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-      "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
-    ];
+    const months = normalizeLocaleWeb(locale) === "en"
+      ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+      : ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
     const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
 
@@ -967,7 +1371,7 @@
       return;
     }
 
-    suggestions.forEach((question) => {
+    getSuggestionsWeb().forEach((question) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "gm-suggestion";
@@ -983,7 +1387,8 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          web_identity: webIdentity
+          web_identity: webIdentity,
+          locale: currentLocale
         }),
         cache: "no-store"
       });
@@ -1091,7 +1496,8 @@
           ]),
       ["4", "Mi suscripción"],
       ["5", "Ayuda y soporte"],
-      ["6", "Privacidad y términos"]
+      ["6", "Privacidad y términos"],
+      ["8", "Idioma / Language"]
     ];
 
     ui.suggestionBox.replaceChildren();
@@ -1101,11 +1507,11 @@
 
     const title = document.createElement("div");
     title.className = "gm-menu-heading__title";
-    title.textContent = "Menú de Cartes";
+    title.textContent = t("menuTitle");
 
     const subtitle = document.createElement("div");
     subtitle.className = "gm-menu-heading__subtitle";
-    subtitle.textContent = "Selecciona una opción:";
+    subtitle.textContent = t("menuSubtitle");
 
     heading.append(title, subtitle);
     ui.suggestionBox.appendChild(heading);
@@ -1114,7 +1520,7 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "gm-suggestion";
-      button.textContent = label;
+      setLocalizedText(button, label);
       button.addEventListener("click", () => ejecutarOpcionMenuWeb(id));
       ui.suggestionBox.appendChild(button);
     });
@@ -1141,7 +1547,14 @@
       "buenos dias",
       "buenas tardes",
       "buenas noches",
-      "hola quiero conocer a cartes"
+      "hola quiero conocer a cartes",
+      "hello",
+      "hi",
+      "good morning",
+      "good afternoon",
+      "good evening",
+      "hello i want to meet cartes",
+      "options"
     ]).has(normalizarComandoWeb(texto));
   }
 
@@ -1150,33 +1563,56 @@
       "1": "conversar",
       "conversar": "conversar",
       "conversar con cartes": "conversar",
+      "talk": "conversar",
+      "talk with cartes": "conversar",
 
       "2": "plus_info",
       "conocer cartes plus": "plus_info",
       "conoce cartes plus": "plus_info",
       "cartes plus": "plus_info",
+      "learn about cartes plus": "plus_info",
 
       "3": "suscribirme",
       "suscribirme": "suscribirme",
+      "subscribe": "suscribirme",
+      "subscribe to cartes plus": "suscribirme",
 
       "4": "mi_suscripcion",
       "mi suscripcion": "mi_suscripcion",
       "suscripcion": "mi_suscripcion",
       "estado de mi suscripcion": "mi_suscripcion",
       "ver mi suscripcion": "mi_suscripcion",
+      "my subscription": "mi_suscripcion",
+      "subscription": "mi_suscripcion",
+      "subscription status": "mi_suscripcion",
 
       "5": "ayuda",
       "ayuda y soporte": "ayuda",
+      "help": "ayuda",
+      "help and support": "ayuda",
+      "support": "ayuda",
 
       "6": "legal",
       "privacidad y terminos": "legal",
+      "privacy and terms": "legal",
+      "privacy": "legal",
+      "terms": "legal",
 
       "7": "revisar_documento",
       "revisar documento": "revisar_documento",
       "revisar un documento": "revisar_documento",
       "revision de documento": "revisar_documento",
+      "review document": "revisar_documento",
+      "review a document": "revisar_documento",
+      "document review": "revisar_documento",
       "privacidad": "legal",
-      "terminos": "legal"
+      "terminos": "legal",
+
+      "8": "language",
+      "idioma": "language",
+      "cambiar idioma": "language",
+      "language": "language",
+      "change language": "language"
     };
 
     return opciones[normalizarComandoWeb(texto)] || "";
@@ -1184,6 +1620,47 @@
 
   async function ejecutarOpcionMenuWeb(opcion) {
     const id = resolverOpcionMenuWeb(opcion) || String(opcion || "").trim();
+
+    if (id === "language") {
+      addMessage(
+        "assistant",
+        currentLocale === "en"
+          ? "Choose the Cartes language. Your preference will be shared between Web and WhatsApp."
+          : "Selecciona el idioma de Cartes. La preferencia se compartirá entre Web y WhatsApp.",
+        false
+      );
+
+      ui.suggestionBox.classList.add("gm-suggestions--menu");
+      ui.suggestionBox.classList.remove("gm-suggestions--main-menu");
+      ui.suggestionBox.replaceChildren();
+
+      const spanish = document.createElement("button");
+      spanish.type = "button";
+      spanish.className = "gm-suggestion";
+      spanish.textContent = "Español";
+      spanish.addEventListener("click", async () => {
+        await setLocaleWeb("es", { sync: true, announce: true });
+        await mostrarMenuWeb();
+      });
+
+      const english = document.createElement("button");
+      english.type = "button";
+      english.className = "gm-suggestion";
+      english.textContent = "English";
+      english.addEventListener("click", async () => {
+        await setLocaleWeb("en", { sync: true, announce: true });
+        await mostrarMenuWeb();
+      });
+
+      const back = document.createElement("button");
+      back.type = "button";
+      back.className = "gm-suggestion gm-suggestion--secondary";
+      setLocalizedText(back, "Volver al menú");
+      back.addEventListener("click", () => void mostrarMenuWeb());
+
+      ui.suggestionBox.append(spanish, english, back);
+      return;
+    }
 
     if (id === "conversar") {
       addMessage(
@@ -1245,7 +1722,7 @@
     }
 
     if (id === "mi_suscripcion") {
-      await mostrarEstadoSuscripcionWeb("Mi suscripción");
+      await mostrarEstadoSuscripcionWeb(t("mySubscription"));
       return;
     }
 
@@ -1260,8 +1737,8 @@
     }
 
     if (id === "legal") {
-      const privacyUrl = `${window.location.origin}/cartes-whatsapp/privacy.html`;
-      const termsUrl = `${window.location.origin}/cartes-whatsapp/terminos.html`;
+      const privacyUrl = `${window.location.origin}/cartes-whatsapp/${currentLocale === "en" ? "privacy-en.html" : "privacy.html"}`;
+      const termsUrl = `${window.location.origin}/cartes-whatsapp/${currentLocale === "en" ? "terms.html" : "terminos.html"}`;
 
       addMessage(
         "assistant",
@@ -1283,7 +1760,7 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = `gm-suggestion${secondary ? " gm-suggestion--secondary" : ""}`;
-      button.textContent = label;
+      setLocalizedText(button, label);
       button.addEventListener("click", () => submitQuestion(value));
       ui.suggestionBox.appendChild(button);
     });
@@ -1294,25 +1771,27 @@
     message.className = "gm-message gm-message--assistant gm-message--legal";
 
     const intro = document.createElement("p");
-    intro.textContent =
-      "Antes de continuar, confirma que leíste y aceptas los Términos de uso y el Aviso de privacidad de Cartes.";
+    setLocalizedText(
+      intro,
+      "Antes de continuar, confirma que leíste y aceptas los Términos de uso y el Aviso de privacidad de Cartes."
+    );
 
     const links = document.createElement("div");
     links.className = "gm-legal-links";
 
     const terms = document.createElement("a");
     terms.className = "gm-legal-link";
-    terms.href = `${window.location.origin}/cartes-whatsapp/terminos.html`;
+    terms.href = `${window.location.origin}/cartes-whatsapp/${currentLocale === "en" ? "terms.html" : "terminos.html"}`;
     terms.target = "_blank";
     terms.rel = "noopener noreferrer";
-    terms.textContent = "Ver Términos de uso";
+    setLocalizedText(terms, "Ver Términos de uso");
 
     const privacy = document.createElement("a");
     privacy.className = "gm-legal-link";
-    privacy.href = `${window.location.origin}/cartes-whatsapp/privacy.html`;
+    privacy.href = `${window.location.origin}/cartes-whatsapp/${currentLocale === "en" ? "privacy-en.html" : "privacy.html"}`;
     privacy.target = "_blank";
     privacy.rel = "noopener noreferrer";
-    privacy.textContent = "Ver Aviso de privacidad";
+    setLocalizedText(privacy, "Ver Aviso de privacidad");
 
     links.append(terms, privacy);
     message.append(intro, links);
@@ -1358,7 +1837,7 @@
     const button = document.createElement("button");
     button.type = "button";
     button.className = "gm-suggestion";
-    button.textContent = `Abrir ${provider}`;
+    setLocalizedText(button, `Abrir ${provider}`);
     button.addEventListener("click", () => {
       if (trackSubscription) {
         subscriptionCheckoutPending = true;
@@ -1370,7 +1849,7 @@
     const back = document.createElement("button");
     back.type = "button";
     back.className = "gm-suggestion gm-suggestion--secondary";
-    back.textContent = "Volver al menú";
+    setLocalizedText(back, "Volver al menú");
     back.addEventListener("click", () => {
       void mostrarMenuWeb();
     });
@@ -1386,7 +1865,7 @@
     const plusLimit = queryLimits.plus;
 
     const cycleEnd =
-      formatCartesDateWeb(usage?.cycle_end);
+      formatCartesDateWeb(usage?.cycle_end, currentLocale);
 
     const renewalLine =
       cycleEnd
@@ -1423,7 +1902,7 @@
     const normalized = normalizarComandoWeb(rawQuestion);
 
     if (webSubscriptionFlow === "accept_terms") {
-      if (["no aceptar", "no acepto", "rechazar"].includes(normalized)) {
+      if (["no aceptar", "no acepto", "rechazar", "do not accept", "i do not accept", "decline"].includes(normalized)) {
         webSubscriptionFlow = "";
         ui.input.value = "";
         ui.input.style.height = "auto";
@@ -1436,7 +1915,7 @@
         return true;
       }
 
-      if (!["acepto", "aceptar", "si"].includes(normalized)) {
+      if (!["acepto", "aceptar", "si", "accept", "i accept", "yes"].includes(normalized)) {
         addMessage(
           "assistant",
           "Selecciona Aceptar para continuar o No aceptar para volver sin activar Cartes Plus.",
@@ -1459,7 +1938,7 @@
     }
 
     if (webSubscriptionFlow === "confirm_change_whatsapp") {
-      if (["no", "no cambiar", "cancelar"].includes(normalized)) {
+      if (["no", "no cambiar", "cancelar", "do not change", "cancel"].includes(normalized)) {
         webSubscriptionFlow = "";
 
         addMessage(
@@ -1472,7 +1951,7 @@
         return true;
       }
 
-      if (!["si", "confirmar", "generar codigo"].includes(normalized)) {
+      if (!["si", "confirmar", "generar codigo", "yes", "confirm", "generate code"].includes(normalized)) {
         addMessage(
           "assistant",
           "Confirma si deseas iniciar el cambio de número. El número actual seguirá funcionando hasta que verifiques el nuevo número.",
@@ -1491,7 +1970,7 @@
       return true;
     }
     if (webSubscriptionFlow === "confirm_unlink_whatsapp") {
-      if (["no", "no desvincular", "cancelar"].includes(normalized)) {
+      if (["no", "no desvincular", "cancelar", "do not unlink", "cancel"].includes(normalized)) {
         webSubscriptionFlow = "";
 
         addMessage(
@@ -1504,7 +1983,7 @@
         return true;
       }
 
-      if (!["si", "sí", "confirmar", "si desvincular"].includes(normalized)) {
+      if (!["si", "sí", "confirmar", "si desvincular", "yes", "confirm", "yes unlink"].includes(normalized)) {
         addMessage(
           "assistant",
           "Confirma si deseas desvincular WhatsApp. Esta acción no cancela Cartes Plus ni modifica tu saldo o suscripción.",
@@ -1527,7 +2006,9 @@
         [
           "cambiar numero whatsapp",
           "cambiar numero de whatsapp",
-          "cambiar mi numero whatsapp"
+          "cambiar mi numero whatsapp",
+          "change whatsapp number",
+          "change my whatsapp number"
         ].includes(normalized)
       ) {
         webSubscriptionFlow =
@@ -1551,7 +2032,9 @@
         [
           "desvincular whatsapp",
           "desvincular mi whatsapp",
-          "quitar whatsapp"
+          "quitar whatsapp",
+          "unlink whatsapp",
+          "unlink my whatsapp"
         ].includes(normalized)
       ) {
         webSubscriptionFlow =
@@ -1575,13 +2058,16 @@
         [
           "comprar revisiones",
           `comprar ${currentReviewPackSize} revisiones`,
-          "paquete de revisiones"
+          "paquete de revisiones",
+          "buy reviews",
+          `buy ${currentReviewPackSize} reviews`,
+          "review package"
         ].includes(normalized)
       ) {
         webSubscriptionFlow = "review_pack_provider";
 
         const expiration =
-          formatCartesDateWeb(currentReviewPackExpiration) ||
+          formatCartesDateWeb(currentReviewPackExpiration, currentLocale) ||
           "el vencimiento de tu periodo Plus vigente";
 
         addMessage(
@@ -1599,7 +2085,10 @@
           "cancelar",
           "cancelar renovacion",
           "cancelar suscripcion",
-          "darme de baja"
+          "darme de baja",
+          "cancel",
+          "cancel renewal",
+          "cancel subscription"
         ].includes(normalized)
       ) {
         webSubscriptionFlow = "confirm_cancel";
@@ -1633,7 +2122,7 @@
     }
 
     if (webSubscriptionFlow === "confirm_cancel") {
-      if (["no", "no cancelar", "volver"].includes(normalized)) {
+      if (["no", "no cancelar", "volver", "do not cancel", "back"].includes(normalized)) {
         webSubscriptionFlow = "";
 
         addMessage(
@@ -1646,7 +2135,7 @@
         return true;
       }
 
-      if (!["si", "sí"].includes(normalized)) {
+      if (!["si", "sí", "yes"].includes(normalized)) {
         addMessage(
           "assistant",
           "Selecciona Sí, cancelar o No cancelar.",
@@ -1670,7 +2159,8 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             action: "cancel",
-            web_identity: webIdentity
+            web_identity: webIdentity,
+            locale: currentLocale
           }),
           cache: "no-store"
         });
@@ -1694,7 +2184,7 @@
         );
 
         await refreshMenuPlanWeb();
-        await mostrarEstadoSuscripcionWeb("Mi suscripción");
+        await mostrarEstadoSuscripcionWeb(t("mySubscription"));
 
         return true;
       } catch (error) {
@@ -1752,7 +2242,8 @@
             action: "checkout",
             provider,
             accepted_terms: true,
-            web_identity: webIdentity
+            web_identity: webIdentity,
+            locale: currentLocale
           }),
           cache: "no-store"
         });
@@ -1787,7 +2278,7 @@
 
     if (webSubscriptionFlow === "review_pack_provider") {
       if (
-        ["menu", "volver al menu", "inicio", "opciones"].includes(normalized)
+        ["menu", "volver al menu", "inicio", "opciones", "back to menu", "home", "options"].includes(normalized)
       ) {
         webSubscriptionFlow = "";
         await mostrarMenuWeb();
@@ -1831,7 +2322,8 @@
             body: JSON.stringify({
               action: "checkout",
               provider,
-              web_identity: webIdentity
+              web_identity: webIdentity,
+              locale: currentLocale
             }),
             cache: "no-store"
           }
@@ -1892,9 +2384,23 @@
 
     if (!isPlus) {
       delete ui.reviewsUsage.dataset.state;
-      ui.reviewsUsage.textContent =
-        "Revisiones de documentos disponibles: cargando…";
+      ui.reviewsUsage.textContent = t("reviewsLoading");
     }
+  }
+
+  function renderReviewUsageFromDatasetWeb() {
+    if (!ui?.reviewsUsage) return;
+
+    const restantes = Number(ui.reviewsUsage.dataset.remaining);
+    if (!Number.isFinite(restantes)) return;
+
+    ui.reviewsUsage.textContent = currentLocale === "en"
+      ? `Document reviews available: ${restantes}`
+      : `Revisiones de documentos disponibles: ${restantes}`;
+
+    ui.reviewsUsage.title = currentLocale === "en"
+      ? `${restantes} ${restantes === 1 ? "review available" : "reviews available"}`
+      : `${restantes} ${restantes === 1 ? "revisión disponible" : "revisiones disponibles"}`;
   }
 
   function updateReviewUsage(reviews) {
@@ -1922,21 +2428,13 @@
     const restantes =
       Math.max(0, Math.trunc(disponibles));
 
-    ui.reviewsUsage.textContent =
-      `Revisiones de documentos disponibles: ${restantes}`;
-
-    ui.reviewsUsage.title =
-      `${restantes} ${
-        restantes === 1
-          ? "revisión disponible"
-          : "revisiones disponibles"
-      }`;
-
     ui.reviewsUsage.dataset.state = "ready";
     ui.reviewsUsage.dataset.remaining =
       String(restantes);
     ui.reviewsUsage.dataset.limit =
       String(total);
+
+    renderReviewUsageFromDatasetWeb();
 
     return true;
   }
@@ -1961,7 +2459,8 @@
           },
           body: JSON.stringify({
             action: "status",
-            web_identity: webIdentity
+            web_identity: webIdentity,
+            locale: currentLocale
           }),
           cache: "no-store"
         }
@@ -2024,10 +2523,9 @@
       return;
     }
 
-    const accepted =
-      window.confirm(
-        `Cartes procesará temporalmente "${name}" para validar que tenga un máximo de ${currentDocumentMaxPages} páginas y, si cumple, realizar la revisión. El archivo no se guardará después del procesamiento.\n\n¿Autorizas el procesamiento de este documento?`
-      );
+    const accepted = window.confirm(translateWebText(
+      `Cartes procesará temporalmente "${name}" para validar que tenga un máximo de ${currentDocumentMaxPages} páginas y, si cumple, realizar la revisión. El archivo no se guardará después del procesamiento.\n\n¿Autorizas el procesamiento de este documento?`
+    ));
 
     if (!accepted) {
       ui.documentInput.value = "";
@@ -2066,6 +2564,11 @@
       form.append(
         "accepted_processing",
         "true"
+      );
+
+      form.append(
+        "locale",
+        currentLocale
       );
 
       form.append(
@@ -2175,6 +2678,14 @@
       "buenas",
       "buenas tardes",
       "buenas noches",
+      "hello",
+      "hi",
+      "good morning",
+      "good afternoon",
+      "good evening",
+      "thanks",
+      "thank you",
+      "ready",
       "gracias",
       "ok",
       "okay",
@@ -2241,10 +2752,12 @@
         body: JSON.stringify({
           question,
           history: payloadHistory,
+          locale: currentLocale,
           client: {
             channel: "web",
             external_user_id: webIdentity,
-            request_id: createRequestId()
+            request_id: createRequestId(),
+            locale: currentLocale
           }
         })
       });
@@ -2335,16 +2848,12 @@
     const restantes = Math.max(0, Math.trunc(disponibles));
     const total = Math.max(0, Math.trunc(limite));
 
-    ui.usage.textContent =
-      `Consultas disponibles: ${restantes} de ${total}`;
-
-    ui.usage.title =
-      `${restantes} ${restantes === 1 ? "consulta disponible" : "consultas disponibles"} de ${total}`;
-
     ui.usage.dataset.plan = String(usage.plan || "gratuito");
     ui.usage.dataset.state = "ready";
     ui.usage.dataset.remaining = String(restantes);
     ui.usage.dataset.limit = String(total);
+
+    renderUsageFromDatasetWeb();
 
     if (
       restantes <= 0 &&
@@ -2354,6 +2863,22 @@
     }
 
     return true;
+  }
+
+  function renderUsageFromDatasetWeb() {
+    if (!ui?.usage) return;
+
+    const remaining = Number(ui.usage.dataset.remaining);
+    const limit = Number(ui.usage.dataset.limit);
+    if (!Number.isFinite(remaining) || !Number.isFinite(limit)) return;
+
+    ui.usage.textContent = currentLocale === "en"
+      ? `Questions available: ${remaining} of ${limit}`
+      : `Consultas disponibles: ${remaining} de ${limit}`;
+
+    ui.usage.title = currentLocale === "en"
+      ? `${remaining} ${remaining === 1 ? "question available" : "questions available"} of ${limit}`
+      : `${remaining} ${remaining === 1 ? "consulta disponible" : "consultas disponibles"} de ${limit}`;
   }
 
   function hasRenderedUsage() {
@@ -2367,7 +2892,11 @@
   function addMessage(role, content, persist = true, isError = false) {
     const message = document.createElement("div");
     message.className = `gm-message gm-message--${role}${isError ? " gm-message--error" : ""}`;
-    message.textContent = content;
+    if (role === "assistant") {
+      setLocalizedText(message, content);
+    } else {
+      message.textContent = content;
+    }
     ui.messages.appendChild(message);
     ui.messages.scrollTop = ui.messages.scrollHeight;
 
@@ -2383,7 +2912,7 @@
   function addTyping() {
     const wrapper = document.createElement("div");
     wrapper.className = "gm-message gm-message--assistant gm-typing";
-    wrapper.setAttribute("aria-label", "Cartes está escribiendo");
+    wrapper.setAttribute("aria-label", t("typing"));
     wrapper.innerHTML = "<span></span><span></span><span></span>";
     ui.messages.appendChild(wrapper);
     ui.messages.scrollTop = ui.messages.scrollHeight;
@@ -2418,6 +2947,14 @@
     }
   }
 
+  function loadPreferredLocaleWeb() {
+    try {
+      return normalizeLocaleWeb(localStorage.getItem(CONFIG.localeKey) || "es");
+    } catch {
+      return "es";
+    }
+  }
+
   function createRequestId() {
     const randomPart =
       window.crypto?.randomUUID?.().replace(/-/g, "") ||
@@ -2443,6 +2980,3 @@
     }
   }
 })();
-
-
-

@@ -8,6 +8,8 @@ export default async (request) => {
 
   return Response.json(
     {
+      locales: ["es", "en"],
+      default_locale: "es",
       query_limits: CARTES_QUERY_LIMITS,
       review_limits: {
         plus: CARTES_PLUS_REVIEW_LIMIT

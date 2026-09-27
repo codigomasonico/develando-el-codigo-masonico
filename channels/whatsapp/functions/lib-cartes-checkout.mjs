@@ -1,6 +1,7 @@
 import { savePaymentContext } from "./lib-state.mjs";
 import { createMercadoPagoCheckout } from "./lib-mercadopago.mjs";
 import { createPayPalCheckout } from "./lib-paypal.mjs";
+import { normalizeLocale } from "../../../core/ai/i18n.mjs";
 
 const realDeps = {
   savePaymentContext,
@@ -14,13 +15,18 @@ export async function createCheckoutForCartes(input = {}, overrides = {}) {
   const phone = String(input.phone || "").replace(/\D/g, "");
   const phoneNumberId = String(input.phoneNumberId || "").trim();
   const provider = normalizeProvider(input.provider);
+  const locale = input.locale ? normalizeLocale(input.locale) : "";
 
   if (!/^usr_[a-f0-9]{32}$/.test(userId)) {
     throw new Error("user_id Cartes inválido.");
   }
 
   if (provider === "mercadopago") {
-    const checkout = await d.createMercadoPagoCheckout({ userId, phone });
+    const checkout = await d.createMercadoPagoCheckout({
+      userId,
+      phone,
+      ...(locale ? { locale } : {})
+    });
     if (!checkout?.plan_id || !checkout?.url) {
       throw new Error("Mercado Pago no devolvió un checkout válido.");
     }
@@ -28,7 +34,8 @@ export async function createCheckoutForCartes(input = {}, overrides = {}) {
     await d.savePaymentContext("mercadopago-plan", checkout.plan_id, {
       user_id: userId,
       phone,
-      phone_number_id: phoneNumberId
+      phone_number_id: phoneNumberId,
+      ...(locale ? { locale } : {})
     });
 
     return {
@@ -39,7 +46,11 @@ export async function createCheckoutForCartes(input = {}, overrides = {}) {
     };
   }
 
-  const checkout = await d.createPayPalCheckout({ userId, phone });
+  const checkout = await d.createPayPalCheckout({
+    userId,
+    phone,
+    ...(locale ? { locale } : {})
+  });
   if (!checkout?.subscription_id || !checkout?.url) {
     throw new Error("PayPal no devolvió un checkout válido.");
   }
@@ -47,7 +58,8 @@ export async function createCheckoutForCartes(input = {}, overrides = {}) {
   await d.savePaymentContext("paypal-subscription", checkout.subscription_id, {
     user_id: userId,
     phone,
-    phone_number_id: phoneNumberId
+    phone_number_id: phoneNumberId,
+    ...(locale ? { locale } : {})
   });
 
   return {

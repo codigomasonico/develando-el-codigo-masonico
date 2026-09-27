@@ -1,8 +1,10 @@
 import crypto from "node:crypto";
 import {
+  actualizarIdiomaUsuario,
   completarConsultaMensual,
   liberarConsultaMensual,
   obtenerEstadoUsoMensual,
+  obtenerIdiomaUsuario,
   reservarConsultaMensual,
   resolverOCrearUsuarioPorIdentidad,
   sincronizarPlanUsuario,
@@ -34,6 +36,8 @@ export default async (request) => {
     if (action === "link_complete") return json(await completarVinculacionConWhatsApp({ code: body.code, whatsappUserId: body.user_id }));
     if (action === "subscription_sync") return json(await sincronizarSuscripcionUsuario({ userId: body.user_id, subscription: body.subscription, source: body.source || "mercadopago" }));
     if (action === "subscription_get") return json({ subscription: await obtenerSuscripcionUsuario({ userId: body.user_id }) });
+    if (action === "locale_get") return json({ user_id: body.user_id, locale: await obtenerIdiomaUsuario({ userId: body.user_id }) });
+    if (action === "locale_set") return json(await actualizarIdiomaUsuario({ userId: body.user_id, locale: body.locale }));
     return json({ error: "Acción no soportada." }, 400);
   } catch (error) {
     console.error("Cartes account error", error);

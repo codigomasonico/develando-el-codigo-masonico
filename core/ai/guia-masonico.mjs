@@ -1,16 +1,19 @@
 import cartesCore from "./cartes-core.mjs";
 import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "./config.mjs";
 import {
+  actualizarIdiomaUsuario,
   completarConsultaMensual,
   liberarConsultaMensual,
   mensajesDeConversacion,
   obtenerConversacionUsuario,
   obtenerEstadoUsoMensual,
+  obtenerIdiomaUsuario,
   obtenerPlanUsuario,
   registrarIntercambioConversacion,
   reservarConsultaMensual,
   resolverOCrearUsuarioPorIdentidad
 } from "./lib-cartes-account.mjs";
+import { normalizeLocale, resolveLocale } from "./i18n.mjs";
 
 // Adaptador HTTP público de Cartes.
 // Web reserva y consume aquí contra la cuenta central. WhatsApp mantiene su
@@ -32,11 +35,21 @@ export default async (request) => {
   const requestId = String(client.request_id || "").trim();
   let userId = String(client.user_id || "").trim();
   let reserva = null;
+  const requestedLocale = String(body?.locale || client?.locale || "").trim();
+  let locale = resolveLocale(
+    requestedLocale,
+    body?.question,
+    request.headers.get("accept-language") || "es"
+  );
 
   if (channel === "web") {
     const externalUserId = String(client.external_user_id || "").trim();
     if (!externalUserId || !requestId) {
-      return json({ error: "La sesión Web de Cartes no contiene una identidad válida." }, 400);
+      return json({
+        error: locale === "en"
+          ? "The Cartes Web session does not contain a valid identity."
+          : "La sesión Web de Cartes no contiene una identidad válida."
+      }, 400);
     }
 
     const identidad = await resolverOCrearUsuarioPorIdentidad({ tipo: "web", valor: externalUserId });
@@ -44,8 +57,31 @@ export default async (request) => {
     const plan = await obtenerPlanUsuario({ userId });
     reserva = await reservarConsultaMensual({ userId, plan, requestId, channel: "web" });
 
-    if (reserva.duplicada) return json({ error: "La consulta ya fue recibida.", code: "duplicate_request", usage: reserva }, 409);
-    if (!reserva.permitida) return json({ error: mensajeLimite(reserva.plan), code: "usage_limit", usage: reserva }, 429);
+    if (reserva.duplicada) return json({
+      error: locale === "en" ? "This question has already been received." : "La consulta ya fue recibida.",
+      code: "duplicate_request",
+      usage: reserva
+    }, 409);
+    if (!reserva.permitida) return json({ error: mensajeLimite(reserva.plan, locale), code: "usage_limit", usage: reserva }, 429);
+  }
+
+  locale = resolveLocale(
+    requestedLocale,
+    body?.question,
+    request.headers.get("accept-language") || "es"
+  );
+
+  if (esUserIdValido(userId)) {
+    try {
+      if (requestedLocale) {
+        locale = normalizeLocale(requestedLocale);
+        await actualizarIdiomaUsuario({ userId, locale });
+      } else {
+        locale = await obtenerIdiomaUsuario({ userId });
+      }
+    } catch (error) {
+      console.error("No se pudo sincronizar el idioma de Cartes.", error);
+    }
   }
 
   let sharedHistory = [];
@@ -65,8 +101,14 @@ export default async (request) => {
     headers: request.headers,
     body: JSON.stringify({
       ...body,
+      locale,
       history,
-      client: { ...client, user_id: esUserIdValido(userId) ? userId : null, request_id: requestId || null }
+      client: {
+        ...client,
+        locale,
+        user_id: esUserIdValido(userId) ? userId : null,
+        request_id: requestId || null
+      }
     })
   });
 
@@ -142,7 +184,13 @@ export default async (request) => {
 };
 
 function esUserIdValido(value) { return /^usr_[a-f0-9]{32}$/.test(String(value || "")); }
-function mensajeLimite(plan) {
+function mensajeLimite(plan, locale = "es") {
+  if (normalizeLocale(locale) === "en") {
+    return plan === "plus"
+      ? `You have used all ${CARTES_PLUS_QUERY_LIMIT} questions included with Cartes Plus during this period.`
+      : `You have used all ${CARTES_FREE_QUERY_LIMIT} free questions available during this period.`;
+  }
+
   return plan === "plus"
     ? `Ya utilizaste las ${CARTES_PLUS_QUERY_LIMIT} consultas incluidas en Cartes Plus durante este periodo.`
     : `Ya utilizaste las ${CARTES_FREE_QUERY_LIMIT} consultas gratuitas disponibles en este periodo.`;

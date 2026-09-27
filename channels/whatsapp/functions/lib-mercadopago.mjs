@@ -1,5 +1,6 @@
 import { CARTES_PLUS_PRICE_MXN } from "../../../core/ai/config.mjs";
 import crypto from "node:crypto";
+import { normalizeLocale } from "../../../core/ai/i18n.mjs";
 
 const API = "https://api.mercadopago.com";
 const PRICE = CARTES_PLUS_PRICE_MXN;
@@ -63,19 +64,40 @@ async function mp(path, { method = "GET", body = null, fetchImpl = fetch } = {})
   return data;
 }
 
-export async function createMercadoPagoCheckout({ userId, phone, fetchImpl = fetch }) {
+export async function createMercadoPagoCheckout({ userId, phone, locale = "es", fetchImpl = fetch }) {
   if (!/^usr_[a-f0-9]{32}$/.test(String(userId || ""))) throw new Error("user_id Cartes inválido.");
-  const backUrl = env("CARTES_PLUS_BACK_URL") || "https://develandoelcodigomasonico.com/cartes-whatsapp/suscripcion.html";
+  const selectedLocale = normalizeLocale(locale);
+  const backUrl = cartesBackUrl(selectedLocale);
   const auto_recurring = { frequency: 1, frequency_type: "months", transaction_amount: PRICE, currency_id: "MXN" };
   const trial = Number.parseInt(env("CARTES_PLUS_TRIAL_DAYS") || "0", 10);
   if (Number.isInteger(trial) && trial > 0 && trial <= 365) auto_recurring.free_trial = { frequency: trial, frequency_type: "days" };
   const data = await mp("/preapproval_plan", {
     method: "POST",
-    body: { reason: "Cartes Plus", auto_recurring, back_url: backUrl },
+    body: {
+      reason: selectedLocale === "en" ? "Cartes Plus monthly subscription" : "Suscripción mensual Cartes Plus",
+      auto_recurring,
+      back_url: backUrl
+    },
     fetchImpl
   });
   if (!data?.id || !data?.init_point) throw new Error("Mercado Pago no devolvió el enlace de suscripción.");
   return { provider: "mercadopago", plan_id: String(data.id), url: String(data.init_point), user_id: userId, phone: String(phone || "").replace(/\D/g, "") };
+}
+
+function cartesBackUrl(locale) {
+  const base = locale === "en"
+    ? env("CARTES_PLUS_BACK_URL_EN") || env("CARTES_PLUS_BACK_URL")
+    : env("CARTES_PLUS_BACK_URL");
+
+  const url = new URL(
+    base || "https://develandoelcodigomasonico.com/cartes-whatsapp/suscripcion.html"
+  );
+
+  if (locale === "en" && /\/suscripcion\.html$/i.test(url.pathname)) {
+    url.pathname = url.pathname.replace(/\/suscripcion\.html$/i, "/subscription.html");
+  }
+
+  return url.toString();
 }
 
 export async function getMercadoPagoSubscription(id, fetchImpl = fetch) {

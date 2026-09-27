@@ -1,5 +1,6 @@
 import { CARTES_REVIEW_PACK_PRICE_MXN, CARTES_REVIEW_PACK_SIZE } from "../../../core/ai/config.mjs";
 import crypto from "node:crypto";
+import { normalizeLocale } from "../../../core/ai/i18n.mjs";
 
 const MP_API = "https://api.mercadopago.com";
 const PAYPAL_SANDBOX = "https://api-m.sandbox.paypal.com";
@@ -85,10 +86,12 @@ async function mpRequest(
 export async function createMercadoPagoReviewPackCheckout({
   userId,
   expiresAt,
+  locale = "es",
   fetchImpl = fetch
 }) {
   validarUserId(userId);
   const expiration = validarExpiracion(expiresAt);
+  const selectedLocale = normalizeLocale(locale);
 
   const reference =
     `cartes-review-pack:${userId}:${crypto.randomUUID()}`;
@@ -101,8 +104,12 @@ export async function createMercadoPagoReviewPackCheckout({
         items: [
           {
             id: "cartes-review-pack-3",
-            title: `Cartes - ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales`,
-            description: `Paquete único de ${CARTES_REVIEW_PACK_SIZE} revisiones de documentos`,
+            title: selectedLocale === "en"
+              ? `Cartes - ${CARTES_REVIEW_PACK_SIZE} additional reviews`
+              : `Cartes - ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales`,
+            description: selectedLocale === "en"
+              ? `One-time package of ${CARTES_REVIEW_PACK_SIZE} document reviews`
+              : `Paquete único de ${CARTES_REVIEW_PACK_SIZE} revisiones de documentos`,
             quantity: 1,
             currency_id: "MXN",
             unit_price: PRICE
@@ -115,9 +122,9 @@ export async function createMercadoPagoReviewPackCheckout({
           expires_at: expiration
         },
         back_urls: {
-          success: reviewPackBackUrl("mercadopago", "success"),
-          pending: reviewPackBackUrl("mercadopago", "pending"),
-          failure: reviewPackBackUrl("mercadopago", "failure")
+          success: reviewPackBackUrl("mercadopago", "success", selectedLocale),
+          pending: reviewPackBackUrl("mercadopago", "pending", selectedLocale),
+          failure: reviewPackBackUrl("mercadopago", "failure", selectedLocale)
         },
         auto_return: "approved",
         notification_url: reviewPackWebhookUrl(),
@@ -258,10 +265,12 @@ async function paypalRequest(
 export async function createPayPalReviewPackOrder({
   userId,
   expiresAt,
+  locale = "es",
   fetchImpl = fetch
 }) {
   validarUserId(userId);
   const expiration = validarExpiracion(expiresAt);
+  const selectedLocale = normalizeLocale(locale);
 
   const data = await paypalRequest(
     "/v2/checkout/orders",
@@ -273,7 +282,9 @@ export async function createPayPalReviewPackOrder({
           {
             reference_id: "cartes-review-pack-3",
             custom_id: userId,
-            description: `Cartes - ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales`,
+            description: selectedLocale === "en"
+              ? `Cartes - ${CARTES_REVIEW_PACK_SIZE} additional reviews`
+              : `Cartes - ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales`,
             amount: {
               currency_code: "MXN",
               value: PRICE.toFixed(2)
@@ -284,8 +295,8 @@ export async function createPayPalReviewPackOrder({
           brand_name: "Cartes",
           user_action: "PAY_NOW",
           shipping_preference: "NO_SHIPPING",
-          return_url: reviewPackBackUrl("paypal", "success"),
-          cancel_url: reviewPackBackUrl("paypal", "cancel")
+          return_url: reviewPackBackUrl("paypal", "success", selectedLocale),
+          cancel_url: reviewPackBackUrl("paypal", "cancel", selectedLocale)
         }
       },
       requestId: `cartes-review-pack-create-${crypto.randomUUID()}`,
@@ -348,16 +359,27 @@ export async function capturePayPalReviewPackOrder(
   );
 }
 
-function reviewPackBaseUrl() {
-  return (
-    env("CARTES_REVIEW_PACK_BACK_URL") ||
-    env("CARTES_PLUS_BACK_URL") ||
-    "https://develandoelcodigomasonico.com/cartes-whatsapp/suscripcion.html"
+function reviewPackBaseUrl(locale = "es") {
+  const selectedLocale = normalizeLocale(locale);
+  const configured = selectedLocale === "en"
+    ? env("CARTES_REVIEW_PACK_BACK_URL_EN") ||
+      env("CARTES_PLUS_BACK_URL_EN") ||
+      env("CARTES_REVIEW_PACK_BACK_URL") ||
+      env("CARTES_PLUS_BACK_URL")
+    : env("CARTES_REVIEW_PACK_BACK_URL") || env("CARTES_PLUS_BACK_URL");
+  const url = new URL(
+    configured || "https://develandoelcodigomasonico.com/cartes-whatsapp/suscripcion.html"
   );
+
+  if (selectedLocale === "en" && /\/suscripcion\.html$/i.test(url.pathname)) {
+    url.pathname = url.pathname.replace(/\/suscripcion\.html$/i, "/subscription.html");
+  }
+
+  return url.toString();
 }
 
-function reviewPackBackUrl(provider, result) {
-  const url = new URL(reviewPackBaseUrl());
+function reviewPackBackUrl(provider, result, locale = "es") {
+  const url = new URL(reviewPackBaseUrl(locale));
 
   url.searchParams.set("flow", "review_pack");
   url.searchParams.set("provider", provider);
@@ -371,7 +393,7 @@ function reviewPackWebhookUrl() {
 
   if (configured) return configured;
 
-  const back = new URL(reviewPackBaseUrl());
+  const back = new URL(reviewPackBaseUrl("es"));
 
   return new URL(
     "/.netlify/functions/cartes-review-pack-webhook",

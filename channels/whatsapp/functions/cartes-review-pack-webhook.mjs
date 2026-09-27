@@ -22,6 +22,7 @@ import {
 import {
   sendWhatsAppTextParts
 } from "./lib-meta.mjs";
+import { translateWhatsAppText } from "../i18n.mjs";
 
 const realDeps = {
   obtenerEstadoRevisionesCartes,
@@ -149,8 +150,10 @@ export function createReviewPackWebhookHandler(overrides = {}) {
       await d.sendWhatsAppTextParts({
         to: context.phone,
         phoneNumberId: context.phone_number_id,
-        text:
-          `¡Listo! Se agregaron ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales a tu cuenta Cartes.\n\n*Revisiones disponibles:* ${reviews.disponibles}\n*Paquetes adicionales:* ${reviews.paquetes_comprados} de ${reviews.paquetes_maximo}`
+        text: translateWhatsAppText(
+          `¡Listo! Se agregaron ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales a tu cuenta Cartes.\n\n*Revisiones disponibles:* ${reviews.disponibles}\n*Paquetes adicionales:* ${reviews.paquetes_comprados} de ${reviews.paquetes_maximo}`,
+          context?.locale
+        )
       }).catch(() => {});
     }
 

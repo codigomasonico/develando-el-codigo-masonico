@@ -3,6 +3,7 @@ import { CARTES_CONVERSATION_MESSAGE_MAX_CHARS } from "./config.mjs";
 import { CARTES_CONVERSATION_MEMORY_MESSAGES } from "./config.mjs";
 import { CARTES_LINK_CODE_TTL_MS } from "./config.mjs";
 import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT } from "./config.mjs";
+import { DEFAULT_LOCALE, normalizeLocale } from "./i18n.mjs";
 // CARTES_QA_DEPLOY_STORE_GENERIC
 import crypto from "node:crypto";
 import {
@@ -42,6 +43,62 @@ export async function getCartesAccountStore() {
       name: STORE_NAME,
       consistency: "strong"
     });
+}
+
+export async function obtenerIdiomaUsuario({ userId, store = null }) {
+  store ||= await getCartesAccountStore();
+  const id = validarUserId(userId);
+  const account = await store.get(
+    `${PREFIJO_IDENTIDAD}:user:${id}`,
+    { type: "json", consistency: "strong" }
+  );
+
+  return normalizeLocale(account?.locale, DEFAULT_LOCALE);
+}
+
+export async function actualizarIdiomaUsuario({
+  userId,
+  locale,
+  fecha = new Date(),
+  store = null
+}) {
+  store ||= await getCartesAccountStore();
+  const id = validarUserId(userId);
+  const selectedLocale = normalizeLocale(locale);
+  const key = `${PREFIJO_IDENTIDAD}:user:${id}`;
+
+  for (let attempt = 0; attempt < MAX_REINTENTOS; attempt += 1) {
+    const entry = await store.getWithMetadata(
+      key,
+      { type: "json", consistency: "strong" }
+    );
+
+    if (!entry?.data) {
+      throw new Error("No se encontró la cuenta de Cartes.");
+    }
+
+    if (normalizeLocale(entry.data.locale) === selectedLocale && entry.data.locale) {
+      return { user_id: id, locale: selectedLocale, changed: false };
+    }
+
+    const updated = await store.setJSON(
+      key,
+      {
+        ...entry.data,
+        version: Math.max(1, Number(entry.data.version) || 1),
+        locale: selectedLocale,
+        locale_updated_at: fecha.toISOString(),
+        updated_at: fecha.toISOString()
+      },
+      { onlyIfMatch: entry.etag }
+    );
+
+    if (updated?.modified) {
+      return { user_id: id, locale: selectedLocale, changed: true };
+    }
+  }
+
+  throw new Error("No se pudo actualizar el idioma de Cartes por concurrencia.");
 }
 
 export function normalizarIdentidadCartes(tipo, valor) {
@@ -1665,7 +1722,14 @@ async function fusionarUsuarioEn({ sourceUserId, targetUserId, fecha, store }) {
       }
     }
   }
-  await store.setJSON(targetKey, { ...targetUser, version: 1, user_id: target, identities: mergedIdentities, updated_at: ahora });
+  await store.setJSON(targetKey, {
+    ...targetUser,
+    version: 1,
+    user_id: target,
+    identities: mergedIdentities,
+    locale: normalizeLocale(targetUser.locale || sourceUser?.locale || DEFAULT_LOCALE),
+    updated_at: ahora
+  });
   if (sourceUser) await store.setJSON(sourceKey, { ...sourceUser, merged_into: target, merged_at: ahora, updated_at: ahora });
 
   const sourcePlan = await obtenerPlanUsuario({ userId: source, store });
@@ -1737,7 +1801,7 @@ async function asegurarUsuario({ userId, identidad, fecha, store }) {
     const entrada = await store.getWithMetadata(clave, { type: "json", consistency: "strong" });
     const ahora = fecha.toISOString();
     if (!entrada?.data) {
-      const nuevo = { version: 1, user_id: userId, identities: { [identidad.tipo]: [identidad.valor] }, created_at: ahora, updated_at: ahora };
+      const nuevo = { version: 1, user_id: userId, identities: { [identidad.tipo]: [identidad.valor] }, locale: DEFAULT_LOCALE, created_at: ahora, updated_at: ahora };
       const creado = await store.setJSON(clave, nuevo, { onlyIfNew: true });
       if (creado?.modified) return nuevo;
       continue;

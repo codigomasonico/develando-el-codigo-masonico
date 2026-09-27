@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Cartes</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #101114; color: #f5f5f5; }
+    main { width: min(560px, calc(100% - 40px)); padding: 32px; border: 1px solid #34363d; border-radius: 18px; background: #191b20; text-align: center; }
+    h1 { margin-top: 0; }
+    p { line-height: 1.6; color: #d3d5dc; }
+    a { color: #e5c75b; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 id="title">Cartes Plus</h1>
+    <p id="status">The subscription process was completed with the payment provider. Cartes Plus will be activated automatically when we receive payment confirmation.</p>
+    <p id="detail">You can return to Cartes and select My subscription to check its status.</p>
+    <p>You may now close this window.</p>
+    <p><a href="/cartes-whatsapp/suscripcion.html">Español</a></p>
+  </main>
+
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      const title = document.getElementById("title");
+      const status = document.getElementById("status");
+      const detail = document.getElementById("detail");
+      const provider = String(params.get("provider") || "").toLowerCase();
+      const result = String(params.get("result") || "").toLowerCase();
+
+      if (params.get("flow") !== "review_pack") {
+        if (provider === "paypal" && result === "cancel") {
+          title.textContent = "Subscription not completed";
+          status.textContent = "You canceled the process in PayPal.";
+          detail.textContent = "Cartes Plus was not activated and your plan did not change.";
+          return;
+        }
+
+        if (provider === "paypal" && result === "success") {
+          title.textContent = "Confirming Cartes Plus";
+          status.textContent = "PayPal received your approval.";
+          detail.textContent = "Cartes Plus will be activated automatically when PayPal confirms the subscription. Check My subscription in a few moments.";
+          return;
+        }
+
+        return;
+      }
+
+      title.textContent = "Additional reviews";
+
+      if (["cancel", "failure"].includes(result)) {
+        status.textContent = "The purchase was not completed.";
+        detail.textContent = "No additional reviews were added and no changes were made to your account.";
+        return;
+      }
+
+      if (result === "pending") {
+        status.textContent = "Mercado Pago is processing the transaction.";
+        detail.textContent = "The reviews will be added when payment is confirmed. Check My subscription in a few moments.";
+        return;
+      }
+
+      async function complete() {
+        let body;
+
+        if (provider === "paypal") {
+          const orderId = params.get("token");
+          if (!orderId) {
+            throw new Error("PayPal did not return the order identifier.");
+          }
+
+          body = {
+            action: "paypal_complete",
+            order_id: orderId,
+            locale: "en"
+          };
+        } else if (provider === "mercadopago") {
+          const paymentId = params.get("payment_id") || params.get("collection_id");
+
+          if (!paymentId) {
+            status.textContent = "Mercado Pago received the payment.";
+            detail.textContent = "Cartes will add the reviews when Mercado Pago confirms the transaction. Check My subscription in a few moments.";
+            return;
+          }
+
+          body = {
+            action: "mercadopago_complete",
+            payment_id: paymentId,
+            locale: "en"
+          };
+        } else {
+          throw new Error("Unrecognized payment provider.");
+        }
+
+        status.textContent = "Confirming your purchase…";
+        detail.textContent = "Do not close this window until confirmation is complete.";
+
+        const response = await fetch(
+          "/.netlify/functions/cartes-review-pack",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Cartes-Locale": "en"
+            },
+            body: JSON.stringify(body),
+            cache: "no-store"
+          }
+        );
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data?.ok) {
+          throw new Error(data?.error || "Unable to confirm the purchase.");
+        }
+
+        const reviewPackSize = Number(data?.reviews?.creditos_por_paquete);
+        status.textContent =
+          Number.isSafeInteger(reviewPackSize) && reviewPackSize > 0
+            ? `Purchase confirmed! ${reviewPackSize} additional reviews were added to your Cartes account.`
+            : "Purchase confirmed! Additional reviews were added to your Cartes account.";
+
+        if (data?.reviews) {
+          detail.textContent =
+            `Reviews available: ${data.reviews.disponibles}. Additional packages: ${data.reviews.paquetes_comprados} of ${data.reviews.paquetes_maximo}.`;
+        } else {
+          detail.textContent = "You can return to Cartes and select My subscription.";
+        }
+      }
+
+      void complete().catch((error) => {
+        status.textContent = "We could not confirm the purchase automatically.";
+        detail.textContent =
+          error instanceof Error
+            ? error.message
+            : "Check My subscription before trying to pay again.";
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>Cartes | Administración</title>
+  <link rel="stylesheet" href="admin.css?v=20260927-04" />
+</head>
+<body>
+  <main class="admin-shell">
+    <section id="loginView" class="login-card">
+      <div class="eyebrow">Administración privada</div>
+      <h1>Cartes</h1>
+      <p>Panel de uso y actividad.</p>
+      <form id="loginForm">
+        <label>Contraseña
+          <input id="adminPassword" type="password" autocomplete="current-password" required />
+        </label>
+        <button id="loginButton" type="submit">Ingresar</button>
+        <p id="loginError" class="message message--error" hidden></p>
+      </form>
+    </section>
+
+    <section id="panelView" hidden>
+      <header class="admin-header">
+        <div>
+          <div class="eyebrow">Develando el Código Masónico</div>
+          <h1>Cartes</h1>
+          <p id="generatedAt">Cargando actividad...</p>
+          <p id="runtimeInfo" class="runtime-info"></p>
+        </div>
+        <div class="header-actions">
+          <button id="refreshButton" class="button--secondary" type="button">Actualizar</button>
+          <button id="logoutButton" class="button--secondary" type="button">Salir</button>
+        </div>
+      </header>
+
+      <section class="stats" aria-label="Resumen">
+        <article><span>Usuarios</span><strong id="statUsers">0</strong></article>
+        <article><span>Activos hoy</span><strong id="statToday">0</strong></article>
+        <article><span>Activos 7 días</span><strong id="stat7">0</strong></article>
+        <article><span>Activos 30 días</span><strong id="stat30">0</strong></article>
+        <article><span>Consultas hoy</span><strong id="statQueriesToday">0</strong></article>
+        <article><span>Consultas 7 días</span><strong id="statQueries7">0</strong></article>
+        <article><span>Consultas 30 días</span><strong id="statQueries30">0</strong></article>
+        <article><span>Promedio / activo 30d</span><strong id="statAvg">0</strong></article>
+      </section>
+
+      <section class="grid-2">
+        <article class="panel">
+          <h2>Consultas, últimos 30 días</h2>
+          <div id="dailyChart" class="chart" aria-label="Consultas por día"></div>
+        </article>
+        <article class="panel split-panel">
+          <div><h2>Canal, últimos 30 días</h2><div id="channels"></div></div>
+          <div><h2>Plan actual</h2><div id="plans"></div></div>
+        </article>
+      </section>
+
+      <section class="grid-2">
+        <article class="panel">
+          <h2>Consumo Free, ciclo vigente</h2>
+          <div id="freeConsumption"></div>
+        </article>
+        <article class="panel">
+          <h2>Revisiones, últimos 30 días</h2>
+          <div class="mini-stats">
+            <div><span>Completadas</span><strong id="reviewsCompleted">0</strong></div>
+            <div><span>Pendientes</span><strong id="reviewsPending">0</strong></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div><h2>Actividad por usuario</h2><p>Identificador interno, sin correo, teléfono ni contenido.</p></div>
+          <input id="userSearch" type="search" placeholder="Buscar user_id" />
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Usuario</th><th>Plan</th><th>Canal 30d</th><th>Consultas 30d</th><th>Ciclo vigente</th><th>Última actividad</th></tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <p id="panelMessage" class="message" hidden></p>
+      <div id="notes" class="notes"></div>
+    </section>
+
+    <noscript>
+      <section class="login-card"><p>Este panel requiere JavaScript habilitado.</p></section>
+    </noscript>
+  </main>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const ENDPOINTS = Object.freeze({
+      login: "/.netlify/functions/cartes-admin-login",
+      logout: "/.netlify/functions/cartes-admin-logout",
+      stats: "/.netlify/functions/cartes-admin-stats"
+    });
+    const TOKEN_KEY = "cartes_admin_token_v3";
+
+    let stats = null;
+    const $ = (selector) => document.querySelector(selector);
+    const loginView = $("#loginView");
+    const panelView = $("#panelView");
+    const loginForm = $("#loginForm");
+    const loginButton = $("#loginButton");
+    const passwordInput = $("#adminPassword");
+    const loginError = $("#loginError");
+    const panelMessage = $("#panelMessage");
+
+    function getToken() {
+      return sessionStorage.getItem(TOKEN_KEY) || "";
+    }
+
+    function setToken(token) {
+      if (token) sessionStorage.setItem(TOKEN_KEY, token);
+      else sessionStorage.removeItem(TOKEN_KEY);
+    }
+
+    async function api(url, options = {}) {
+      const { auth = true, ...fetchOptions } = options;
+      const headers = {
+        "Content-Type": "application/json",
+        ...(fetchOptions.headers || {})
+      };
+
+      if (auth) {
+        const token = getToken();
+        if (token) headers.Authorization = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        cache: "no-store",
+        ...fetchOptions,
+        headers
+      });
+
+      const payload = await response.json().catch(() => null);
+
+      if (response.status === 401 && auth) {
+        setToken("");
+        showLogin("Sesión expirada.");
+        throw new Error("Sesión expirada.");
+      }
+
+      if (!response.ok || !payload?.ok) {
+        throw new Error(payload?.message || `Error ${response.status}`);
+      }
+
+      return payload;
+    }
+
+    function showLogin(message = "") {
+      panelView.hidden = true;
+      loginView.hidden = false;
+      if (message) {
+        loginError.textContent = message;
+        loginError.hidden = false;
+      } else {
+        loginError.textContent = "";
+        loginError.hidden = true;
+      }
+      passwordInput.value = "";
+      setTimeout(() => passwordInput.focus(), 20);
+    }
+
+    function showPanel() {
+      loginView.hidden = true;
+      panelView.hidden = false;
+    }
+
+    function fmtDate(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime())
+        ? "—"
+        : new Intl.DateTimeFormat("es-MX", {
+            dateStyle: "medium",
+            timeStyle: "short"
+          }).format(date);
+    }
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function setText(selector, value) {
+      const element = $(selector);
+      if (element) element.textContent = String(value ?? 0);
+    }
+
+    function bars(container, entries) {
+      const total = entries.reduce((sum, [, value]) => sum + Number(value || 0), 0) || 1;
+      container.innerHTML = entries.map(([label, value]) => `
+        <div class="bar-row">
+          <span class="bar-label">${esc(label)}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.max(0, Math.min(100, Number(value || 0) / total * 100))}%"></div></div>
+          <span class="bar-value">${esc(value)}</span>
+        </div>`).join("");
+    }
+
+    function renderChart(days) {
+      const max = Math.max(1, ...days.map((day) => Number(day.queries || 0)));
+      $("#dailyChart").innerHTML = days.map((day) => {
+        const height = Math.max(2, Math.round((Number(day.queries || 0) / max) * 100));
+        return `<div class="chart-col" title="${esc(day.date)}: ${esc(day.queries)} consultas"><div class="chart-bar" style="height:${height}%"></div></div>`;
+      }).join("");
+    }
+
+    function renderUsers() {
+      const query = $("#userSearch").value.trim().toLowerCase();
+      const rows = (stats?.users || []).filter((user) =>
+        !query || String(user.user_id).toLowerCase().includes(query)
+      );
+
+      $("#usersBody").innerHTML = rows.map((user) => `
+        <tr>
+          <td><code>${esc(user.user_id)}</code></td>
+          <td><span class="chip">${esc(user.plan)}</span></td>
+          <td>${esc((user.channels || []).join(", ") || "—")}</td>
+          <td>${esc(user.queries)}</td>
+          <td>${esc(user.current_cycle_used)} / ${esc(user.current_cycle_limit)}</td>
+          <td>${esc(fmtDate(user.last_activity))}</td>
+        </tr>`).join("") || '<tr><td colspan="6">No hay usuarios que coincidan.</td></tr>';
+    }
+
+    function render() {
+      const summary = stats.summary;
+      setText("#statUsers", summary.users_total);
+      setText("#statToday", summary.active_today);
+      setText("#stat7", summary.active_7d);
+      setText("#stat30", summary.active_30d);
+      setText("#statQueriesToday", summary.queries_today);
+      setText("#statQueries7", summary.queries_7d);
+      setText("#statQueries30", summary.queries_30d);
+      setText("#statAvg", summary.avg_queries_per_active_30d);
+      setText("#reviewsCompleted", summary.reviews_completed);
+      setText("#reviewsPending", summary.reviews_pending);
+      $("#generatedAt").textContent = `Actualizado ${fmtDate(stats.generated_at)}`;
+
+      bars($("#channels"), [
+        ["Web", stats.channels.web],
+        ["WhatsApp", stats.channels.whatsapp],
+        ["Otros", stats.channels.unknown]
+      ]);
+      bars($("#plans"), [
+        ["Free", stats.plans.gratuito],
+        ["Plus", stats.plans.plus]
+      ]);
+
+      const free = stats.consumption.gratuito;
+      bars($("#freeConsumption"), [
+        ["0", free["0"]],
+        ["1", free["1"]],
+        ["2-5", free["2-5"]],
+        ["6-9", free["6-9"]],
+        ["Límite", free.limit]
+      ]);
+
+      renderChart(stats.daily || []);
+      renderUsers();
+      $("#notes").innerHTML = (stats.notes || []).map((note) => `<p>${esc(note)}</p>`).join("");
+    }
+
+    async function loadStats() {
+      panelMessage.hidden = true;
+      const payload = await api(ENDPOINTS.stats);
+      stats = payload.stats;
+      showPanel();
+      render();
+
+      const runtime = payload.runtime || {};
+      const runtimeInfo = $("#runtimeInfo");
+      if (runtimeInfo) {
+        runtimeInfo.textContent = runtime.local
+          ? "Entorno local, datos aislados de producción"
+          : "Datos reales de cartes-core";
+      }
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      loginError.hidden = true;
+      loginButton.disabled = true;
+      loginButton.textContent = "Ingresando...";
+
+      try {
+        const payload = await api(ENDPOINTS.login, {
+          auth: false,
+          method: "POST",
+          body: JSON.stringify({ password: passwordInput.value })
+        });
+
+        if (!payload.token) throw new Error("El servidor no devolvió una sesión válida.");
+        setToken(payload.token);
+        showPanel();
+
+        try {
+          await loadStats();
+        } catch (error) {
+          panelMessage.textContent = error.message;
+          panelMessage.className = "message message--error";
+          panelMessage.hidden = false;
+        }
+      } catch (error) {
+        setToken("");
+        showLogin(error.message);
+      } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = "Ingresar";
+      }
+    });
+
+    $("#refreshButton").addEventListener("click", async () => {
+      try {
+        await loadStats();
+      } catch (error) {
+        if (!loginView.hidden) return;
+        panelMessage.textContent = error.message;
+        panelMessage.className = "message message--error";
+        panelMessage.hidden = false;
+      }
+    });
+
+    $("#logoutButton").addEventListener("click", async () => {
+      setToken("");
+      try {
+        await api(ENDPOINTS.logout, { auth: false, method: "POST", body: "{}" });
+      } catch {}
+      showLogin();
+    });
+
+    $("#userSearch").addEventListener("input", renderUsers);
+
+    async function init() {
+      if (!getToken()) {
+        showLogin();
+        return;
+      }
+
+      showPanel();
+      try {
+        await loadStats();
+      } catch (error) {
+        if (!loginView.hidden) return;
+        panelMessage.textContent = error.message;
+        panelMessage.className = "message message--error";
+        panelMessage.hidden = false;
+      }
+    }
+
+    init();
+  })();
+  </script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 import {
+  actualizarIdiomaUsuario,
   resolverOCrearUsuarioPorIdentidad
 } from "./lib-cartes-account.mjs";
+import { coreText, normalizeLocale } from "./i18n.mjs";
 
 import {
   CartesDocumentError,
@@ -18,6 +20,7 @@ const GENERIC_BINARY_MIME =
   "application/octet-stream";
 
 const realDeps = {
+  actualizarIdiomaUsuario,
   resolverOCrearUsuarioPorIdentidad,
   obtenerEstadoRevisionesCartes,
   revisarDocumentoCartes
@@ -30,6 +33,13 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
   };
 
   return async function handler(request) {
+    const headerLocale = normalizeLocale(
+      request.headers.get("x-cartes-locale") ||
+      request.headers.get("accept-language") ||
+      "es"
+    );
+    let activeLocale = headerLocale;
+
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -39,7 +49,7 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
 
     if (request.method !== "POST") {
       return json(
-        { error: "Método no permitido." },
+        { error: coreText(activeLocale, "method_not_allowed") },
         405
       );
     }
@@ -51,10 +61,12 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
 
       if (contentType.includes("application/json")) {
         const body = await request.json().catch(() => ({}));
+        const requestedLocale = String(body?.locale || "").trim();
+        activeLocale = normalizeLocale(requestedLocale, headerLocale);
 
         if (String(body?.action || "").toLowerCase() !== "status") {
           return json(
-            { error: "Acción no soportada." },
+            { error: activeLocale === "en" ? "Unsupported action." : "Acción no soportada." },
             400
           );
         }
@@ -65,7 +77,7 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
 
         if (!webIdentity) {
           return json(
-            { error: "La sesión Web no contiene una identidad válida." },
+            { error: activeLocale === "en" ? "The Web session does not contain a valid identity." : "La sesión Web no contiene una identidad válida." },
             400
           );
         }
@@ -76,6 +88,13 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
             valor: webIdentity
           });
 
+        if (requestedLocale) {
+          await d.actualizarIdiomaUsuario({
+            userId: identity.user_id,
+            locale: activeLocale
+          });
+        }
+
         const reviews =
           await d.obtenerEstadoRevisionesCartes({
             userId: identity.user_id
@@ -83,6 +102,7 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
 
         return json({
           ok: true,
+          locale: activeLocale,
           plan: reviews.plan,
           reviews
         });
@@ -92,13 +112,21 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
         return json(
           {
             error:
-              "La revisión documental requiere multipart/form-data."
+              activeLocale === "en"
+                ? "Document review requires multipart/form-data."
+                : "La revisión documental requiere multipart/form-data."
           },
           415
         );
       }
 
       const form = await request.formData();
+
+      const requestedLocale = String(
+        form.get("locale") || ""
+      ).trim();
+
+      activeLocale = normalizeLocale(requestedLocale, headerLocale);
 
       const webIdentity = String(
         form.get("web_identity") || ""
@@ -117,7 +145,7 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
 
       if (!webIdentity) {
         return json(
-          { error: "La sesión Web no contiene una identidad válida." },
+          { error: activeLocale === "en" ? "The Web session does not contain a valid identity." : "La sesión Web no contiene una identidad válida." },
           400
         );
       }
@@ -127,7 +155,7 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
         typeof file.arrayBuffer !== "function"
       ) {
         return json(
-          { error: "No se recibió ningún documento." },
+          { error: activeLocale === "en" ? "No document was received." : "No se recibió ningún documento." },
           400
         );
       }
@@ -168,9 +196,9 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
       ) {
         return json(
           {
-            error:
-              "Este tipo de archivo no es compatible. Cartes admite únicamente documentos Word en formato .doc o .docx para revisión.\n\n" +
-              "El archivo no fue revisado y no se consumió ninguna revisión."
+            error: activeLocale === "en"
+              ? "This file type is not supported. Cartes accepts only Word documents in .doc or .docx format for review.\n\nThe file was not reviewed and no review credit was used."
+              : "Este tipo de archivo no es compatible. Cartes admite únicamente documentos Word en formato .doc o .docx para revisión.\n\nEl archivo no fue revisado y no se consumió ninguna revisión."
           },
           415
         );
@@ -181,6 +209,13 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
           tipo: "web",
           valor: webIdentity
         });
+
+      if (requestedLocale) {
+        await d.actualizarIdiomaUsuario({
+          userId: identity.user_id,
+          locale: activeLocale
+        });
+      }
 
       let bytes = Buffer.from(
         await file.arrayBuffer()
@@ -194,7 +229,8 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
             fileName,
             channel: "web",
             requestId,
-            consentAccepted
+            consentAccepted,
+            locale: activeLocale
           });
 
         return json(result, 200);
@@ -227,8 +263,9 @@ export function createDocumentReviewHttpHandler(overrides = {}) {
 
       return json(
         {
-          error:
-            "No fue posible revisar el documento en este momento."
+          error: activeLocale === "en"
+            ? "The document could not be reviewed at this time."
+            : "No fue posible revisar el documento en este momento."
         },
         500
       );
@@ -244,7 +281,7 @@ function corsHeaders() {
       "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers":
-      "Content-Type",
+      "Content-Type, X-Cartes-Locale",
     "Access-Control-Allow-Methods":
       "POST, OPTIONS"
   };

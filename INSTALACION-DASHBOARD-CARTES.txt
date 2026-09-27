@@ -1,0 +1,74 @@
+DASHBOARD ADMINISTRATIVO DE CARTES
+Versión: 2026-09-26-01
+
+OBJETIVO
+Agregar un panel privado de solo lectura para visualizar uso real de Cartes desde:
+https://develandoelcodigomasonico.com/admin/cartes/
+
+ARCHIVOS NUEVOS
+- channels/web/public/admin/cartes/index.html
+- channels/web/public/admin/cartes/admin.css
+- channels/web/public/admin/cartes/admin.js
+- netlify/lib/cartes-admin-auth.js
+- netlify/lib/cartes-admin-stats.js
+- netlify/functions/cartes-admin-login.js
+- netlify/functions/cartes-admin-logout.js
+- netlify/functions/cartes-admin-stats.js
+- tests/admin/cartes-admin.test.mjs
+
+NO MODIFICA
+- Los blobs de cartes-core.
+- El flujo Web de Cartes.
+- WhatsApp.
+- Planes Free/Plus.
+- Conversaciones.
+- Revisiones.
+- El panel de pedidos del libro.
+
+SEGURIDAD
+El panel usa una sesión administrativa independiente y HttpOnly.
+Configurar en Netlify, Project configuration > Environment variables:
+
+CARTES_ADMIN_PASSWORD
+  Contraseña elegida para entrar al panel.
+
+CARTES_ADMIN_SESSION_SECRET
+  Cadena aleatoria de al menos 32 caracteres.
+
+Opcional:
+CARTES_ADMIN_SESSION_HOURS=8
+
+Para generar el secreto en PowerShell:
+[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
+
+PUBLICACIÓN
+1. Copiar los archivos conservando exactamente las rutas indicadas.
+2. Configurar las dos variables de entorno obligatorias.
+3. Ejecutar las pruebas locales/predeploy habituales del proyecto.
+4. Desplegar primero a Draft/Preview.
+5. Abrir /admin/cartes/ y validar login y métricas.
+6. Solo después publicar en producción.
+
+MÉTRICAS INCLUIDAS
+- Usuarios reales, excluyendo cuentas fusionadas.
+- Usuarios con consultas completadas.
+- Usuarios activos hoy, 7 días y 30 días.
+- Consultas completadas hoy, 7 días y 30 días.
+- Promedio de consultas por usuario activo a 30 días.
+- Web vs WhatsApp.
+- Free vs Plus.
+- Distribución de consumo Free.
+- Revisiones completadas y pendientes.
+- Tabla de actividad por user_id interno.
+- Gráfico de consultas por día.
+
+PRIVACIDAD
+El endpoint no devuelve correos, teléfonos ni contenido de conversaciones.
+
+LIMITACIÓN ACTUAL
+usage-v3 está diseñado para control de ciclo de consumo, no como almacén histórico permanente.
+Por ello, los indicadores de 7 y 30 días sólo pueden contar las consultas que todavía estén presentes en los registros usage-v3 actuales.
+Para analítica histórica completa será necesaria una segunda fase de telemetría append-only.
+
+PRUEBA AGREGADA
+node --test tests/admin/cartes-admin.test.mjs

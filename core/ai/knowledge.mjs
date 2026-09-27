@@ -1,14 +1,115 @@
 import glossary from "../knowledge/01_GLOSARIO_MASONICO.json" with { type: "json" };
 import faq from "../knowledge/faq-base.json" with { type: "json" };
 import catalog from "../knowledge/02_CATALOGO_CONTENIDOS.json" with { type: "json" };
+import { coreText, normalizeLocale } from "./i18n.mjs";
 
 const STOP_WORDS = new Set([
   "que", "cual", "cuales", "como", "donde", "cuando", "quien", "quienes",
   "para", "sobre", "tienen", "tiene", "hay", "un", "una", "unos", "unas",
   "el", "la", "los", "las", "de", "del", "en", "y", "o", "es", "son",
   "me", "puedes", "podrias", "quiero", "dime", "explica", "explicame",
-  "significa", "masoneria", "masonico", "masonica", "masonicos", "masonicas"
+  "significa", "masoneria", "masonico", "masonica", "masonicos", "masonicas",
+  "what", "which", "where", "when", "who", "why", "how", "about", "with",
+  "from", "that", "this", "these", "those", "the", "and", "for", "are",
+  "does", "explain", "meaning", "freemasonry", "freemason", "freemasons",
+  "masonic", "mason", "masons"
 ]);
+
+// The approved documentary corpus remains in Spanish. These equivalents make
+// its retrieval bilingual while preserving one authoritative content source.
+// The model receives the Spanish evidence and is explicitly instructed to
+// answer in natural English when the selected locale is English.
+const ENGLISH_TO_SPANISH_EQUIVALENTS = Object.freeze([
+  ["freemasonry", "masoneria"],
+  ["freemason", "mason"],
+  ["freemasons", "masones"],
+  ["masonic", "masonico"],
+  ["lodge meeting", "tenida"],
+  ["stated communication", "tenida"],
+  ["grand lodge", "gran logia"],
+  ["masonic body", "obediencia"],
+  ["recognition", "reconocimiento"],
+  ["regularity", "regularidad"],
+  ["jurisdiction", "jurisdiccion"],
+  ["rite", "rito"],
+  ["ritual", "ritual"],
+  ["ceremony", "ceremonia"],
+  ["degree", "grado"],
+  ["degrees", "grados"],
+  ["office", "cargo"],
+  ["officer", "dignatario"],
+  ["worshipful master", "venerable maestro"],
+  ["entered apprentice", "aprendiz mason"],
+  ["fellow craft", "companero mason"],
+  ["master mason", "maestro mason"],
+  ["square and compasses", "escuadra compas"],
+  ["square", "escuadra"],
+  ["compasses", "compas"],
+  ["compass", "compas"],
+  ["apron", "mandil"],
+  ["plumb rule", "plomada"],
+  ["plumb", "plomada"],
+  ["level", "nivel"],
+  ["gavel", "mallete"],
+  ["trowel", "palustre"],
+  ["rough ashlar", "piedra bruta"],
+  ["perfect ashlar", "piedra cubica"],
+  ["chamber of reflection", "camara de reflexiones"],
+  ["chamber of reflections", "camara de reflexiones"],
+  ["three great lights", "tres grandes luces"],
+  ["great architect of the universe", "gran arquitecto del universo"],
+  ["grand architect of the universe", "gran arquitecto del universo"],
+  ["chain of union", "cadena de union"],
+  ["pillars", "pilares columnas"],
+  ["pillar", "pilar columna"],
+  ["columns", "columnas"],
+  ["column", "columna"],
+  ["east", "oriente"],
+  ["west", "occidente"],
+  ["light", "luz"],
+  ["temple", "templo"],
+  ["symbolism", "simbolismo simbologia"],
+  ["symbol", "simbolo"],
+  ["symbols", "simbolos"],
+  ["brotherhood", "fraternidad"],
+  ["brotherly love", "amor fraternal"],
+  ["virtue", "virtud"],
+  ["ethics", "etica"],
+  ["philosophy", "filosofia"],
+  ["operative masonry", "masoneria operativa"],
+  ["speculative masonry", "masoneria especulativa"],
+  ["old charges", "antiguos deberes"],
+  ["anderson constitutions", "constituciones de anderson"],
+  ["landmarks", "landmarks"],
+  ["initiation", "iniciacion"],
+  ["oath", "juramento"],
+  ["obligation", "obligacion juramento"],
+  ["secrecy", "secreto reserva"],
+  ["women", "mujeres"],
+  ["religion", "religion"],
+  ["god", "dios"],
+  ["supreme being", "ser supremo"],
+  ["conspiracy", "conspiracion"],
+  ["lucifer", "lucifer"],
+  ["podcast", "podcast episodio"],
+  ["episode", "episodio"],
+  ["episodes", "episodios"],
+  ["listen", "escuchar"],
+  ["book", "libro"]
+]);
+
+function expandEnglishQuestion(value) {
+  let expanded = ` ${normalize(value)} `;
+
+  for (const [english, spanish] of ENGLISH_TO_SPANISH_EQUIVALENTS) {
+    const normalizedEnglish = normalize(english);
+    if (expanded.includes(` ${normalizedEnglish} `)) {
+      expanded += ` ${spanish}`;
+    }
+  }
+
+  return expanded.trim();
+}
 
 function normalize(value) {
   return String(value || "")
@@ -135,13 +236,17 @@ function countMatchedPhrases(question, phrases) {
   return count;
 }
 
-export function retrieveLocalKnowledge(question, limit = 6) {
-  const questionTokens = new Set(tokens(question));
+export function retrieveLocalKnowledge(question, limit = 6, locale = "es") {
+  const selectedLocale = normalizeLocale(locale);
+  const searchQuestion = selectedLocale === "en"
+    ? expandEnglishQuestion(question)
+    : question;
+  const questionTokens = new Set(tokens(searchQuestion));
   const candidates = [];
 
   for (const item of glossary.entries || []) {
     const phrases = [item.term, ...(item.aliases || [])];
-    const phrase = phraseScore(question, phrases);
+    const phrase = phraseScore(searchQuestion, phrases);
     const overlap = tokenScore(
       questionTokens,
       [
@@ -167,12 +272,12 @@ export function retrieveLocalKnowledge(question, limit = 6) {
 
   for (const item of glossary.distinctions || []) {
     const phrases = item.terms || [];
-    const phrase = phraseScore(question, phrases);
+    const phrase = phraseScore(searchQuestion, phrases);
     const overlap = tokenScore(
       questionTokens,
       `${item.title} ${item.text} ${phrases.join(" ")}`
     );
-    const matchedPhrases = countMatchedPhrases(question, phrases);
+    const matchedPhrases = countMatchedPhrases(searchQuestion, phrases);
     const score =
       phrase +
       overlap +
@@ -197,7 +302,7 @@ export function retrieveLocalKnowledge(question, limit = 6) {
       item.english,
       ...(item.aliases || [])
     ];
-    const phrase = phraseScore(question, phrases);
+    const phrase = phraseScore(searchQuestion, phrases);
     const overlap = tokenScore(
       questionTokens,
       `${item.degree} ${item.spanish} ${item.english} ${(item.aliases || []).join(" ")}`
@@ -217,7 +322,7 @@ export function retrieveLocalKnowledge(question, limit = 6) {
   }
 
   for (const item of faq.entries || []) {
-    const phrase = phraseScore(question, [item.question]);
+    const phrase = phraseScore(searchQuestion, [item.question]);
     const overlap = tokenScore(
       questionTokens,
       `${item.question} ${item.answer} ${(item.keywords || []).join(" ")}`
@@ -239,7 +344,7 @@ export function retrieveLocalKnowledge(question, limit = 6) {
     if (item.estado !== "publicado") continue;
 
     const phrases = [item.titulo, ...(item.temas || [])];
-    const phrase = phraseScore(question, phrases);
+    const phrase = phraseScore(searchQuestion, phrases);
     const overlap = tokenScore(
       questionTokens,
       `${item.titulo} ${item.descripcion} ${(item.temas || []).join(" ")} ${item.categoria || ""}`
@@ -274,9 +379,9 @@ export function retrieveLocalKnowledge(question, limit = 6) {
     .slice(0, limit);
 }
 
-export function formatKnowledge(items) {
+export function formatKnowledge(items, locale = "es") {
   if (!items.length) {
-    return "No se recuperó contexto documental local específico para esta pregunta.";
+    return coreText(locale, "local_context_empty");
   }
 
   return items

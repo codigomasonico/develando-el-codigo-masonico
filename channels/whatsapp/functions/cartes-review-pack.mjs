@@ -26,6 +26,8 @@ import {
 
 import { getPaymentContext } from "./lib-state.mjs";
 import { sendWhatsAppTextParts } from "./lib-meta.mjs";
+import { normalizeLocale } from "../../../core/ai/i18n.mjs";
+import { translateWhatsAppText } from "../i18n.mjs";
 
 const realDeps = {
   obtenerPlanUsuario,
@@ -64,14 +66,17 @@ export function createCartesReviewPackHandler(overrides = {}) {
     }
 
     const action = String(body?.action || "").trim().toLowerCase();
+    const locale = normalizeLocale(
+      body?.locale || request.headers.get("x-cartes-locale") || "es"
+    );
 
     try {
       if (action === "paypal_complete") {
-        return completarPayPal(body, d);
+        return completarPayPal({ ...body, locale }, d);
       }
 
       if (action === "mercadopago_complete") {
-        return completarMercadoPago(body, d);
+        return completarMercadoPago({ ...body, locale }, d);
       }
 
       if (!["checkout", "status"].includes(action)) {
@@ -161,7 +166,8 @@ export function createCartesReviewPackHandler(overrides = {}) {
         await d.createReviewPackCheckout({
           provider: body?.provider,
           userId,
-          expiresAt
+          expiresAt,
+          locale
         });
 
       return json(
@@ -440,8 +446,10 @@ async function notificarCompra(
   await d.sendWhatsAppTextParts({
     to: context.phone,
     phoneNumberId: context.phone_number_id,
-    text:
-      `¡Listo! Se agregaron ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales a tu cuenta Cartes.\n\n*Revisiones disponibles:* ${reviews.disponibles}\n*Paquetes adicionales:* ${reviews.paquetes_comprados} de ${reviews.paquetes_maximo}`
+    text: translateWhatsAppText(
+      `¡Listo! Se agregaron ${CARTES_REVIEW_PACK_SIZE} revisiones adicionales a tu cuenta Cartes.\n\n*Revisiones disponibles:* ${reviews.disponibles}\n*Paquetes adicionales:* ${reviews.paquetes_comprados} de ${reviews.paquetes_maximo}`,
+      context?.locale
+    )
   }).catch((error) => {
     console.warn(
       "REVIEW_PACK_WA_NOTIFY_ERROR",

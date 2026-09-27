@@ -5,16 +5,20 @@ import { resolveDirectAnswer } from "./direct-answer.mjs";
 import { retrieveLocalKnowledge } from "./knowledge.mjs";
 import { buildInstructions } from "./prompt-builder.mjs";
 import { validateAndNormalizeAnswer, safeFallbackAnswer } from "./validator.mjs";
+import { coreText, normalizeLocale, resolveLocale } from "./i18n.mjs";
 import {
   recoverEditorialAnswer,
   stabilizeEditorialAnswer,
   enforceEditorialEvidenceLanguage
 } from "./editorial-recovery.mjs";
 
-const OUT_OF_SCOPE_ANSWER =
-  "Esta consulta no se considera de carácter masónico, por lo que no puedo responderla.";
-
 export default async (request) => {
+  const headerLocale = normalizeLocale(
+    request.headers.get("x-cartes-locale") ||
+    request.headers.get("accept-language") ||
+    "es"
+  );
+
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
@@ -23,7 +27,7 @@ export default async (request) => {
   }
 
   if (request.method !== "POST") {
-    return json({ error: "Método no permitido." }, 405);
+    return json({ error: coreText(headerLocale, "method_not_allowed") }, 405);
   }
 
   let body;
@@ -31,17 +35,22 @@ export default async (request) => {
   try {
     body = await request.json();
   } catch {
-    return json({ error: "La solicitud no contiene JSON válido." }, 400);
+    return json({ error: coreText(headerLocale, "invalid_json") }, 400);
   }
 
-  const questionResult = sanitizeQuestion(body?.question);
+  const locale = resolveLocale(
+    body?.locale || body?.client?.locale,
+    body?.question,
+    headerLocale
+  );
+  const questionResult = sanitizeQuestion(body?.question, locale);
 
   if (!questionResult.ok) {
     return json({ error: questionResult.error }, 400);
   }
 
   const question = questionResult.text;
-  const safety = detectSafetyIssue(question);
+  const safety = detectSafetyIssue(question, locale);
 
   if (safety.blocked) {
     return json(
@@ -50,6 +59,7 @@ export default async (request) => {
         filtered: true,
         meta: {
           route: "seguridad",
+          locale,
           promptVersion: CONFIG.promptVersion
         }
       },
@@ -60,16 +70,17 @@ export default async (request) => {
   // Las respuestas canónicas del catálogo, glosario y FAQ se evalúan antes
   // del filtro temático. Así se conservan consultas legítimas sobre términos
   // masónicos aunque no coincidan con una expresión general del router.
-  const direct = resolveDirectAnswer(question);
+  const direct = resolveDirectAnswer(question, locale);
 
   if (direct.handled) {
-    const validated = validateAndNormalizeAnswer(direct.answer);
+    const validated = validateAndNormalizeAnswer(direct.answer, locale);
 
     return json(
       {
-        answer: validated.ok ? validated.text : safeFallbackAnswer(),
+        answer: validated.ok ? validated.text : safeFallbackAnswer(locale),
         meta: {
           route: "directa",
+          locale,
           source: direct.source,
           confidence: direct.confidence,
           items: direct.items,
@@ -89,7 +100,7 @@ export default async (request) => {
 
     if (!semanticApiKey) {
       return json(
-        { error: "El servicio de Cartes aún no está configurado en el servidor." },
+        { error: coreText(locale, "service_not_configured") },
         503
       );
     }
@@ -104,10 +115,11 @@ export default async (request) => {
     if (!semanticScope) {
       return json(
         {
-          answer: OUT_OF_SCOPE_ANSWER,
+          answer: coreText(locale, "out_of_scope"),
           filtered: true,
           meta: {
             route: "fuera_de_tema_semantico",
+            locale,
             promptVersion: CONFIG.promptVersion
           }
         },
@@ -120,14 +132,14 @@ export default async (request) => {
       topic: "general"
     };
   }
-  const knowledge = retrieveLocalKnowledge(question);
+  const knowledge = retrieveLocalKnowledge(question, 6, locale);
 
   // Banco canónico para preguntas editoriales centrales. Estas respuestas
   // forman parte del producto y no dependen de la variabilidad del modelo.
-  const canonical = recoverEditorialAnswer(question);
+  const canonical = recoverEditorialAnswer(question, locale);
 
   if (canonical.handled) {
-    const validation = validateAndNormalizeAnswer(canonical.answer);
+    const validation = validateAndNormalizeAnswer(canonical.answer, locale);
 
     if (!validation.ok) {
       console.error(
@@ -138,9 +150,10 @@ export default async (request) => {
 
       return json(
         {
-          answer: safeFallbackAnswer(),
+          answer: safeFallbackAnswer(locale),
           meta: {
             route: "ia_fallback",
+            locale,
             topic: classification.topic,
             validation: "canonical_rejected",
             promptVersion: CONFIG.promptVersion
@@ -155,6 +168,7 @@ export default async (request) => {
         answer: validation.text,
         meta: {
           route: "ia",
+          locale,
           topic: classification.topic,
           recovery: canonical.id,
           sources: knowledge.map((item) => ({
@@ -174,7 +188,7 @@ export default async (request) => {
 
   if (!apiKey) {
     return json(
-      { error: "El servicio de Cartes aún no está configurado en el servidor." },
+      { error: coreText(locale, "service_not_configured") },
       503
     );
   }
@@ -183,6 +197,7 @@ export default async (request) => {
   const instructions = buildInstructions({
     topic: classification.topic,
     knowledge,
+    locale,
     promptVersion: CONFIG.promptVersion,
     knowledgeVersion: CONFIG.knowledgeVersion
   });
@@ -211,8 +226,7 @@ export default async (request) => {
 
       const retryInstructions =
         `${instructions}\n\n` +
-        "IMPORTANTE: responde de forma completa, autosuficiente y concisa. " +
-        "No dejes la respuesta inconclusa.";
+        coreText(locale, "retry_instruction");
 
       const second = await requestOpenAI({
         apiKey,
@@ -239,10 +253,10 @@ export default async (request) => {
         }
       );
 
-      const recovery = recoverEditorialAnswer(question);
+      const recovery = recoverEditorialAnswer(question, locale);
 
       if (recovery.handled) {
-        const recovered = validateAndNormalizeAnswer(recovery.answer);
+        const recovered = validateAndNormalizeAnswer(recovery.answer, locale);
 
         if (recovered.ok) {
           return json(
@@ -250,6 +264,7 @@ export default async (request) => {
               answer: recovered.text,
               meta: {
                 route: "ia",
+                locale,
                 topic: classification.topic,
                 recovery: recovery.id,
                 sources: knowledge.map((item) => ({
@@ -267,9 +282,10 @@ export default async (request) => {
 
       return json(
         {
-          answer: safeFallbackAnswer(),
+          answer: safeFallbackAnswer(locale),
           meta: {
             route: "ia_fallback",
+            locale,
             topic: classification.topic,
             validation: "incomplete_after_retry",
             promptVersion: CONFIG.promptVersion
@@ -281,10 +297,11 @@ export default async (request) => {
 
     const generatedAnswer = enforceEditorialEvidenceLanguage(
       question,
-      generatedText
+      generatedText,
+      locale
     );
-    const stabilized = stabilizeEditorialAnswer(question, generatedAnswer);
-    let validation = validateAndNormalizeAnswer(stabilized.answer);
+    const stabilized = stabilizeEditorialAnswer(question, generatedAnswer, locale);
+    let validation = validateAndNormalizeAnswer(stabilized.answer, locale);
 
     if (!validation.ok) {
       console.error(
@@ -297,10 +314,10 @@ export default async (request) => {
         }
       );
 
-      const recovery = recoverEditorialAnswer(question);
+      const recovery = recoverEditorialAnswer(question, locale);
 
       if (recovery.handled) {
-        validation = validateAndNormalizeAnswer(recovery.answer);
+        validation = validateAndNormalizeAnswer(recovery.answer, locale);
 
         if (validation.ok) {
           return json(
@@ -308,6 +325,7 @@ export default async (request) => {
               answer: validation.text,
               meta: {
                 route: "ia",
+                locale,
                 topic: classification.topic,
                 recovery: recovery.id,
                 sources: knowledge.map((item) => ({
@@ -325,9 +343,10 @@ export default async (request) => {
 
       return json(
         {
-          answer: safeFallbackAnswer(),
+          answer: safeFallbackAnswer(locale),
           meta: {
             route: "ia_fallback",
+            locale,
             topic: classification.topic,
             validation: "rejected",
             promptVersion: CONFIG.promptVersion
@@ -346,6 +365,7 @@ export default async (request) => {
         answer: validation.text,
         meta: {
           route: "ia",
+          locale,
           topic: classification.topic,
           recovery: stabilized.handled ? stabilized.id : undefined,
           sources: knowledge.map((item) => ({
@@ -363,8 +383,8 @@ export default async (request) => {
 
     const message =
       error?.name === "AbortError"
-        ? "La respuesta demoró demasiado. Intenta nuevamente."
-        : "No fue posible conectar con el servicio de inteligencia artificial.";
+        ? coreText(locale, "request_timeout")
+        : coreText(locale, "ai_unavailable");
 
     return json({ error: message }, 502);
   }
@@ -526,12 +546,12 @@ function summarizeOutputTypes(data) {
   }));
 }
 
-function sanitizeQuestion(value) {
+function sanitizeQuestion(value, locale = "es") {
   if (typeof value !== "string") {
     return {
       ok: false,
       text: "",
-      error: "Escribe una pregunta antes de enviarla."
+      error: coreText(locale, "question_required")
     };
   }
 
@@ -541,7 +561,7 @@ function sanitizeQuestion(value) {
     return {
       ok: false,
       text: "",
-      error: "Escribe una pregunta antes de enviarla."
+      error: coreText(locale, "question_required")
     };
   }
 
@@ -549,7 +569,7 @@ function sanitizeQuestion(value) {
     return {
       ok: false,
       text: "",
-      error: `La pregunta supera el máximo de ${CONFIG.maxQuestionChars} caracteres.`
+      error: coreText(locale, "question_too_long", { max: CONFIG.maxQuestionChars })
     };
   }
 

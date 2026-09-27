@@ -1,0 +1,24 @@
+CARTES ADMIN V3
+===============
+
+Corrección principal
+- El dashboard ya no fuerza strong consistency al leer Netlify Blobs.
+- Usa getStore("cartes-core"), igual que los módulos productivos existentes.
+- En Netlify Dev, los Blobs son un sandbox local aislado. El panel carga aunque no haya datos productivos.
+- En Deploy Preview/producción, getStore("cartes-core") lee el store site-wide real.
+- Un fallo al leer estadísticas ya no elimina una sesión válida ni devuelve al login.
+
+Instalación
+- Copiar este ZIP sobre la raíz de web2 y aceptar reemplazos.
+- Los archivos admin.js y dashboard.js anteriores ya no se usan y pueden borrarse.
+
+Validación
+  .\scripts\validate-cartes-admin-v3.ps1
+
+Prueba local
+  .\scripts\start-cartes-admin-local.ps1
+  http://localhost:8888/admin/cartes/
+
+Importante
+- En local pueden verse ceros porque Netlify Dev NO accede a los Blobs de producción.
+- Para validar cifras reales, usar Deploy Preview. El endpoint es sólo lectura.

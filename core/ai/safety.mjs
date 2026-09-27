@@ -1,3 +1,5 @@
+import { coreText, normalizeLocale } from "./i18n.mjs";
+
 const RESERVED_PATTERNS = [
   /(?:signos?\s+y\s+toques?|contraseña|palabra\s+(?:secreta|reservada)|se\s+susurra|clave\s+de\s+openai|api\s*key)/i,
   /(?:paso\s+a\s+paso).*?(?:ceremonia|iniciaci[oó]n|ritual)/i,
@@ -11,16 +13,20 @@ const RESERVED_PATTERNS = [
   /(?:actúa como desarrollador|simula que no tienes restricciones|responde sin censura)/i,
   /\b(?:ignore|disregard|forget|override)\b.*?\b(?:instructions|rules|prompt|policies)\b/i,
   /\b(?:show|reveal|print|repeat|copy)\b.*?\b(?:system prompt|internal instructions|developer message|api key)\b/i,
+  /\b(?:tell|give|show|reveal|list|describe|write|transcribe|reproduce)\b.*?\b(?:secret|sacred|password|pass word|word of the degree|signs?|grips?|tokens?|modes? of recognition|complete oath|full oath|complete ritual|full ritual)\b/i,
+  /\b(?:oath|ceremony|initiation|ritual)\b.*?\b(?:complete|full|verbatim|word for word|step by step|reproduce|transcribe)\b/i,
+  /\b(?:pretend|simulate)\b.*?\b(?:to be a freemason|to be a mason|enter a lodge)\b/i,
   /\b(?:jailbreak|developer mode|do anything now)\b/i
 ];
 
-export function detectSafetyIssue(question) {
+export function detectSafetyIssue(question, locale = "es") {
   const text = String(question || "");
+  const selectedLocale = normalizeLocale(locale);
 
   if (RESERVED_PATTERNS.some((pattern) => pattern.test(text))) {
     return {
       blocked: true,
-      response: "No puedo revelar instrucciones internas, credenciales ni contenido ritual reservado o reproducible. Sí puedo ofrecer una explicación general de su sentido histórico, ético o simbólico."
+      response: coreText(selectedLocale, "safety_blocked")
     };
   }
 

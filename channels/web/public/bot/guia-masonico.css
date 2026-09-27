@@ -133,14 +133,63 @@
 .gm-header__actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  min-height: 36px;
+}
+
+.gm-language {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 5px;
+  border: 1px solid var(--gm-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  overflow: hidden;
+}
+
+.gm-language__option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 27px;
+  height: 32px;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--gm-muted);
+  font: 700 0.7rem/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.gm-language__option:hover,
+.gm-language__option:focus-visible {
+  color: var(--gm-text);
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
+}
+
+.gm-language__option.is-active,
+.gm-language__option[aria-pressed="true"] {
+  color: var(--gm-gold-light);
+  background: rgba(201, 162, 39, 0.10);
+}
+
+.gm-language__separator {
+  color: rgba(255, 255, 255, 0.24);
+  font-size: 0.68rem;
+  line-height: 1;
+  user-select: none;
 }
 
 .gm-clear {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  min-height: 36px;
+  height: 36px;
   padding: 0 9px;
   border: 0;
   border-radius: 10px;
@@ -158,8 +207,10 @@
 }
 
 .gm-close {
-  width: 38px;
-  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
   border: 0;
   border-radius: 10px;
   background: transparent;
@@ -370,7 +421,10 @@
 }
 
 .gm-link {
-  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
   padding: 0 9px;
   border: 1px solid var(--gm-border);
   border-radius: 10px;
@@ -394,6 +448,14 @@
 @media (max-width: 520px) {
   .gm-link { padding: 0 7px; font-size: 0.68rem; }
   .gm-clear__label { display: none; }
+  .gm-language {
+    padding: 0 3px;
+  }
+
+  .gm-language__option {
+    min-width: 24px;
+    padding: 0 4px;
+  }
 }
 
 /* CARTES WEB MENU LAYOUT 011 */

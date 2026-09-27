@@ -1,0 +1,35 @@
+CARTES ADMIN V4
+===============
+
+Corrección principal
+- El dashboard ya no fuerza strong consistency al leer Netlify Blobs.
+- Usa getStore("cartes-core"), igual que los módulos productivos existentes.
+- En Netlify Dev, los Blobs son un sandbox local aislado. El panel carga aunque no haya datos productivos.
+- En Deploy Preview/producción, getStore("cartes-core") lee el store site-wide real.
+- Un fallo al leer estadísticas ya no elimina una sesión válida ni devuelve al login.
+
+Instalación
+- Copiar este ZIP sobre la raíz de web2 y aceptar reemplazos.
+- Los archivos admin.js y dashboard.js anteriores ya no se usan y pueden borrarse.
+
+Validación
+  .\scripts\validate-cartes-admin-v4.ps1
+
+Prueba local
+  .\scripts\start-cartes-admin-local.ps1
+  http://localhost:8888/admin/cartes/
+
+Importante
+- En local pueden verse ceros porque Netlify Dev NO accede a los Blobs de producción.
+- Para validar cifras reales, usar Deploy Preview. El endpoint es sólo lectura.
+
+
+V4: unifica la ventana de Canal, Consultas por usuario y Revisiones a 30 días. Incluye validación interna de que Canal 30d suma exactamente Consultas 30d.
+
+CAMBIO DE MÉTRICAS V4
+- Canal cuenta únicamente consultas completadas dentro de los últimos 30 días.
+- La suma Web + WhatsApp + Otros debe ser exactamente igual a Consultas 30 días.
+- Actividad por usuario muestra Consultas 30d y Canal 30d.
+- Revisiones muestra últimos 30 días.
+- Plan actual sigue siendo fotografía actual.
+- Consumo Free sigue siendo ciclo vigente, porque corresponde al límite operativo de Cartes.

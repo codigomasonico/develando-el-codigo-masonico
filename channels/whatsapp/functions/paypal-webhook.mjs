@@ -3,6 +3,7 @@ import { obtenerSuscripcionUsuario, sincronizarSuscripcionUsuario } from "../../
 import { getPayPalSubscription, normalizePayPalSubscription, verifyPayPalWebhook } from "./lib-paypal.mjs";
 import { getPaymentContext } from "./lib-state.mjs";
 import { sendWhatsAppTextParts } from "./lib-meta.mjs";
+import { translateWhatsAppText } from "../i18n.mjs";
 
 const RELEVANT = new Set([
   "BILLING.SUBSCRIPTION.CREATED",
@@ -89,7 +90,10 @@ export function createPayPalWebhookHandler(overrides = {}) {
       await d.sendWhatsAppTextParts({
         to: context.phone,
         phoneNumberId: context.phone_number_id,
-        text: `¡Bienvenido a Cartes Plus! Tu suscripción de $${CARTES_PLUS_PRICE_MXN} MXN al mes ya está activa. Tus beneficios se comparten entre Web y WhatsApp.`
+        text: translateWhatsAppText(
+          `¡Bienvenido a Cartes Plus! Tu suscripción de $${CARTES_PLUS_PRICE_MXN} MXN al mes ya está activa. Tus beneficios se comparten entre Web y WhatsApp.`,
+          context?.locale
+        )
       }).catch((e) => console.error("PAYPAL_WA_NOTIFY_ERROR", e));
     }
 

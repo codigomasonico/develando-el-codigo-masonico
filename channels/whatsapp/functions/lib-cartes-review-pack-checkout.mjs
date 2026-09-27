@@ -6,6 +6,7 @@ import {
 import {
   savePaymentContext
 } from "./lib-state.mjs";
+import { normalizeLocale } from "../../../core/ai/i18n.mjs";
 
 const realDeps = {
   createMercadoPagoReviewPackCheckout,
@@ -24,6 +25,7 @@ export async function createReviewPackCheckout(
   const phoneNumberId = String(input.phoneNumberId || "").trim();
   const expiresAt = String(input.expiresAt || "").trim();
   const provider = normalizeProvider(input.provider);
+  const locale = input.locale ? normalizeLocale(input.locale) : "";
 
   if (!/^usr_[a-f0-9]{32}$/.test(userId)) {
     throw new Error("user_id Cartes inválido.");
@@ -39,7 +41,8 @@ export async function createReviewPackCheckout(
     const checkout =
       await d.createMercadoPagoReviewPackCheckout({
         userId,
-        expiresAt
+        expiresAt,
+        ...(locale ? { locale } : {})
       });
 
     await d.savePaymentContext(
@@ -51,7 +54,8 @@ export async function createReviewPackCheckout(
         phone,
         phone_number_id: phoneNumberId,
         expires_at: expiresAt,
-        preference_id: checkout.preference_id
+        preference_id: checkout.preference_id,
+        ...(locale ? { locale } : {})
       }
     );
 
@@ -67,7 +71,8 @@ export async function createReviewPackCheckout(
   const checkout =
     await d.createPayPalReviewPackOrder({
       userId,
-      expiresAt
+      expiresAt,
+      ...(locale ? { locale } : {})
     });
 
   await d.savePaymentContext(
@@ -79,7 +84,8 @@ export async function createReviewPackCheckout(
       phone,
       phone_number_id: phoneNumberId,
       expires_at: expiresAt,
-      order_id: checkout.order_id
+      order_id: checkout.order_id,
+      ...(locale ? { locale } : {})
     }
   );
 

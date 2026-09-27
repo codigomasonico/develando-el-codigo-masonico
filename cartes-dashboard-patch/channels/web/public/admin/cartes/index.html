@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>Cartes | Administración</title>
+  <link rel="stylesheet" href="admin.css?v=20260926-01" />
+</head>
+<body>
+  <main class="admin-shell">
+    <section id="loginView" class="login-card" hidden>
+      <div class="eyebrow">Administración privada</div>
+      <h1>Cartes</h1>
+      <p>Panel de uso y actividad.</p>
+      <form id="loginForm">
+        <label>Contraseña
+          <input id="adminPassword" type="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Ingresar</button>
+        <p id="loginError" class="message message--error" hidden></p>
+      </form>
+    </section>
+
+    <section id="panelView" hidden>
+      <header class="admin-header">
+        <div>
+          <div class="eyebrow">Develando el Código Masónico</div>
+          <h1>Cartes</h1>
+          <p id="generatedAt">Cargando actividad...</p>
+        </div>
+        <div class="header-actions">
+          <button id="refreshButton" class="button--secondary" type="button">Actualizar</button>
+          <button id="logoutButton" class="button--secondary" type="button">Salir</button>
+        </div>
+      </header>
+
+      <section class="stats" aria-label="Resumen">
+        <article><span>Usuarios</span><strong id="statUsers">0</strong></article>
+        <article><span>Activos hoy</span><strong id="statToday">0</strong></article>
+        <article><span>Activos 7 días</span><strong id="stat7">0</strong></article>
+        <article><span>Activos 30 días</span><strong id="stat30">0</strong></article>
+        <article><span>Consultas hoy</span><strong id="statQueriesToday">0</strong></article>
+        <article><span>Consultas 7 días</span><strong id="statQueries7">0</strong></article>
+        <article><span>Consultas 30 días</span><strong id="statQueries30">0</strong></article>
+        <article><span>Promedio / activo 30d</span><strong id="statAvg">0</strong></article>
+      </section>
+
+      <section class="grid-2">
+        <article class="panel">
+          <h2>Consultas, últimos 30 días</h2>
+          <div id="dailyChart" class="chart" aria-label="Consultas por día"></div>
+        </article>
+        <article class="panel split-panel">
+          <div><h2>Canal</h2><div id="channels"></div></div>
+          <div><h2>Plan actual</h2><div id="plans"></div></div>
+        </article>
+      </section>
+
+      <section class="grid-2">
+        <article class="panel">
+          <h2>Consumo Free</h2>
+          <div id="freeConsumption"></div>
+        </article>
+        <article class="panel">
+          <h2>Revisiones</h2>
+          <div class="mini-stats">
+            <div><span>Completadas</span><strong id="reviewsCompleted">0</strong></div>
+            <div><span>Pendientes</span><strong id="reviewsPending">0</strong></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div><h2>Actividad por usuario</h2><p>Identificador interno, sin correo, teléfono ni contenido.</p></div>
+          <input id="userSearch" type="search" placeholder="Buscar user_id" />
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Usuario</th><th>Plan</th><th>Canal</th><th>Consultas</th><th>Ciclo</th><th>Última actividad</th></tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <p id="panelMessage" class="message" hidden></p>
+      <div id="notes" class="notes"></div>
+    </section>
+  </main>
+  <script src="admin.js?v=20260926-01" defer></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 const SANDBOX = "https://api-m.sandbox.paypal.com";
 const LIVE = "https://api-m.paypal.com";
+import { normalizeLocale } from "../../../core/ai/i18n.mjs";
 
 function env(name) { return String(process.env[name] || "").trim(); }
 export function paypalEnvironment() { return env("PAYPAL_ENVIRONMENT").toLowerCase() === "live" ? "live" : "sandbox"; }
@@ -33,13 +34,11 @@ async function paypal(path, { method = "GET", body = null, fetchImpl = fetch } =
   return data;
 }
 
-export async function createPayPalCheckout({ userId, phone, fetchImpl = fetch }) {
+export async function createPayPalCheckout({ userId, phone, locale = "es", fetchImpl = fetch }) {
   const planId = env("PAYPAL_PLAN_ID");
   if (!planId) throw new Error("Falta PAYPAL_PLAN_ID.");
   if (!/^usr_[a-f0-9]{32}$/.test(String(userId || ""))) throw new Error("user_id Cartes inválido.");
-  const backUrl =
-    env("CARTES_PLUS_BACK_URL") ||
-    "https://develandoelcodigomasonico.com/cartes-whatsapp/suscripcion.html";
+  const backUrl = cartesBackUrl(normalizeLocale(locale));
 
   // CARTES_PAYPAL_RETURN_V112
   const returnTarget = new URL(backUrl);
@@ -65,6 +64,21 @@ export async function createPayPalCheckout({ userId, phone, fetchImpl = fetch })
   const approve = (Array.isArray(data?.links) ? data.links : []).find((x) => x?.rel === "approve")?.href;
   if (!data?.id || !approve) throw new Error("PayPal no devolvió el enlace de aprobación.");
   return { provider: "paypal", subscription_id: String(data.id), url: String(approve), user_id: userId, phone: String(phone || "").replace(/\D/g, "") };
+}
+
+function cartesBackUrl(locale) {
+  const baseUrl = locale === "en"
+    ? env("CARTES_PLUS_BACK_URL_EN") || env("CARTES_PLUS_BACK_URL")
+    : env("CARTES_PLUS_BACK_URL");
+  const url = new URL(
+    baseUrl || "https://develandoelcodigomasonico.com/cartes-whatsapp/suscripcion.html"
+  );
+
+  if (locale === "en" && /\/suscripcion\.html$/i.test(url.pathname)) {
+    url.pathname = url.pathname.replace(/\/suscripcion\.html$/i, "/subscription.html");
+  }
+
+  return url.toString();
 }
 
 export async function getPayPalSubscription(id, fetchImpl = fetch) {

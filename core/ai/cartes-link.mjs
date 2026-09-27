@@ -1,14 +1,23 @@
 import {
+  actualizarIdiomaUsuario,
   desvincularWhatsAppUsuario,
   iniciarCambioNumeroWhatsApp,
   iniciarVinculacionWeb,
   obtenerEstadoVinculacionWeb,
+  obtenerIdiomaUsuario,
   obtenerEstadoUsoMensual,
   resolverOCrearUsuarioPorIdentidad,
   resolverUsuarioExistentePorIdentidad
 } from "./lib-cartes-account.mjs";
+import { coreText, normalizeLocale } from "./i18n.mjs";
 
 export default async (request) => {
+  let locale = normalizeLocale(
+    request.headers.get("x-cartes-locale") ||
+    request.headers.get("accept-language") ||
+    "es"
+  );
+
   if (request.method === "OPTIONS") {
     return new Response(
       null,
@@ -21,7 +30,7 @@ export default async (request) => {
 
   if (request.method !== "POST") {
     return json(
-      { error: "Método no permitido." },
+      { error: coreText(locale, "method_not_allowed") },
       405
     );
   }
@@ -33,7 +42,7 @@ export default async (request) => {
   }
   catch {
     return json(
-      { error: "JSON inválido." },
+      { error: coreText(locale, "invalid_json") },
       400
     );
   }
@@ -43,18 +52,39 @@ export default async (request) => {
       .trim()
       .toLowerCase();
 
+  locale = normalizeLocale(body?.locale, locale);
+
   const webIdentity =
     String(body?.web_identity || "")
       .trim();
 
   if (!/^web_[a-zA-Z0-9_-]{8,}$/.test(webIdentity)) {
     return json(
-      { error: "Identidad Web inválida." },
+      { error: locale === "en" ? "Invalid Web identity." : "Identidad Web inválida." },
       400
     );
   }
 
   try {
+    if (action === "locale_get" || action === "locale_set") {
+      const identity = await resolverOCrearUsuarioPorIdentidad({
+        tipo: "web",
+        valor: webIdentity
+      });
+
+      if (action === "locale_set") {
+        await actualizarIdiomaUsuario({
+          userId: identity.user_id,
+          locale: body?.locale
+        });
+      }
+
+      return json({
+        ok: true,
+        locale: await obtenerIdiomaUsuario({ userId: identity.user_id })
+      });
+    }
+
     if (action === "start") {
       return json(
         await iniciarVinculacionWeb({
@@ -80,8 +110,14 @@ export default async (request) => {
           userId: identity.user_id
         });
 
+      const locale =
+        await obtenerIdiomaUsuario({
+          userId: identity.user_id
+        });
+
       return json({
         ...link,
+        locale,
         usage: publicUsage(usage)
       });
     }
@@ -98,7 +134,9 @@ export default async (request) => {
         return json(
           {
             error:
-              "No se encontró una cuenta Cartes asociada a esta sesión Web."
+              locale === "en"
+                ? "No Cartes account was found for this Web session."
+                : "No se encontró una cuenta Cartes asociada a esta sesión Web."
           },
           404
         );
@@ -132,7 +170,9 @@ export default async (request) => {
         return json(
           {
             error:
-              "No se encontró una cuenta Cartes asociada a esta sesión Web."
+              locale === "en"
+                ? "No Cartes account was found for this Web session."
+                : "No se encontró una cuenta Cartes asociada a esta sesión Web."
           },
           404
         );
@@ -159,7 +199,7 @@ export default async (request) => {
     }
 
     return json(
-      { error: "Acción no soportada." },
+      { error: locale === "en" ? "Unsupported action." : "Acción no soportada." },
       400
     );
   }
@@ -175,7 +215,7 @@ export default async (request) => {
       /no tiene un número de WhatsApp activo/i.test(message)
     ) {
       return json(
-        { error: message },
+        { error: translateLinkError(message, locale) },
         409
       );
     }
@@ -187,13 +227,23 @@ export default async (request) => {
 
     return json(
       {
-        error:
-          "No se pudo gestionar la vinculación en este momento."
+        error: locale === "en"
+          ? "Linking could not be managed at this time."
+          : "No se pudo gestionar la vinculación en este momento."
       },
       500
     );
   }
 };
+
+function translateLinkError(message, locale) {
+  if (normalizeLocale(locale) !== "en") return message;
+
+  return String(message)
+    .replace("La cuenta no tiene un número de WhatsApp activo para cambiar.", "The account does not have an active WhatsApp number to change.")
+    .replace("La cuenta tiene más de un número de WhatsApp activo y requiere revisión.", "The account has more than one active WhatsApp number and requires review.")
+    .replace("No puedes eliminar la única identidad de acceso de la cuenta.", "You cannot remove the account's only access identity.");
+}
 
 function publicUsage(usage) {
   return {
@@ -211,7 +261,7 @@ function headers() {
       "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers":
-      "Content-Type",
+      "Content-Type, X-Cartes-Locale",
     "Access-Control-Allow-Methods":
       "POST, OPTIONS",
     "Cache-Control": "no-store"

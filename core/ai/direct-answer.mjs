@@ -1,6 +1,7 @@
 import glossary from "../knowledge/01_GLOSARIO_MASONICO.json" with { type: "json" };
 import faq from "../knowledge/faq-base.json" with { type: "json" };
 import catalog from "../knowledge/02_CATALOGO_CONTENIDOS.json" with { type: "json" };
+import { normalizeLocale } from "./i18n.mjs";
 
 const STOP_WORDS = new Set([
   "que", "cual", "cuales", "como", "donde", "cuando", "quien", "quienes",
@@ -222,7 +223,14 @@ function findFaq(question) {
   return null;
 }
 
-export function resolveDirectAnswer(question) {
+export function resolveDirectAnswer(question, locale = "es") {
+  // The canonical catalog, FAQ, and glossary records are approved in Spanish.
+  // English requests continue through the bilingual retrieval and model layer
+  // so Cartes never exposes an untranslated direct answer.
+  if (normalizeLocale(locale) === "en") {
+    return { handled: false };
+  }
+
   if (isCatalogQuery(question)) {
     const matches = findCatalog(question);
 

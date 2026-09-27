@@ -8,6 +8,7 @@ import { CARTES_REVIEW_PACK_PRICE_MXN } from "../../../core/ai/config.mjs";
 import { CARTES_PLUS_PRICE_MXN } from "../../../core/ai/config.mjs";
 import { CARTES_FREE_QUERY_LIMIT, CARTES_PLUS_QUERY_LIMIT, CARTES_PLUS_REVIEW_LIMIT } from "../../../core/ai/config.mjs";
 import {
+  actualizarIdiomaUsuario,
   completarCambioNumeroWhatsApp,
   completarConsultaMensual,
   completarVinculacionConWhatsApp,
@@ -15,12 +16,20 @@ import {
   iniciarCambioNumeroWhatsApp,
   liberarConsultaMensual,
   obtenerEstadoUsoMensual,
+  obtenerIdiomaUsuario,
   obtenerPlanUsuario,
   obtenerSuscripcionUsuario,
   reservarConsultaMensual,
   resolverOCrearUsuarioPorIdentidad,
   sincronizarSuscripcionUsuario
 } from "../../../core/ai/lib-cartes-account.mjs";
+import {
+  detectLocaleFromText,
+  normalizeLocale
+} from "../../../core/ai/i18n.mjs";
+import {
+  localizeWhatsAppDeps
+} from "../i18n.mjs";
 import guiaMasonico from "../../../core/ai/guia-masonico.mjs";
 import {
   obtenerEstadoRevisionesCartes,
@@ -59,6 +68,7 @@ Elige una opción o escribe directamente tu consulta sobre la masonería:
 • Privacidad y términos`;
 
 const realDeps = {
+  actualizarIdiomaUsuario,
   completarCambioNumeroWhatsApp,
   completarConsultaMensual,
   completarVinculacionConWhatsApp,
@@ -66,6 +76,7 @@ const realDeps = {
   iniciarCambioNumeroWhatsApp,
   liberarConsultaMensual,
   obtenerEstadoUsoMensual,
+  obtenerIdiomaUsuario,
   obtenerPlanUsuario,
   obtenerSuscripcionUsuario,
   reservarConsultaMensual,
@@ -214,6 +225,8 @@ async function processMessage(message, d) {
   const phoneNumberId = String(message?.phoneNumberId || "").trim();
   const messageId = String(message?.id || "").trim();
   const text = cleanText(resolveInteractiveCommand(message, d.extractMessageText(message)));
+  let locale = detectLocaleFromText(text, "es");
+  d = localizeWhatsAppDeps(d, locale);
   const documentInfo =
     typeof d.extractMessageDocument === "function"
       ? d.extractMessageDocument(message)
@@ -257,7 +270,7 @@ async function processMessage(message, d) {
   // cualquier identidad WhatsApp. Así el número nuevo nunca recibe una
   // cuenta gratuita temporal antes de completar la verificación.
   const changeMatch =
-    text.match(/^CAMBIAR\s+(\d{6})$/i);
+    text.match(/^(?:CAMBIAR|CHANGE)\s+(\d{6})$/i);
 
   if (changeMatch) {
     try {
@@ -300,6 +313,11 @@ async function processMessage(message, d) {
 
       if (changedUserId) {
         await d.clearFlow(changedUserId);
+
+        try {
+          locale = await d.obtenerIdiomaUsuario({ userId: changedUserId });
+          d = localizeWhatsAppDeps(d, locale);
+        } catch {}
       }
 
       await d.sendWhatsAppTextParts({
@@ -331,7 +349,7 @@ async function processMessage(message, d) {
   // Esto permite recuperar de forma explícita un número revocado sin
   // fabricar una segunda cuenta gratuita.
   const linkMatch =
-    text.match(/^VINCULAR\s+(\d{6})$/i);
+    text.match(/^(?:VINCULAR|LINK)\s+(\d{6})$/i);
 
   if (linkMatch) {
     const linked =
@@ -345,6 +363,11 @@ async function processMessage(message, d) {
 
     if (linkedUserId) {
       await d.clearFlow(linkedUserId);
+
+      try {
+        locale = await d.obtenerIdiomaUsuario({ userId: linkedUserId });
+        d = localizeWhatsAppDeps(d, locale);
+      } catch {}
     }
 
     if (
@@ -413,15 +436,85 @@ async function processMessage(message, d) {
 
   const userId = identity.user_id;
   const normalized = normalizeCommand(text);
+
+  try {
+    const storedLocale = await d.obtenerIdiomaUsuario({ userId });
+    locale = identity?.created === true
+      ? detectLocaleFromText(text, storedLocale)
+      : storedLocale;
+
+    if (identity?.created === true && locale !== storedLocale) {
+      await d.actualizarIdiomaUsuario({ userId, locale });
+    }
+  } catch (error) {
+    console.warn(
+      "WA_LOCALE_READ_FALLBACK_V140",
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+
+  d = localizeWhatsAppDeps(d, locale);
+
+  if ([
+    "idioma",
+    "cambiar idioma",
+    "language",
+    "change language"
+  ].includes(normalized)) {
+    await sendLanguageOptions({ phone, phoneNumberId }, d);
+    return;
+  }
+
+  const selectedLanguage = [
+    "english",
+    "ingles",
+    "idioma ingles",
+    "language english"
+  ].includes(normalized)
+    ? "en"
+    : [
+        "espanol",
+        "spanish",
+        "idioma espanol",
+        "language spanish"
+      ].includes(normalized)
+      ? "es"
+      : "";
+
+  if (selectedLanguage) {
+    await d.actualizarIdiomaUsuario({
+      userId,
+      locale: selectedLanguage
+    });
+    await d.clearFlow(userId);
+    d = localizeWhatsAppDeps(d, selectedLanguage);
+    await d.sendWhatsAppTextParts({
+      to: phone,
+      phoneNumberId,
+      text: selectedLanguage === "en"
+        ? "Language changed to English. Your preference is shared with Cartes on the Web."
+        : "Idioma cambiado a español. Tu preferencia se comparte con Cartes en la Web."
+    });
+    await sendMainMenu({ phone, phoneNumberId, userId }, d);
+    return;
+  }
+
   const env = d.env || process.env;
-  const terms = env.CARTES_TERMS_URL || "https://develandoelcodigomasonico.com/cartes-whatsapp/terminos.html";
-  const privacy = env.CARTES_PRIVACY_URL || "https://develandoelcodigomasonico.com/cartes-whatsapp/privacy.html";
+  const terms = locale === "en"
+    ? env.CARTES_TERMS_URL_EN || "https://develandoelcodigomasonico.com/cartes-whatsapp/terms.html"
+    : env.CARTES_TERMS_URL || "https://develandoelcodigomasonico.com/cartes-whatsapp/terminos.html";
+  const privacy = locale === "en"
+    ? env.CARTES_PRIVACY_URL_EN || "https://develandoelcodigomasonico.com/cartes-whatsapp/privacy-en.html"
+    : env.CARTES_PRIVACY_URL || "https://develandoelcodigomasonico.com/cartes-whatsapp/privacy.html";
   if (
     [
       "cambiar numero whatsapp",
       "cambiar numero de whatsapp",
       "cambiar mi numero whatsapp",
-      "cambiar numero"
+      "cambiar numero",
+      "change whatsapp number",
+      "change my whatsapp number",
+      "change number"
     ].includes(normalized)
   ) {
     await d.sendWhatsAppReplyButtons({
@@ -447,7 +540,9 @@ async function processMessage(message, d) {
   if (
     [
       "confirmar cambiar numero whatsapp",
-      "si cambiar numero whatsapp"
+      "si cambiar numero whatsapp",
+      "confirm change whatsapp number",
+      "yes change whatsapp number"
     ].includes(normalized)
   ) {
     try {
@@ -483,7 +578,10 @@ async function processMessage(message, d) {
     [
       "desvincular whatsapp",
       "desvincular mi whatsapp",
-      "quitar whatsapp"
+      "quitar whatsapp",
+      "unlink whatsapp",
+      "unlink my whatsapp",
+      "remove whatsapp"
     ].includes(normalized)
   ) {
     await d.sendWhatsAppReplyButtons({
@@ -509,7 +607,9 @@ async function processMessage(message, d) {
   if (
     [
       "confirmar desvincular whatsapp",
-      "si desvincular whatsapp"
+      "si desvincular whatsapp",
+      "confirm unlink whatsapp",
+      "yes unlink whatsapp"
     ].includes(normalized)
   ) {
     try {
@@ -619,27 +719,43 @@ async function processMessage(message, d) {
 
     "conversar",
     "conversar con cartes",
+    "talk",
+    "talk with cartes",
+    "ask cartes",
 
     "revisar documento",
     "revisar un documento",
     "revision de documento",
+    "review document",
+    "review a document",
+    "document review",
 
     "mi suscripcion",
     "estado suscripcion",
     "estado de mi suscripcion",
     "ver mi suscripcion",
+    "my subscription",
+    "subscription status",
+    "view my subscription",
 
     "ayuda",
     "ayuda y soporte",
     "help",
+    "help and support",
 
     "privacidad",
     "terminos",
     "privacidad y terminos",
+    "privacy",
+    "terms",
+    "privacy and terms",
 
     "comprar revisiones",
     `comprar ${CARTES_REVIEW_PACK_SIZE} revisiones`,
-    "paquete de revisiones"
+    "paquete de revisiones",
+    "buy reviews",
+    `buy ${CARTES_REVIEW_PACK_SIZE} reviews`,
+    "review package"
   ]);
 
   const pendingDocumentNavigationFlow =
@@ -675,7 +791,10 @@ async function processMessage(message, d) {
       [
         "no acepto documento",
         "no aceptar documento",
-        "rechazar documento"
+        "rechazar documento",
+        "do not accept document",
+        "decline document",
+        "do not review document"
       ].includes(normalized)
     ) {
       await d.clearFlow(userId);
@@ -694,7 +813,9 @@ async function processMessage(message, d) {
       [
         "acepto documento",
         "aceptar documento",
-        "si revisar documento"
+        "si revisar documento",
+        "accept document",
+        "yes review document"
       ].includes(normalized)
     ) {
       await procesarDocumentoWhatsApp({
@@ -719,7 +840,7 @@ async function processMessage(message, d) {
   }
 
   if (flow?.flow === "accept_terms") {
-    if (["no aceptar", "no acepto", "rechazar"].includes(normalized)) {
+    if (["no aceptar", "no acepto", "rechazar", "do not accept", "decline"].includes(normalized)) {
       await d.clearFlow(userId);
       await d.sendWhatsAppTextParts({
         to: phone,
@@ -730,7 +851,7 @@ async function processMessage(message, d) {
       return;
     }
 
-    if (["acepto", "aceptar", "si"].includes(normalized)) {
+    if (["acepto", "aceptar", "si", "i accept", "accept", "yes"].includes(normalized)) {
       await d.setFlow(userId, "payment_provider", { phone, phoneNumberId });
       await sendPaymentProviderOptions({ phone, phoneNumberId, accepted: true }, d);
       return;
@@ -743,7 +864,7 @@ async function processMessage(message, d) {
   if (flow?.flow === "payment_provider") {
     if (["1", "mercado pago", "mercadopago"].includes(normalized)) {
       const checkout = await d.createCheckoutForCartes(
-        { provider: "mercadopago", userId, phone, phoneNumberId },
+        { provider: "mercadopago", userId, phone, phoneNumberId, locale: d.locale || "es" },
         {
           createMercadoPagoCheckout: d.createMercadoPagoCheckout,
           createPayPalCheckout: d.createPayPalCheckout,
@@ -761,7 +882,7 @@ async function processMessage(message, d) {
 
     if (["2", "paypal", "pay pal"].includes(normalized)) {
       const checkout = await d.createCheckoutForCartes(
-        { provider: "paypal", userId, phone, phoneNumberId },
+        { provider: "paypal", userId, phone, phoneNumberId, locale: d.locale || "es" },
         {
           createMercadoPagoCheckout: d.createMercadoPagoCheckout,
           createPayPalCheckout: d.createPayPalCheckout,
@@ -796,13 +917,13 @@ async function processMessage(message, d) {
   }
 
   if (flow?.flow === "confirm_cancel") {
-    if (normalized === "si") {
+    if (["si", "yes"].includes(normalized)) {
       await d.clearFlow(userId);
       await cancelSubscription({ phone, phoneNumberId, userId }, d);
       return;
     }
 
-    if (["no", "no cancelar", "volver"].includes(normalized)) {
+    if (["no", "no cancelar", "volver", "do not cancel", "back"].includes(normalized)) {
       await d.clearFlow(userId);
       await d.sendWhatsAppTextParts({
         to: phone,
@@ -820,7 +941,7 @@ async function processMessage(message, d) {
     return;
   }
 
-  if (["1", "conversar", "conversar con cartes"].includes(normalized)) {
+  if (["1", "conversar", "conversar con cartes", "talk", "talk with cartes", "ask cartes"].includes(normalized)) {
     await d.sendWhatsAppTextParts({
       to: phone,
       phoneNumberId,
@@ -829,7 +950,7 @@ async function processMessage(message, d) {
     return;
   }
 
-  if (["2", "conocer cartes plus", "conoce cartes plus", "cartes plus", "plus"].includes(normalized)) {
+  if (["2", "conocer cartes plus", "conoce cartes plus", "cartes plus", "plus", "learn about cartes plus", "about cartes plus"].includes(normalized)) {
     await d.sendWhatsAppTextParts({
       to: phone,
       phoneNumberId,
@@ -843,7 +964,10 @@ async function processMessage(message, d) {
     [
       "revisar documento",
       "revisar un documento",
-      "revision de documento"
+      "revision de documento",
+      "review document",
+      "review a document",
+      "document review"
     ].includes(normalized)
   ) {
     const subscriptionDocument =
@@ -873,7 +997,10 @@ async function processMessage(message, d) {
     [
       "comprar revisiones",
       `comprar ${CARTES_REVIEW_PACK_SIZE} revisiones`,
-      "paquete de revisiones"
+      "paquete de revisiones",
+      "buy reviews",
+      `buy ${CARTES_REVIEW_PACK_SIZE} reviews`,
+      "review package"
     ].includes(normalized)
   ) {
     await iniciarCompraPaqueteWhatsApp(
@@ -888,7 +1015,7 @@ async function processMessage(message, d) {
     return;
   }
 
-  if (["3", "suscribirme", "suscribirme a cartes plus"].includes(normalized)) {
+  if (["3", "suscribirme", "suscribirme a cartes plus", "subscribe", "subscribe to cartes plus", "get cartes plus"].includes(normalized)) {
     const subscription = await d.obtenerSuscripcionUsuario({ userId });
 
     const effectivePlan = String(
@@ -911,21 +1038,21 @@ async function processMessage(message, d) {
     await sendLegalAcceptanceOptions({ phone, phoneNumberId, terms, privacy }, d);
     return;
   }
-  if (["4", "mi suscripcion", "estado", "estado suscripcion", "ver mi suscripcion"].includes(normalized)) {
+  if (["4", "mi suscripcion", "estado", "estado suscripcion", "ver mi suscripcion", "my subscription", "subscription status", "view my subscription"].includes(normalized)) {
     await showSubscription({ phone, phoneNumberId, userId }, d);
     return;
   }
 
-  if (["5", "ayuda", "help", "ayuda y soporte"].includes(normalized)) {
+  if (["5", "ayuda", "help", "ayuda y soporte", "help and support", "support"].includes(normalized)) {
     await d.sendWhatsAppTextParts({
       to: phone,
       phoneNumberId,
-      text: "Para recibir ayuda con Cartes, tu suscripción o un pago, escríbenos a soporte@develandoelcodigomasonico.com y cuéntanos brevemente qué ocurrió."
+      text: "Para recibir ayuda con Cartes, tu suscripción o un pago, escríbenos a soporte@develandoelcodigomasonico.com y cuéntanos brevemente qué ocurrió. Para cambiar el idioma, escribe *IDIOMA* o *LANGUAGE*."
     });
     return;
   }
 
-  if (["6", "privacidad", "terminos", "privacidad y terminos"].includes(normalized)) {
+  if (["6", "privacidad", "terminos", "privacidad y terminos", "privacy", "terms", "privacy and terms"].includes(normalized)) {
     await d.sendWhatsAppTextParts({
       to: phone,
       phoneNumberId,
@@ -934,7 +1061,7 @@ async function processMessage(message, d) {
     return;
   }
 
-  if (["cancelar", "cancelar renovacion", "cancelar suscripcion", "cancelar cartes plus", "darme de baja", "dar de baja cartes plus"].includes(normalized)) {
+  if (["cancelar", "cancelar renovacion", "cancelar suscripcion", "cancelar cartes plus", "darme de baja", "dar de baja cartes plus", "cancel", "cancel renewal", "cancel subscription", "cancel cartes plus"].includes(normalized)) {
     const existing = await d.obtenerSuscripcionUsuario({ userId });
 
     if (!existing) {
@@ -1001,11 +1128,13 @@ async function processMessage(message, d) {
     body: JSON.stringify({
       question: text,
       history: [],
+      locale: d.locale || "es",
       client: {
         channel: "whatsapp",
         external_user_id: phone,
         user_id: userId,
-        request_id: messageId
+        request_id: messageId,
+        locale: d.locale || "es"
       }
     })
   });
@@ -1386,6 +1515,7 @@ async function procesarDocumentoWhatsApp({
         fileBuffer: media.buffer,
         fileName,
         channel: "whatsapp",
+        locale: d.locale || "es",
         requestId:
           `wareview_${sourceMessageId}`,
         consentAccepted: true
@@ -1473,7 +1603,7 @@ async function ofrecerCartesPlusPorLimite(
   d
 ) {
   const cycleEnd =
-    formatDateForUser(usage?.cycle_end);
+    formatDateForUser(usage?.cycle_end, d.locale);
 
   const renewalLine =
     cycleEnd
@@ -1596,7 +1726,7 @@ async function showSubscription({ phone, phoneNumberId, userId }, d) {
         ? "Mercado Pago"
         : "Sin suscripción recurrente";
 
-  const dates = resolveSubscriptionDates(subscription);
+  const dates = resolveSubscriptionDates(subscription, d.locale);
 
   let reviews = null;
   let reviewLine = "";
@@ -1628,7 +1758,9 @@ async function showSubscription({ phone, phoneNumberId, userId }, d) {
   const freeCycleEnd =
     plan === "plus"
       ? ""
-      : formatDateForUser(usage?.cycle_end);
+      : normalizeLocale(d.locale) === "en"
+        ? formatDateForUser(usage?.cycle_end, "en")
+        : formatDateForUser(usage?.cycle_end);
 
   const periodLine =
     plan === "plus"
@@ -1751,7 +1883,7 @@ async function cancelSubscription({ phone, phoneNumberId, userId }, d) {
   });
 }
 
-function resolveSubscriptionDates(subscription) {
+function resolveSubscriptionDates(subscription, locale = "es") {
   const provider = String(subscription?.provider || "").toLowerCase();
   const recurring = provider === "paypal" || provider === "mercadopago";
 
@@ -1768,21 +1900,20 @@ function resolveSubscriptionDates(subscription) {
     null;
 
   return {
-    expiration: formatDateForUser(expirationRaw) || "No disponible",
+    expiration: formatDateForUser(expirationRaw, locale) || (normalizeLocale(locale) === "en" ? "Not available" : "No disponible"),
     renewal: subscription?.renovacion_cancelada
-      ? "Cancelada"
-      : (formatDateForUser(renewalRaw) || "No disponible")
+      ? (normalizeLocale(locale) === "en" ? "Canceled" : "Cancelada")
+      : (formatDateForUser(renewalRaw, locale) || (normalizeLocale(locale) === "en" ? "Not available" : "No disponible"))
   };
 }
 
-function formatDateForUser(value) {
+function formatDateForUser(value, locale = "es") {
   const raw = String(value || "").trim();
   if (!raw) return "";
 
-  const months = [
-    "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-    "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
-  ];
+  const months = normalizeLocale(locale) === "en"
+    ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    : ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
   const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
 
@@ -1813,7 +1944,11 @@ function isPublicEntryInput(value) {
     "hola quiero conocer a cartes",
     "quiero conocer a cartes",
     "hola cartes quiero comenzar",
-    "cartes quiero comenzar"
+    "cartes quiero comenzar",
+    "hello i want to meet cartes",
+    "i want to meet cartes",
+    "hello cartes i want to start",
+    "cartes i want to start"
   ]).has(normalized);
 }
 
@@ -1836,6 +1971,14 @@ function isNonQueryInput(value) {
     "buenas",
     "buenas tardes",
     "buenas noches",
+    "hello",
+    "hi",
+    "good morning",
+    "good afternoon",
+    "good evening",
+    "thanks",
+    "thank you",
+    "ready",
     "gracias",
     "ok",
     "okay",
@@ -1864,6 +2007,9 @@ function resolveInteractiveCommand(message, fallbackText) {
     ["menu_suscripcion", "4"],
     ["menu_ayuda", "5"],
     ["menu_legal", "6"],
+    ["menu_language", "language"],
+    ["language_en", "language english"],
+    ["language_es", "idioma espanol"],
     ["menu_document_review", "revisar documento"],
     ["terms_accept", "acepto"],
     ["terms_reject", "no acepto"],
@@ -1937,7 +2083,7 @@ async function handlePublicEntryWhatsApp({
 
     if (plan !== "plus") {
       const cycleEnd =
-        formatDateForUser(usage?.cycle_end);
+        formatDateForUser(usage?.cycle_end, d.locale);
 
       statusText += cycleEnd
         ? `\nTus ${CARTES_FREE_QUERY_LIMIT} consultas gratuitas se renuevan el ${cycleEnd}.`
@@ -1951,7 +2097,7 @@ async function handlePublicEntryWhatsApp({
         });
 
       const dates =
-        resolveSubscriptionDates(subscription);
+        resolveSubscriptionDates(subscription, d.locale);
 
       statusText +=
         `\nFecha de vencimiento: ${dates.expiration}` +
@@ -1977,6 +2123,39 @@ async function handlePublicEntryWhatsApp({
     { phone, phoneNumberId, userId },
     d
   );
+}
+
+async function sendLanguageOptions({ phone, phoneNumberId }, d) {
+  const body =
+    "Selecciona el idioma de Cartes. La preferencia se compartirá entre Web y WhatsApp.\n\n" +
+    "Choose the Cartes language. Your preference will be shared between Web and WhatsApp.";
+
+  try {
+    const raw = d.__cartesRawDeps || d;
+    await raw.sendWhatsAppReplyButtons({
+      to: phone,
+      phoneNumberId,
+      body,
+      buttons: [
+        { id: "language_es", title: "Español" },
+        { id: "language_en", title: "English" },
+        { id: "menu_main", title: d.locale === "en" ? "Back to menu" : "Volver al menú" }
+      ]
+    });
+    return;
+  } catch (error) {
+    console.warn(
+      "WA_LANGUAGE_OPTIONS_FALLBACK_V140",
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+
+  const raw = d.__cartesRawDeps || d;
+  await raw.sendWhatsAppTextParts({
+    to: phone,
+    phoneNumberId,
+    text: `${body}\n\nResponde *ESPAÑOL* o *ENGLISH*. / Reply *SPANISH* or *ENGLISH*.`
+  });
 }
 
 async function sendMainMenu({ phone, phoneNumberId, userId }, d) {
@@ -2048,7 +2227,7 @@ async function sendMainMenu({ phone, phoneNumberId, userId }, d) {
       to: phone,
       phoneNumberId,
       header: "Menú de Cartes",
-      body: "Selecciona una opción o escribe directamente tu consulta sobre la masonería.",
+      body: "Selecciona una opción o escribe directamente tu consulta sobre la masonería. Para cambiar el idioma, escribe IDIOMA o LANGUAGE.",
       button: "Ver opciones",
       footer: "Web y WhatsApp comparten la misma cuenta Cartes.",
       sections: [{
@@ -2065,7 +2244,7 @@ async function sendMainMenu({ phone, phoneNumberId, userId }, d) {
   }
 
   const fallbackMenu = isPlus
-    ? `*Menú de Cartes*\n\nElige una opción o escribe directamente tu consulta sobre la masonería:\n\n• Conversar con Cartes\n• Revisar documento\n• Mi suscripción\n• Ayuda y soporte\n• Privacidad y términos`
+    ? `*Menú de Cartes*\n\nElige una opción o escribe directamente tu consulta sobre la masonería:\n\n• Conversar con Cartes\n• Revisar documento\n• Mi suscripción\n• Ayuda y soporte\n• Privacidad y términos\n\nPara cambiar el idioma, escribe *IDIOMA* o *LANGUAGE*.`
     : MENU;
 
   await d.sendWhatsAppTextParts({
@@ -2169,7 +2348,8 @@ async function iniciarCompraPaqueteWhatsApp({
     {
       phone,
       phoneNumberId,
-      expiresAt
+      expiresAt,
+      locale: d.locale || "es"
     },
     d
   );
@@ -2265,7 +2445,8 @@ async function procesarProveedorPaqueteWhatsApp({
       userId,
       phone,
       phoneNumberId,
-      expiresAt
+      expiresAt,
+      locale: d.locale || "es"
     });
 
   await d.clearFlow(userId);
@@ -2289,7 +2470,7 @@ async function sendReviewPackProviderOptions({
   expiresAt
 }, d) {
   const expiration =
-    formatDateForUser(expiresAt) ||
+    formatDateForUser(expiresAt, d.locale) ||
     "el final de tu periodo Plus vigente";
 
   const body =

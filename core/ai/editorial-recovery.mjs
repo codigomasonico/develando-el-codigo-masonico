@@ -8,6 +8,8 @@ function normalize(value) {
     .trim();
 }
 
+import { normalizeLocale } from "./i18n.mjs";
+
 const EXACT_CASES = new Map([
   [normalize("¿Qué diferencia hay entre rito, ritual y ceremonia?"), {
     id: "rito-ritual-ceremonia",
@@ -131,22 +133,146 @@ Su interpretación puede variar según el rito y la jurisdicción, pero la idea 
   }]
 ]);
 
-function findCase(question) {
-  return EXACT_CASES.get(normalize(question)) || null;
+const EXACT_CASES_EN = new Map([
+  [normalize("What is the difference between a rite, a ritual, and a ceremony?"), {
+    id: "rite-ritual-ceremony-en",
+    answer: `Rite, ritual, and ceremony are related concepts, but they are not interchangeable.
+
+A rite is the broader system of degrees, teachings, customs, and ceremonies within a Masonic tradition. A ritual is the prescribed text or sequence governing a particular act. A ceremony is the actual performance of that ritual at a particular time and place.
+
+In simple terms, the rite establishes the framework, the ritual organizes the proceedings, and the ceremony is the act being performed. Details vary among Masonic bodies and jurisdictions.`
+  }],
+  [normalize("What does the square represent?"), {
+    id: "square-meaning-en",
+    answer: `In Masonic symbolism, the square commonly represents moral rectitude, justice, and consistency between thought, word, and action.
+
+Its meaning comes from the builder's tool used to test right angles. Morally, it suggests measuring and correcting one's conduct with honesty and sound judgment.
+
+No interpretation is universal across every Masonic tradition, but ethical uprightness is among the square's most widespread meanings.`
+  }],
+  [normalize("What do all Freemasons believe?"), {
+    id: "masonic-beliefs-en",
+    answer: `There is no single position shared by every Freemason. Freemasonry includes different rites, Masonic bodies, and jurisdictions.
+
+Many emphasize personal improvement, fraternity, ethical reflection, tolerance, and symbolic work. Religious requirements, philosophical emphases, and organizational practices nevertheless vary.
+
+Any universal claim about what all Freemasons believe should therefore be treated with caution.`
+  }],
+  [normalize("Does Freemasonry teach one doctrine?"), {
+    id: "single-doctrine-en",
+    answer: `No. Freemasonry does not impose one doctrine on all of its traditions.
+
+Different rites, Masonic bodies, and jurisdictions have distinct philosophical, spiritual, and organizational emphases. Many share symbolic methods and goals of moral formation, but there is no universal authority imposing one creed on every Freemason.
+
+Its internal plurality is essential to understanding Freemasonry accurately.`
+  }],
+  [normalize("Explain the symbolism of the square."), {
+    id: "square-symbolism-en",
+    answer: `In Masonic symbolism, the square commonly represents rectitude, justice, and the effort to align conduct with ethical principles.
+
+It originates in the builder's tool used to test right angles. Freemasonry turns that practical function into a moral image: measuring one's actions, correcting deviations, and seeking consistency between intention and conduct.
+
+Its precise meaning may vary by rite and jurisdiction, but rectitude remains one of its most widespread interpretations.`
+  }],
+  [normalize("Are non-Masons inferior to Freemasons?"), {
+    id: "non-masons-en",
+    answer: `No. Membership in Freemasonry does not make a person more valuable than someone who is not a Freemason.
+
+Initiation and degrees describe internal stages of formation and commitment within an organization. They do not establish a hierarchy of human dignity over the rest of society.
+
+In English, "people who are not Freemasons" or "the general public" is normally clearer and less exclusionary than internal labels.`
+  }],
+  [normalize("Did Freemasonry begin in ancient Egypt?"), {
+    id: "egypt-origin-en",
+    answer: `There is no evidence that Freemasonry, as an institution, began in ancient Egypt.
+
+Egyptian references belong mainly to the symbolic, legendary, or esoteric traditions of some currents. They may have allegorical value, but they do not establish direct institutional continuity.
+
+Documentary evidence places the formation of modern speculative Freemasonry in Europe during the seventeenth and eighteenth centuries.`
+  }],
+  [normalize("Did modern Freemasonry begin in 1717?"), {
+    id: "freemasonry-1717-en",
+    answer: `The year 1717 is commonly treated as an important institutional milestone in modern Freemasonry because four London lodges are traditionally said to have formed a Grand Lodge that year.
+
+It was not an absolute beginning. Lodges, documents, and earlier developments already existed, and the transition from operative to speculative Masonry was gradual.
+
+The most careful formulation is that 1717 marks an influential organizational stage within a longer historical process.`
+  }],
+  [normalize("Were all the Founding Fathers of the United States Freemasons?"), {
+    id: "us-founders-en",
+    answer: `No. Some Founding Fathers of the United States were Freemasons, but many were not.
+
+The prominence of several Masonic figures encouraged later generalizations, yet membership must be established individually through documentary evidence.
+
+Freemasons were present among the founders, but Masonic affiliation was not universal.`
+  }],
+  [normalize("Do Freemasons control governments?"), {
+    id: "government-control-en",
+    answer: `There is no historical or documentary evidence that Freemasonry controls governments as a coordinated organization.
+
+Individual Freemasons have held public office and positions of influence, as members of many other associations have. The presence of individuals in power does not demonstrate unified institutional direction.
+
+Claims of global control belong to conspiracy theory when they are not supported by verifiable evidence.`
+  }],
+  [normalize("Does Freemasonry worship Lucifer?"), {
+    id: "lucifer-en",
+    answer: `No. Worship of Lucifer is not a general teaching of Freemasonry.
+
+The accusation stems largely from anti-Masonic polemics, forgeries, quotations taken out of context, and generalizations based on particular authors. Freemasonry has no worldwide authority or single theology.
+
+A rigorous assessment must distinguish verifiable documents, symbolic interpretations, and propaganda.`
+  }],
+  [normalize("Can women be Freemasons?"), {
+    id: "women-en",
+    answer: `It depends on the Masonic body and jurisdiction. There is no single rule throughout Freemasonry.
+
+There are male-only, female-only, and mixed-gender Masonic bodies. Each establishes its own admission requirements and relationships of recognition.
+
+Women may belong to female and mixed-gender organizations, while certain male-only Grand Lodges do not admit them as members.`
+  }],
+  [normalize("Must all Freemasons believe in God?"), {
+    id: "belief-in-god-en",
+    answer: `It depends on the Masonic body and jurisdiction.
+
+Many organizations require belief in a Supreme Being as a condition of membership. Others, particularly some liberal or adogmatic traditions, also admit atheists or agnostics.
+
+There is no worldwide authority imposing the same religious requirement on all of Freemasonry.`
+  }],
+  [normalize("Is there a world authority governing all Freemasonry?"), {
+    id: "world-authority-en",
+    answer: `No. Freemasonry is not governed by one worldwide authority.
+
+It is decentralized among lodges, Grand Lodges, Grand Orients, and other Masonic bodies that exercise authority within their own jurisdictions.
+
+Recognition and cooperation may exist among organizations, but those relationships do not create one central governing structure.`
+  }],
+  [normalize("What do the compasses represent?"), {
+    id: "compasses-meaning-en",
+    answer: `In Masonic symbolism, the compasses commonly represent measure, balance, moderation, and self-control.
+
+As a geometric instrument, they draw limits and proportions. Morally, they suggest setting reasonable bounds on one's desires and acting with restraint.
+
+Interpretations vary among rites and jurisdictions, but personal measure is one of the most widespread readings.`
+  }]
+]);
+
+function findCase(question, locale = "es") {
+  const cases = normalizeLocale(locale) === "en" ? EXACT_CASES_EN : EXACT_CASES;
+  return cases.get(normalize(question)) || null;
 }
 
-export function recoverEditorialAnswer(question) {
-  const item = findCase(question);
+export function recoverEditorialAnswer(question, locale = "es") {
+  const item = findCase(question, locale);
   return item ? { handled: true, id: item.id, answer: item.answer } : { handled: false };
 }
 
-export function stabilizeEditorialAnswer(question, answer) {
-  const item = findCase(question);
+export function stabilizeEditorialAnswer(question, answer, locale = "es") {
+  const item = findCase(question, locale);
   if (!item) return { handled: false, answer: String(answer || "").trim() };
   return { handled: true, id: item.id, answer: item.answer };
 }
 
-export function enforceEditorialEvidenceLanguage(question, answer) {
+export function enforceEditorialEvidenceLanguage(question, answer, locale = "es") {
   const normalizedQuestion = normalize(question);
   let text = String(answer || "").trim();
 
@@ -156,7 +282,11 @@ export function enforceEditorialEvidenceLanguage(question, answer) {
       || /\bsin evidencia\b/.test(normalizedAnswer)
       || /\bno hay pruebas\b/.test(normalizedAnswer);
 
-    if (!alreadyExplicit) text = `No hay evidencia histórica o documental que respalde esa afirmación.\n\n${text}`;
+    if (!alreadyExplicit) {
+      text = normalizeLocale(locale) === "en"
+        ? `There is no historical or documentary evidence supporting that claim.\n\n${text}`
+        : `No hay evidencia histórica o documental que respalde esa afirmación.\n\n${text}`;
+    }
   }
 
   return text;

@@ -1,4 +1,6 @@
 import { applyTerminology } from "./terminology.mjs";
+import { applyTerminologyEn } from "./terminology-en.mjs";
+import { coreText, normalizeLocale } from "./i18n.mjs";
 
 // V4.2: el validador de salida es deliberadamente conservador.
 // La seguridad de entrada bloquea solicitudes reservadas antes de llamar al modelo.
@@ -17,8 +19,12 @@ const HARD_BLOCK_PATTERNS = [
   /(?:aquí|estos|estas)\s+(?:están|son)\s+(?:los|las)\s+(?:signos|toques|palabras\s+de\s+paso|palabras\s+sagradas)\s*(?:reservados|secretos)?\s*:/i
 ];
 
-export function validateAndNormalizeAnswer(answer) {
-  let text = applyTerminology(String(answer || "").trim());
+export function validateAndNormalizeAnswer(answer, locale = "es") {
+  const selectedLocale = normalizeLocale(locale);
+  let text = String(answer || "").trim();
+  text = selectedLocale === "en"
+    ? applyTerminologyEn(text)
+    : applyTerminology(text);
   const warnings = [];
 
   if (!text) {
@@ -35,10 +41,10 @@ export function validateAndNormalizeAnswer(answer) {
   }
 
   // Advertencias informativas: nunca activan fallback.
-  if (/\btodos los masones creen\b/i.test(text)) {
+  if (/\btodos los masones creen\b/i.test(text) || /\ball (?:freemasons|masons) believe\b/i.test(text)) {
     warnings.push("Revisar posible generalización universal");
   }
-  if (/\bla Masonería enseña que\b/i.test(text)) {
+  if (/\bla Masonería enseña que\b/i.test(text) || /\bfreemasonry teaches that\b/i.test(text)) {
     warnings.push("Revisar posible formulación monolítica");
   }
 
@@ -46,6 +52,6 @@ export function validateAndNormalizeAnswer(answer) {
   return { ok: true, text, warnings };
 }
 
-export function safeFallbackAnswer() {
-  return "No puedo ofrecer una respuesta suficientemente rigurosa con la información disponible. Prueba formulando la pregunta de manera más específica.";
+export function safeFallbackAnswer(locale = "es") {
+  return coreText(locale, "safe_fallback");
 }
