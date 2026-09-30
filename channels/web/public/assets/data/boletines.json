@@ -248,5 +248,15 @@
     "archivo": "archivo-boletines/boletin_2624.pdf",
     "imagen": "",
     "orden": 24
+	},
+  {
+    "numero": 25,
+    "especial": false,
+    "titulo": "Lo que el símbolo nos recuerda",
+    "fecha": "2026-09-27",
+    "descripcion": "Los símbolos conservan algo más que una forma y despiertan recuerdos, nuevas preguntas y sentidos distintos cada vez que volvemos a mirarlos desde lo vivido.",
+    "archivo": "archivo-boletines/boletin_2625.pdf",
+    "imagen": "",
+    "orden": 25
 	}
 ]

@@ -336,5 +336,18 @@
 		"invitado": "",
 		"spotify": "https://open.spotify.com/episode/4GYkK71QxaebKzyyUnKjPs?si=YMlRS8ygTpOZquL5EIW9Mg",
 		"youtube": ""
+	},
+	{
+		"id": "ep-027",
+		"numero": 27,
+		"titulo": "Vivir la Masonería fuera del Templo",
+		"categoria": "Filosofía",
+		"fecha": "2026-09-30",
+		"duracion": "37:39",
+		"descripcion": "Un episodio sobre la distancia entre lo que la Masonería propone dentro del Templo y la forma en que esos principios se reflejan, o no, en la vida cotidiana.",
+		"imagen": "",
+		"invitado": "",
+		"spotify": "https://open.spotify.com/episode/5SPnEZ7i0eFjdnCtgk5OjC?si=ioyHjR8FTS2qmA7qO2l2Jg",
+		"youtube": ""
 	}	
 ]
